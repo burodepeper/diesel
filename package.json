@@ -1,0 +1,38 @@
+{
+  "name": "diesel-engine",
+  "author": {
+    "name": "David van Gemeren",
+    "email": "david@burodepeper.nl"
+  },
+  "version": "0.0.1",
+  "repository": "https://github.com/burodepeper/diesel-engine",
+  "private": true,
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-coffee": "~0.13.0",
+    "grunt-contrib-watch": "~0.6.1"
+  },
+  "main": "index.html",
+  "coffeelintConfig": {
+    "arrow_spacing": {
+      "level": "error"
+    },
+    "max_line_length": {
+      "level": "ignore",
+      "value": 80
+    },
+    "no_backticks": {
+      "level": "ignore"
+    },
+    "no_empty_param_list": {
+      "level": "error"
+    },
+    "no_stand_alone_at": {
+      "level": "warn"
+    },
+    "prefer_english_operator": {
+      "level": "warn"
+    }
+  }
+}
