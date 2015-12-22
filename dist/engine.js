@@ -1,40 +1,144 @@
-var CONTEXT, Controller, DEBUG, Engine, Entity, PX, Pane, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
+var CONTEXT, Controller, DEBUG, Engine, Entity, NOW, PX, Pane, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-Controller = (function(superClass) {
-  extend(Controller, superClass);
+snap = function(value) {
+  return Math.round(value / PX) * PX;
+};
 
-  function Controller() {
-    Controller.__super__.constructor.call(this);
+delay = function(ms, func) {
+  return setTimeout(func, ms);
+};
+
+getRandomInt = function(low, high) {
+  var diff;
+  diff = (high - low) + 1;
+  diff = Math.random() * diff;
+  return low + Math.floor(diff);
+};
+
+getWeighedInt = function(low, high, gravity, i) {
+  var chance, diff, okay, r;
+  r = Math.random();
+  chance = Math.sqrt(Math.random());
+  diff = (high - low) + 1;
+  okay = false;
+  if (gravity == null) {
+    gravity = "high";
   }
+  if (i == null) {
+    i = 0;
+  }
+  if (gravity === "low") {
+    if (chance >= r) {
+      okay = true;
+    }
+  } else if (gravity === "high") {
+    if (chance <= r) {
+      okay = true;
+    }
+  } else if (gravity === "middle" || "center") {
+    chance /= 2;
+    if (r >= chance && r <= 1 - chance) {
+      okay = true;
+    }
+  }
+  if (okay) {
+    return low + Math.floor(diff * r);
+  } else {
+    return getWeighedInt(low, high, gravity, i + 1);
+  }
+};
 
-  return Controller;
+getRandomFromArray = function(array) {
+  return array[getRandomInt(0, array.length - 1)];
+};
 
-})(Entity);
+getRandomFromObject = function(data) {
+  var key, r, total, value;
+  total = 0;
+  for (key in data) {
+    value = data[key];
+    total += value;
+    data[key] = total;
+  }
+  r = getRandomInt(1, total);
+  for (key in data) {
+    value = data[key];
+    if (r <= value) {
+      return key;
+    }
+  }
+};
+
+average = function(data) {
+  var k, len, total, value;
+  total = 0;
+  for (k = 0, len = data.length; k < len; k++) {
+    value = data[k];
+    total += value;
+  }
+  return total / data.length;
+};
+
+shuffle = function(array) {
+  var currentIndex, randomIndex, temporaryValue;
+  currentIndex = array.length;
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+};
+
+addDiversity = function(value, diversity) {
+  if (diversity == null) {
+    diversity = 0.5;
+  }
+  return (value * (1 - diversity)) + (value * Math.random() * diversity * 2);
+};
+
+PX = 6;
+
+CONTEXT = false;
+
+WINDOW = false;
+
+NOW = false;
+
+DEBUG = false;
 
 Engine = {
+  config: {
+    viewport: {}
+  },
   entities: [],
   context: false,
   canvas: false,
   now: 0,
+  px: 1,
   isTouchDevice: 'ontouchstart' in document.documentElement,
-  init: function() {
-    this.createCanvas();
-    if (this.canvas && this.context) {
-      this.run();
+  init: function(settings) {
+    if (this.createCanvas()) {
+      if (settings.viewport.width) {
+        this.config.viewport.width = settings.viewport.width;
+      }
+      if (settings.viewport.height) {
+        this.config.viewport.height = settings.viewport.height;
+      }
       this.trigger('resize');
-      return true;
-    } else {
-      return false;
+      return this.run();
     }
   },
   run: function(timeElapsed) {
     if (timeElapsed == null) {
       timeElapsed = 0;
     }
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.now = new Date().getTime();
+    window.NOW = this.now;
     Engine.update();
     Engine.draw();
     window.requestAnimationFrame(Engine.run);
@@ -56,6 +160,7 @@ Engine = {
   },
   draw: function() {
     var entities, entity, i, k, l, len, len1, ref;
+    this.context.clearRect(0, 0, this.width, this.height);
     ref = this.entities;
     for (i = k = 0, len = ref.length; k < len; i = ++k) {
       entities = ref[i];
@@ -90,17 +195,38 @@ Engine = {
     this.canvas = document.createElement("canvas");
     this.canvas.setAttribute("id", "diesel-canvas");
     document.body.appendChild(this.canvas);
+    this.canvas.style.position = 'fixed';
+    this.canvas.style.top = '50%';
+    this.canvas.style.left = '50%';
     this.context = this.canvas.getContext("2d");
     window.CONTEXT = this.context;
+    window.addEventListener("resize", (function(_this) {
+      return function() {
+        _this.onResize();
+      };
+    })(this));
+    return this.canvas && this.context;
   },
   onResize: function() {
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
-    this.columns = Math.ceil(this.width / PX);
-    this.rows = Math.ceil(this.height / PX);
-    this.canvas.setAttribute("width", this.width);
-    this.canvas.setAttribute("height", this.height);
-    WINDOW.setSize(this.columns, this.rows);
+    var viewportRatio;
+    this.windowWidth = window.innerWidth;
+    this.windowHeight = window.innerHeight;
+    this.windowRatio = this.windowWidth / this.windowHeight;
+    if (this.config.viewport.width && this.config.viewport.height) {
+      viewportRatio = this.config.viewport.width / this.config.viewport.height;
+      if (viewportRatio >= this.windowRatio) {
+        this.px = Math.floor(this.windowWidth / this.config.viewport.width);
+      } else {
+        this.px = Math.floor(this.windowHeight / this.config.viewport.height);
+      }
+      this.width = this.config.viewport.width * this.px;
+      this.height = this.config.viewport.height * this.px;
+    }
+    window.PX = this.px;
+    this.canvas.setAttribute('width', this.width);
+    this.canvas.setAttribute('height', this.height);
+    this.canvas.style.marginLeft = -(this.width / 2) + 'px';
+    this.canvas.style.marginTop = -(this.height / 2) + 'px';
   },
   trigger: function(eventType) {
     window.dispatchEvent(new Event(eventType));
@@ -203,6 +329,17 @@ Entity = (function() {
 
 })();
 
+Controller = (function(superClass) {
+  extend(Controller, superClass);
+
+  function Controller() {
+    Controller.__super__.constructor.call(this);
+  }
+
+  return Controller;
+
+})(Entity);
+
 Pane = (function(superClass) {
   extend(Pane, superClass);
 
@@ -225,13 +362,16 @@ Pane = (function(superClass) {
       surface: 0,
       circumference: 0
     };
-    this.style = {
-      opacity: 1,
-      color: COLORS.white
-    };
+    this.opacity = 1;
     this.children = [];
-    this.css = false;
-    this.button = false;
+    this.css = {
+      top: null,
+      right: null,
+      bottom: null,
+      left: null,
+      width: null,
+      height: null
+    };
     this.isVisible = true;
   }
 
@@ -247,12 +387,20 @@ Pane = (function(superClass) {
     this.size.circumference = (2 * width) + (2 * height);
   };
 
-  Pane.prototype.setCSS = function(css) {
-    this.css = css;
+  Pane.prototype.setCSS = function(properties) {
+    var k, len, name, value;
+    for (value = k = 0, len = properties.length; k < len; value = ++k) {
+      name = properties[value];
+      this.setCSSProperty(name, value);
+    }
+  };
+
+  Pane.prototype.setCSSProperty = function(name, value) {
+    this.css[name] = value;
   };
 
   Pane.prototype.setOpacity = function(opacity) {
-    this.style.opacity = opacity;
+    this.opacity = opacity;
   };
 
   Pane.prototype.setReference = function(reference) {
@@ -261,44 +409,7 @@ Pane = (function(superClass) {
 
   return Pane;
 
-})(Controller);
-
-Storage = (function() {
-  function Storage(type) {
-    this.type = type != null ? type : 'localStorage';
-    this.storage = window[this.type];
-    if (!this.isAvailable()) {
-      console.warn(this.type, "is NOT available");
-    }
-  }
-
-  Storage.prototype.isAvailable = function() {
-    var error, x;
-    try {
-      x = '__storage_test__';
-      this.storage.setItem(x, x);
-      this.storage.removeItem(x);
-      return true;
-    } catch (_error) {
-      error = _error;
-      return false;
-    }
-  };
-
-  Storage.prototype.get = function(key) {
-    var value;
-    value = this.storage.getItem(key);
-    return value = JSON.parse(value);
-  };
-
-  Storage.prototype.set = function(key, value) {
-    value = JSON.stringify(value);
-    return this.storage.setItem(key, value);
-  };
-
-  return Storage;
-
-})();
+})(Entity);
 
 Timer = (function(superClass) {
   extend(Timer, superClass);
@@ -351,7 +462,7 @@ Timer = (function(superClass) {
 
   return Timer;
 
-})(Controller);
+})(Entity);
 
 Tween = (function(superClass) {
   extend(Tween, superClass);
@@ -401,109 +512,39 @@ Tween = (function(superClass) {
 
 })(Timer);
 
-PX = 6;
-
-CONTEXT = false;
-
-WINDOW = false;
-
-DEBUG = false;
-
-snap = function(value) {
-  return Math.round(value / PX) * PX;
-};
-
-delay = function(ms, func) {
-  return setTimeout(func, ms);
-};
-
-getRandomInt = function(low, high) {
-  var diff;
-  diff = (high - low) + 1;
-  diff = Math.random() * diff;
-  return low + Math.floor(diff);
-};
-
-getWeighedInt = function(low, high, gravity, i) {
-  var chance, diff, okay, r;
-  r = Math.random();
-  chance = Math.sqrt(Math.random());
-  diff = (high - low) + 1;
-  okay = false;
-  if (gravity == null) {
-    gravity = "high";
-  }
-  if (i == null) {
-    i = 0;
-  }
-  if (gravity === "low") {
-    if (chance >= r) {
-      okay = true;
-    }
-  } else if (gravity === "high") {
-    if (chance <= r) {
-      okay = true;
-    }
-  } else if (gravity === "middle" || "center") {
-    chance /= 2;
-    if (r >= chance && r <= 1 - chance) {
-      okay = true;
+Storage = (function() {
+  function Storage(type) {
+    this.type = type != null ? type : 'localStorage';
+    this.storage = window[this.type];
+    if (!this.isAvailable()) {
+      console.warn(this.type, "is NOT available");
     }
   }
-  if (okay) {
-    return low + Math.floor(diff * r);
-  } else {
-    return getWeighedInt(low, high, gravity, i + 1);
-  }
-};
 
-getRandomFromArray = function(array) {
-  return array[getRandomInt(0, array.length - 1)];
-};
-
-getRandomFromObject = function(data) {
-  var key, r, total, value;
-  total = 0;
-  for (key in data) {
-    value = data[key];
-    total += value;
-    data[key] = total;
-  }
-  r = getRandomInt(1, total);
-  for (key in data) {
-    value = data[key];
-    if (r <= value) {
-      return key;
+  Storage.prototype.isAvailable = function() {
+    var error, x;
+    try {
+      x = '__storage_test__';
+      this.storage.setItem(x, x);
+      this.storage.removeItem(x);
+      return true;
+    } catch (_error) {
+      error = _error;
+      return false;
     }
-  }
-};
+  };
 
-average = function(data) {
-  var k, len, total, value;
-  total = 0;
-  for (k = 0, len = data.length; k < len; k++) {
-    value = data[k];
-    total += value;
-  }
-  return total / data.length;
-};
+  Storage.prototype.get = function(key) {
+    var value;
+    value = this.storage.getItem(key);
+    return value = JSON.parse(value);
+  };
 
-shuffle = function(array) {
-  var currentIndex, randomIndex, temporaryValue;
-  currentIndex = array.length;
-  while (0 !== currentIndex) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-  return array;
-};
+  Storage.prototype.set = function(key, value) {
+    value = JSON.stringify(value);
+    return this.storage.setItem(key, value);
+  };
 
-addDiversity = function(value, diversity) {
-  if (diversity == null) {
-    diversity = 0.5;
-  }
-  return (value * (1 - diversity)) + (value * Math.random() * diversity * 2);
-};
+  return Storage;
+
+})();

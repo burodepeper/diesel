@@ -8,6 +8,10 @@ module.exports = function(grunt) {
       engine: {
         files: ['src/**/*.coffee'],
         tasks: ['coffee:engine']
+      },
+      examples: {
+        files: ['examples/**/*.coffee'],
+        tasks: ['coffee:examples']
       }
     },
 
@@ -19,8 +23,21 @@ module.exports = function(grunt) {
       engine: {
         files: {
           'dist/engine.js': [
-            'src/**/*.coffee'
+            'src/lib/functions.coffee',
+            'src/core/Engine.coffee',
+            'src/core/Entity.coffee',
+            'src/core/Controller.coffee',
+            'src/core/Entity.coffee',
+            'src/core/Pane.coffee',
+            'src/core/Timer.coffee',
+            'src/core/Tween.coffee',
+            'src/core/Storage.coffee'
           ]
+        }
+      },
+      examples: {
+        files: {
+          'examples/01-bounce/js/app.js': ['examples/01-bounce/js/src/*.coffee']
         }
       }
     }

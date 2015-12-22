@@ -1,36 +1,53 @@
 
+# Constants and globals
+PX = 6              # Particle size, 6 is nice
+CONTEXT = false     # shorthand for Engine.context
+WINDOW = false      # fallback reference Pane for particles and panes
+NOW = false
+DEBUG = false
+
 # Engine
 # -----------------------------------------------------------------------------
-# The global Engine variable is both the container for all entities and a the
-# controllers that updates them on every tick. By default, this tick is defined
+# The global Engine variable is both the container for all entities and the
+# controller that updates them on every tick. By default, this tick is defined
 # by the browser's requestAnimationFrame() method and is limited at 60 fps. All
 # entities added to the Engine will have their update() and draw() methods
 # invoked on every tick.
 
 Engine =
 
+  config:
+    viewport: {}
   entities: []
   context: false
   canvas: false
   now: 0
+  px: 1
 
   # TODO: No idea how to replicate this in CoffeeScript
   isTouchDevice: `'ontouchstart' in document.documentElement`
 
-  init: ->
-    @createCanvas()
-    if @canvas and @context
-      @run()
+  init: (settings) ->
+    if @createCanvas()
+
+      # TODO
+      # Properly process settings
+      if settings.viewport.width
+        @config.viewport.width = settings.viewport.width
+      if settings.viewport.height
+        @config.viewport.height = settings.viewport.height
+
+      # WINDOW is on level 1, otherwise draw() won't be executed
+      # window.WINDOW = new Pane(1)
+
       @trigger('resize')
-      return true
-    else
-      return false
+      @run()
 
   # Cycle ---------------------------------------------------------------------
 
   run: (timeElapsed = 0) ->
-    @context.clearRect(0, 0, @canvas.width, @canvas.height)
     @now = new Date().getTime()
+    window.NOW = @now
     Engine.update()
     Engine.draw()
     window.requestAnimationFrame(Engine.run)
@@ -44,6 +61,7 @@ Engine =
     return
 
   draw: ->
+    @context.clearRect(0, 0, @width, @height)
     for entities, i in @entities
       # entities in level 0 are not drawn
       if i and entities
@@ -73,24 +91,43 @@ Engine =
     @canvas.setAttribute("id", "diesel-canvas")
     document.body.appendChild(@canvas)
 
+    # Set default CSS on canvas element
+    @canvas.style.position = 'fixed'
+    @canvas.style.top = '50%'
+    @canvas.style.left = '50%'
+
     @context = @canvas.getContext("2d")
     window.CONTEXT = @context
-
-    # WINDOW is on level 1, otherwise draw() won't be executed
     # window.WINDOW = new Pane(1)
-    # window.addEventListener "resize", => @onResize(); return
+    window.addEventListener "resize", => @onResize(); return
 
-    return
+    return (@canvas and @context)
 
   onResize: ->
-    @width = window.innerWidth
-    @height = window.innerHeight
-    @columns = Math.ceil(@width / PX)
-    @rows = Math.ceil(@height / PX)
-    @canvas.setAttribute("width", @width)
-    @canvas.setAttribute("height", @height)
-    WINDOW.setSize(@columns, @rows)
+
+    @windowWidth = window.innerWidth
+    @windowHeight = window.innerHeight
+    @windowRatio = @windowWidth / @windowHeight
+
+    if @config.viewport.width and @config.viewport.height
+      viewportRatio = @config.viewport.width / @config.viewport.height
+      if viewportRatio >= @windowRatio
+        @px = Math.floor(@windowWidth / @config.viewport.width)
+      else
+        @px = Math.floor(@windowHeight / @config.viewport.height)
+      @width = @config.viewport.width * @px
+      @height = @config.viewport.height * @px
+
+    window.PX = @px
+
+    @canvas.setAttribute('width', @width)
+    @canvas.setAttribute('height', @height)
+    @canvas.style.marginLeft = -(@width / 2) + 'px'
+    @canvas.style.marginTop = -(@height / 2) + 'px'
+
     return
+
+  # Support -------------------------------------------------------------------
 
   trigger: (eventType) ->
     window.dispatchEvent(new Event(eventType))
