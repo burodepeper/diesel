@@ -51,9 +51,11 @@ class Pane extends Entity
       if width
         @size.surface = width
         @size.circumference = width * 2
+        @size.height = 0
       else
         @size.surface = height
         @size.circumference = height * 2
+        @size.width = 0
     return
 
   setCSS: (properties) ->
@@ -63,12 +65,8 @@ class Pane extends Entity
     return
 
   setCSSProperty: (name, value) ->
-    switch name
-      when 'top', 'left'
-        unless value is 'center'
-          value = parseInt(value)
-      else
-        value = parseInt(value)
+    unless ((name is 'top') or (name is 'left')) and value is 'center'
+      value = parseInt(value)
     @css[name] = value
     return
 

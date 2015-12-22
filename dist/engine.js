@@ -393,9 +393,11 @@ Pane = (function(superClass) {
       if (width) {
         this.size.surface = width;
         this.size.circumference = width * 2;
+        this.size.height = 0;
       } else {
         this.size.surface = height;
         this.size.circumference = height * 2;
+        this.size.width = 0;
       }
     }
   };
@@ -410,15 +412,8 @@ Pane = (function(superClass) {
   };
 
   Pane.prototype.setCSSProperty = function(name, value) {
-    switch (name) {
-      case 'top':
-      case 'left':
-        if (value !== 'center') {
-          value = parseInt(value);
-        }
-        break;
-      default:
-        value = parseInt(value);
+    if (!(((name === 'top') || (name === 'left')) && value === 'center')) {
+      value = parseInt(value);
     }
     this.css[name] = value;
   };
