@@ -38,7 +38,7 @@ Engine =
         @config.viewport.height = settings.viewport.height
 
       # WINDOW is on level 1, otherwise draw() won't be executed
-      # window.WINDOW = new Pane(1)
+      window.WINDOW = new Pane()
 
       @trigger('resize')
       @run()
@@ -124,6 +124,8 @@ Engine =
     @canvas.setAttribute('height', @height)
     @canvas.style.marginLeft = -(@width / 2) + 'px'
     @canvas.style.marginTop = -(@height / 2) + 'px'
+
+    WINDOW.setSize(@width, @height)
 
     return
 

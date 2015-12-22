@@ -129,6 +129,7 @@ Engine = {
       if (settings.viewport.height) {
         this.config.viewport.height = settings.viewport.height;
       }
+      window.WINDOW = new Pane();
       this.trigger('resize');
       return this.run();
     }
@@ -227,6 +228,7 @@ Engine = {
     this.canvas.setAttribute('height', this.height);
     this.canvas.style.marginLeft = -(this.width / 2) + 'px';
     this.canvas.style.marginTop = -(this.height / 2) + 'px';
+    WINDOW.setSize(this.width, this.height);
   },
   trigger: function(eventType) {
     window.dispatchEvent(new Event(eventType));
@@ -373,6 +375,7 @@ Pane = (function(superClass) {
       height: null
     };
     this.isVisible = true;
+    this.hasCSS = false;
   }
 
   Pane.prototype.setPosition = function(x, y) {
@@ -383,19 +386,40 @@ Pane = (function(superClass) {
   Pane.prototype.setSize = function(width, height) {
     this.size.width = width;
     this.size.height = height;
-    this.size.surface = width * height;
-    this.size.circumference = (2 * width) + (2 * height);
-  };
-
-  Pane.prototype.setCSS = function(properties) {
-    var k, len, name, value;
-    for (value = k = 0, len = properties.length; k < len; value = ++k) {
-      name = properties[value];
-      this.setCSSProperty(name, value);
+    if (width && height) {
+      this.size.surface = width * height;
+      this.size.circumference = (2 * width) + (2 * height);
+    } else {
+      if (width) {
+        this.size.surface = width;
+        this.size.circumference = width * 2;
+      } else {
+        this.size.surface = height;
+        this.size.circumference = height * 2;
+      }
     }
   };
 
+  Pane.prototype.setCSS = function(properties) {
+    var name, value;
+    for (name in properties) {
+      value = properties[name];
+      this.setCSSProperty(name, value);
+    }
+    this.hasCSS = true;
+  };
+
   Pane.prototype.setCSSProperty = function(name, value) {
+    switch (name) {
+      case 'top':
+      case 'left':
+        if (value !== 'center') {
+          value = parseInt(value);
+        }
+        break;
+      default:
+        value = parseInt(value);
+    }
     this.css[name] = value;
   };
 
@@ -405,6 +429,54 @@ Pane = (function(superClass) {
 
   Pane.prototype.setReference = function(reference) {
     this.reference = reference;
+  };
+
+  Pane.prototype.getWidth = function() {
+    return this.size.width;
+  };
+
+  Pane.prototype.getHeight = function() {
+    return this.size.height;
+  };
+
+  Pane.prototype.onResize = function() {
+    var height, ref, ref1, width, x, y;
+    if (this.hasCSS) {
+      ref = this.position.relative, x = ref.x, y = ref.y;
+      ref1 = this.size, width = ref1.width, height = ref1.height;
+      if (this.css.width) {
+        width = this.css.width;
+      }
+      if (this.css.height) {
+        height = this.css.height;
+      }
+      if ((this.css.left != null) && (this.css.right != null)) {
+        width = this.reference.getWidth() - this.css.left - this.css.right;
+        x = this.css.left;
+      } else if ((this.css.left === 'center') && width) {
+        x = Math.floor((this.reference.getWidth() - width) / 2);
+      } else if (this.css.left != null) {
+        x = this.css.left;
+      } else if ((this.css.right != null) && width) {
+        x = this.reference.getWidth() - width - this.css.right;
+      } else {
+        console.warn("Pane.onResize()", this, "invalid horizontal positioning");
+      }
+      if ((this.css.top != null) && (this.css.bottom != null)) {
+        height = this.reference.getHeight() - this.css.top - this.css.bottom;
+        y = this.css.top;
+      } else if ((this.css.top === 'center') && height) {
+        y = Math.floor((this.reference.getHeight() - height) / 2);
+      } else if (this.css.top != null) {
+        y = this.css.top;
+      } else if ((this.css.bottom != null) && height) {
+        y = this.reference.getHeight() - height - this.css.bottom;
+      } else {
+        console.warn("Pane.onResize()", this, "invalid vertical positioning");
+      }
+      this.setPosition(x, y);
+      return this.setSize(width, height);
+    }
   };
 
   return Pane;
