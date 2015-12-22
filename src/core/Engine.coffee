@@ -42,6 +42,9 @@ Engine =
 
       @trigger('resize')
       @run()
+      return true
+    else
+      return false
 
   # Cycle ---------------------------------------------------------------------
 
@@ -115,15 +118,15 @@ Engine =
         @px = Math.floor(@windowWidth / @config.viewport.width)
       else
         @px = Math.floor(@windowHeight / @config.viewport.height)
-      @width = @config.viewport.width * @px
-      @height = @config.viewport.height * @px
+      @width = @config.viewport.width
+      @height = @config.viewport.height
 
     window.PX = @px
 
-    @canvas.setAttribute('width', @width)
-    @canvas.setAttribute('height', @height)
-    @canvas.style.marginLeft = -(@width / 2) + 'px'
-    @canvas.style.marginTop = -(@height / 2) + 'px'
+    @canvas.setAttribute('width', (@width * @px))
+    @canvas.setAttribute('height', (@height * @px))
+    @canvas.style.marginLeft = -((@width * @px) / 2) + 'px'
+    @canvas.style.marginTop = -((@height * @px) / 2) + 'px'
 
     WINDOW.setSize(@width, @height)
 

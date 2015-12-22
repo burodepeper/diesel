@@ -62,6 +62,7 @@ class Pane extends Entity
     for name, value of properties
       @setCSSProperty(name, value)
     @hasCSS = true
+    @onResize()
     return
 
   setCSSProperty: (name, value) ->
@@ -81,6 +82,18 @@ class Pane extends Entity
 
   getHeight: ->
     return @size.height
+
+  getX: ->
+    if @reference
+      return @reference.getX() + @position.relative.x
+    else
+      return @position.relative.x
+
+  getY: ->
+    if @reference
+      return @reference.getY() + @position.relative.y
+    else
+      return @position.relative.y
 
   # Updates -------------------------------------------------------------------
 
@@ -122,3 +135,9 @@ class Pane extends Entity
       @setSize(width, height)
 
   # Children ------------------------------------------------------------------
+
+  addChild: (child) ->
+    @children.push(child)
+    child.setReference this, @children.length - 1
+    child.isVisible = @isVisible
+    return

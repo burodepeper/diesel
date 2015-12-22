@@ -1,4 +1,4 @@
-var CONTEXT, Controller, DEBUG, Engine, Entity, NOW, PX, Pane, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
+var CONTEXT, Controller, DEBUG, Engine, Entity, NOW, PX, Pane, Particle, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -131,7 +131,10 @@ Engine = {
       }
       window.WINDOW = new Pane();
       this.trigger('resize');
-      return this.run();
+      this.run();
+      return true;
+    } else {
+      return false;
     }
   },
   run: function(timeElapsed) {
@@ -220,14 +223,14 @@ Engine = {
       } else {
         this.px = Math.floor(this.windowHeight / this.config.viewport.height);
       }
-      this.width = this.config.viewport.width * this.px;
-      this.height = this.config.viewport.height * this.px;
+      this.width = this.config.viewport.width;
+      this.height = this.config.viewport.height;
     }
     window.PX = this.px;
-    this.canvas.setAttribute('width', this.width);
-    this.canvas.setAttribute('height', this.height);
-    this.canvas.style.marginLeft = -(this.width / 2) + 'px';
-    this.canvas.style.marginTop = -(this.height / 2) + 'px';
+    this.canvas.setAttribute('width', this.width * this.px);
+    this.canvas.setAttribute('height', this.height * this.px);
+    this.canvas.style.marginLeft = -((this.width * this.px) / 2) + 'px';
+    this.canvas.style.marginTop = -((this.height * this.px) / 2) + 'px';
     WINDOW.setSize(this.width, this.height);
   },
   trigger: function(eventType) {
@@ -409,6 +412,7 @@ Pane = (function(superClass) {
       this.setCSSProperty(name, value);
     }
     this.hasCSS = true;
+    this.onResize();
   };
 
   Pane.prototype.setCSSProperty = function(name, value) {
@@ -418,8 +422,8 @@ Pane = (function(superClass) {
     this.css[name] = value;
   };
 
-  Pane.prototype.setOpacity = function(opacity) {
-    this.opacity = opacity;
+  Pane.prototype.setOpacity = function(opacity1) {
+    this.opacity = opacity1;
   };
 
   Pane.prototype.setReference = function(reference) {
@@ -432,6 +436,22 @@ Pane = (function(superClass) {
 
   Pane.prototype.getHeight = function() {
     return this.size.height;
+  };
+
+  Pane.prototype.getX = function() {
+    if (this.reference) {
+      return this.reference.getX() + this.position.relative.x;
+    } else {
+      return this.position.relative.x;
+    }
+  };
+
+  Pane.prototype.getY = function() {
+    if (this.reference) {
+      return this.reference.getY() + this.position.relative.y;
+    } else {
+      return this.position.relative.y;
+    }
   };
 
   Pane.prototype.onResize = function() {
@@ -474,7 +494,156 @@ Pane = (function(superClass) {
     }
   };
 
+  Pane.prototype.addChild = function(child) {
+    this.children.push(child);
+    child.setReference(this, this.children.length - 1);
+    child.isVisible = this.isVisible;
+  };
+
   return Pane;
+
+})(Entity);
+
+Particle = (function(superClass) {
+  extend(Particle, superClass);
+
+  function Particle(_layer) {
+    this._layer = _layer != null ? _layer : 1;
+    Particle.__super__.constructor.call(this);
+    this.position = {
+      relative: {
+        x: 0,
+        y: 0
+      },
+      absolute: {
+        x: 0,
+        y: 0
+      }
+    };
+    this.color = {
+      r: 255,
+      g: 255,
+      b: 255,
+      a: 1
+    };
+    this.size = {
+      width: 1,
+      height: 1
+    };
+    this.momentum = {
+      horizontal: 0,
+      vertical: 0
+    };
+    this.reference = WINDOW;
+    this.isVisible = true;
+  }
+
+  Particle.prototype.setReference = function(reference, _particleID) {
+    this.reference = reference;
+    this._particleID = _particleID;
+  };
+
+  Particle.prototype.setPosition = function(x, y) {
+    this.position.relative = {
+      x: x,
+      y: y
+    };
+  };
+
+  Particle.prototype.setSize = function(width, height) {
+    this.size = {
+      width: width,
+      height: height
+    };
+  };
+
+  Particle.prototype.setOpacity = function(opacity) {
+    this.color.a = parseFloat(opacity);
+  };
+
+  Particle.prototype.setColor = function(color) {
+    var b, g, match, r;
+    color = color.replace(/[ ]+/g, '').toLowerCase();
+    if ((color.length === 7) && color.match(/#[0-9a-f]{6}/)) {
+      this.color.r = parseInt(color.substring(1, 3), 16);
+      this.color.g = parseInt(color.substring(3, 5), 16);
+      this.color.b = parseInt(color.substring(5, 7), 16);
+    } else if ((color.length === 4) && color.match(/#[0-9a-f]{3}/)) {
+      r = parseInt(color.substring(1, 2), 16);
+      g = parseInt(color.substring(2, 3), 16);
+      b = parseInt(color.substring(3, 4), 16);
+      this.color.r = (r * 16) + r;
+      this.color.g = (g * 16) + g;
+      this.color.b = (b * 16) + b;
+    } else if (match = color.match(/rgba\(([0-9]+),([0-9]+),([0-9]+),([\.0-9]+)\)/)) {
+      this.color.r = parseInt(match[1]);
+      this.color.g = parseInt(match[2]);
+      this.color.b = parseInt(match[3]);
+      this.color.a = parseFloat(match[4]);
+    } else {
+      console.log("Particle.setColor()", this, "color '" + color + "' is not valid");
+    }
+  };
+
+  Particle.prototype.addMomentum = function(horizontal, vertical) {
+    if (horizontal == null) {
+      horizontal = 0;
+    }
+    if (vertical == null) {
+      vertical = 0;
+    }
+    this.momentum.horizontal += horizontal;
+    this.momentum.vertical += vertical;
+  };
+
+  Particle.prototype.update = function() {
+    this.position.absolute.x = this.reference.getX() + this.position.relative.x;
+    this.position.absolute.y = this.reference.getY() + this.position.relative.y;
+  };
+
+  Particle.prototype.draw = function() {
+    var height, left, top, width;
+    if (this.isVisible && (this.color.a > 0)) {
+      left = snap(this.position.absolute.x * PX);
+      top = snap(this.position.absolute.y * PX);
+      width = snap(this.size.width * PX);
+      height = snap(this.size.height * PX);
+      CONTEXT.fillStyle = this.getColor();
+      CONTEXT.fillRect(left, top, width, height);
+    }
+  };
+
+  Particle.prototype.getColor = function() {
+    return "rgba(" + this.color.r + ", " + this.color.g + ", " + this.color.b + ", " + this.color.a + ")";
+  };
+
+  Particle.prototype.show = function() {
+    this.isVisible = true;
+  };
+
+  Particle.prototype.hide = function() {
+    this.isVisible = false;
+  };
+
+  Particle.prototype.isWithinBounds = function() {
+    return this.isWithinHorizontalBounds() && this.isWithinVerticalBounds();
+  };
+
+  Particle.prototype.isWithinHorizontalBounds = function() {
+    var aboveLower, belowUpper;
+    aboveLower = this.position.relative.x >= 0;
+    belowUpper = this.position.relative.x <= (this.reference.getWidth() - 1);
+    return aboveLower && belowUpper;
+  };
+
+  Particle.prototype.isWithinVerticalBounds = function() {
+    var aboveLower, belowUpper;
+    aboveLower = this.position.relative.y >= 0;
+    belowUpper = this.position.relative.y <= (this.reference.getHeight() - 1);
+    return aboveLower && belowUpper;
+  };
+
+  return Particle;
 
 })(Entity);
 
