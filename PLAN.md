@@ -13,7 +13,7 @@
       - [ ] Optional browser window padding
   - [ ] `Entity`
   - [ ] `Pane`
-    - [ ] Display debug bounding box
+    - [ ] Display debug bounding box, and optionally specify color
   - [ ] `Particle`
   - [ ] `ParticlePane`
   - [ ] `Storage`
