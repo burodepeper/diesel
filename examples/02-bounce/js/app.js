@@ -15,19 +15,16 @@ App = {
       this.red = new PaneController();
       this.red.setSize(20);
       this.red.setY(0);
-      this.red.setSpeed(0.1);
       this.red.setColor('#e10');
       this.red.init();
       this.green = new PaneController();
       this.green.setSize(30);
       this.green.setY(20);
-      this.green.setSpeed(0.15);
       this.green.setColor('#5d0');
       this.green.init();
       this.blue = new PaneController();
       this.blue.setSize(40);
       this.blue.setY(50);
-      this.blue.setSpeed(0.2);
       this.blue.setColor('#05d');
       this.blue.init();
     }
@@ -107,33 +104,54 @@ PaneController = (function(superClass) {
   PaneController.prototype.color = null;
 
   PaneController.prototype.init = function() {
-    var i, j, particle, ref, results;
-    if ((this.size != null) && (this.y != null) && (this.speed != null) && (this.color != null)) {
+    var i, j, particle, ref;
+    if ((this.size != null) && (this.y != null) && (this.color != null)) {
       this.pane = new Pane();
       this.pane.setSize(this.size, this.size);
       this.pane.setPosition(0, this.y);
-      results = [];
       for (i = j = 1, ref = this.size; 1 <= ref ? j <= ref : j >= ref; i = 1 <= ref ? ++j : --j) {
         particle = new BouncingParticle();
         this.pane.addChild(particle);
         particle.setColor(this.color);
         particle.setRandomPosition();
-        results.push(particle.setRandomMomentum());
+        particle.setRandomMomentum();
       }
-      return results;
+      return this.setState('left-to-right');
     }
   };
 
   PaneController.prototype.update = function() {
-    var newX, ref, x, y;
-    ref = this.pane.position.relative, x = ref.x, y = ref.y;
-    newX = x + this.speed;
-    if (this.pane.isWithinBounds(newX)) {
-      this.pane.setPosition(newX, y);
-    } else {
-      this.speed = 0 - this.speed;
+    var parameters, right, x, y;
+    switch (this.state) {
+      case 'tween':
+        x = this.tween.getValue('x');
+        y = this.pane.position.relative.y;
+        this.pane.setPosition(x, y);
+        if (this.tween.isComplete) {
+          return this.setState(this.nextState);
+        }
+        break;
+      case 'left-to-right':
+        right = this.pane.reference.getWidth() - this.pane.getWidth();
+        parameters = [];
+        parameters.push({
+          name: 'x',
+          from: 0,
+          to: right
+        });
+        this.tween = new Tween(parameters, 3000, 'ease-in-out');
+        return this.setState('tween', 'right-to-left');
+      case 'right-to-left':
+        right = this.pane.reference.getWidth() - this.pane.getWidth();
+        parameters = [];
+        parameters.push({
+          name: 'x',
+          from: right,
+          to: 0
+        });
+        this.tween = new Tween(parameters, 3000, 'ease-in-out');
+        return this.setState('tween', 'left-to-right');
     }
-    return PaneController.__super__.update.call(this);
   };
 
   PaneController.prototype.setSize = function(size) {
