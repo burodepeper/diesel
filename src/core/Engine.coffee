@@ -64,7 +64,7 @@ Engine =
     return
 
   draw: ->
-    @context.clearRect(0, 0, @width, @height)
+    @context.clearRect(0, 0, @width * PX, @height * PX)
     for entities, i in @entities
       # entities in level 0 are not drawn
       if i and entities
