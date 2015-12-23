@@ -4,13 +4,13 @@
 
 - Implement core of the engine; target is to be able to show some examples and write basic API documentation
   - [ ] `Controller`
-  - [ ] `Diesel`
+  - [ ] `Engine`
     - [ ] Set configuration when initializing
       - [ ] Resizing and windowing
       - [ ] Color channel limitations
       - [ ] Pixel vs grid snapping
       - [ ] Show grid
-  - [ ] `Engine`
+      - [ ] Optional browser window padding
   - [ ] `Entity`
   - [ ] `Pane`
     - [ ] Display debug bounding box
