@@ -16,6 +16,13 @@ Currently in the process of being rewritten to become open-source. Current conte
 
 The canvas is divided in three columns, and each column is populated with 40 randomly bouncing particles.
 
-- Viewport with fixed dimensions adapts `PX` to size of browser
+- Viewport with fixed dimensions, adapts `PX` to size of browser
 - Multiple variations of `Pane.setCSS()`
 - Custom `BouncingParticle` that extends `Particle`
+
+### 02) Bouncing particles within moving panes
+
+Three square panes (with different sizes) are created and filled with bouncing particles. Each pane moves horizontally at a different speed.
+
+- Horizontal movement of each `Pane` is controlled by a `Tween`
+- Each `Pane` is controller by a custom `PaneController`
