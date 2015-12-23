@@ -19,9 +19,6 @@ class Particle extends Entity
     @size =
       width: 1
       height: 1
-    @momentum =
-      horizontal: 0
-      vertical: 0
     @reference = WINDOW
 
     @isVisible = true
@@ -67,11 +64,6 @@ class Particle extends Entity
 
     return
 
-  addMomentum: (horizontal = 0, vertical = 0) ->
-    @momentum.horizontal += horizontal
-    @momentum.vertical += vertical
-    return
-
   update: ->
     @position.absolute.x = @reference.getX() + @position.relative.x
     @position.absolute.y = @reference.getY() + @position.relative.y
@@ -103,12 +95,12 @@ class Particle extends Entity
   isWithinBounds: ->
     return (@isWithinHorizontalBounds() and @isWithinVerticalBounds())
 
-  isWithinHorizontalBounds: ->
-    aboveLower = @position.relative.x >= 0
-    belowUpper = @position.relative.x <= (@reference.getWidth() - 1)
+  isWithinHorizontalBounds: (x = @position.relative.x) ->
+    aboveLower = x >= 0
+    belowUpper = x <= (@reference.getWidth() - 1)
     return (aboveLower and belowUpper)
 
-  isWithinVerticalBounds: ->
-    aboveLower = @position.relative.y >= 0
-    belowUpper = @position.relative.y <= (@reference.getHeight() - 1)
+  isWithinVerticalBounds: (y = @position.relative.y) ->
+    aboveLower = y >= 0
+    belowUpper = y <= (@reference.getHeight() - 1)
     return (aboveLower and belowUpper)
