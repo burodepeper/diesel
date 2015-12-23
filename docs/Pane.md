@@ -56,6 +56,8 @@ Returns the absolute y coordinate of the `Pane` in `PX`.
 top = WINDOW.getY() * PX
 ```
 
+<!-- ### isWithinBounds -->
+
 ### setCSS
 
 ```js

@@ -6,23 +6,6 @@ A simple 2d, particle-based (game) engine using library independent web-technolo
 
 Currently in the process of being rewritten to become open-source. Current content should all be considered temporary, but feel free to follow the progress.
 
-## Documentation
-
-### Concepts
-
-TODO
-
-### Core API
-
-- Controller (TODO)
-- Engine (TODO)
-- Entity (TODO)
-- [Pane](docs/Pane.md): represents an area of the canvas and relates child entities to that area
-- Particle (TODO)
-- Storage (TODO)
-- Timer (TODO)
-- Tween (TODO)
-
 ## Examples
 
 ### 01) Bouncing particles
@@ -40,3 +23,16 @@ Three square panes (with different sizes) are created and filled with bouncing p
 - Horizontal movement of each `Pane` is controlled by a `Tween`
 - Each `Pane` is controller by a custom `PaneController`
 - Each `Pane` is set to debug-mode, where its unsnapped absolute position and size is drawn on the canvas
+
+## Documentation
+
+### Core API
+
+- Controller (TODO)
+- Engine (TODO)
+- Entity (TODO)
+- [Pane](docs/Pane.md): represents an area of the canvas and relates child entities to that area
+- Particle (TODO)
+- Storage (TODO)
+- Timer (TODO)
+- Tween (TODO)

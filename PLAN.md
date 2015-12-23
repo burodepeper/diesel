@@ -11,6 +11,7 @@
     - [ ] Show grid
     - [ ] Optional browser window padding
     - [ ] Full screen
+  - [ ] `Engine.pause()`
 - `Entity`
 - `Pane`
   - [ ] Display debug bounding box, and optionally specify color
