@@ -110,6 +110,13 @@ class Pane extends Entity
     else
       return @position.relative.y
 
+  isWithinBounds: (x = @position.relative.x, y = @position.relative.y, width = @getWidth(), height = @getHeight()) ->
+    if @reference
+      if (x >= 0) and (y >= 0)
+        if (x + width <= @reference.getWidth()) and (y + height <= @reference.getHeight())
+          return true
+      return false
+
   # Updates -------------------------------------------------------------------
 
   onResize: ->

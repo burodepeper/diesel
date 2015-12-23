@@ -472,6 +472,29 @@ Pane = (function(superClass) {
     }
   };
 
+  Pane.prototype.isWithinBounds = function(x, y, width, height) {
+    if (x == null) {
+      x = this.position.relative.x;
+    }
+    if (y == null) {
+      y = this.position.relative.y;
+    }
+    if (width == null) {
+      width = this.getWidth();
+    }
+    if (height == null) {
+      height = this.getHeight();
+    }
+    if (this.reference) {
+      if ((x >= 0) && (y >= 0)) {
+        if ((x + width <= this.reference.getWidth()) && (y + height <= this.reference.getHeight())) {
+          return true;
+        }
+      }
+      return false;
+    }
+  };
+
   Pane.prototype.onResize = function() {
     var height, ref, ref1, width, x, y;
     if (this.hasCSS) {
