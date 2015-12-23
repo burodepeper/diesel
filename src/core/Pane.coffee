@@ -8,7 +8,10 @@ class Pane extends Entity
 
   constructor: ->
     super()
+
     @reference = WINDOW
+    @children = []
+
     @position =
       absolute:
         x: 0
@@ -21,8 +24,7 @@ class Pane extends Entity
       height: 0
       surface: 0
       circumference: 0
-    @opacity = 1
-    @children = []
+
     @css =
       top: null
       right: null
@@ -31,16 +33,21 @@ class Pane extends Entity
       width: null
       height: null
 
+    @opacity = 1
     @isVisible = true
     @hasCSS = false
 
   # Setters -------------------------------------------------------------------
 
+  # TODO
+  # Check validaty of x and y
   setPosition: (x, y) ->
     @position.relative.x = x
     @position.relative.y = y
     return
 
+  # TODO
+  # Check validaty of width and height
   setSize: (width, height) ->
     @size.width = width
     @size.height = height
@@ -65,15 +72,23 @@ class Pane extends Entity
     @onResize()
     return
 
-  setCSSProperty: (name, value) ->
-    unless ((name is 'top') or (name is 'left')) and value is 'center'
-      value = parseInt(value)
-    @css[name] = value
+  setCSSProperty: (key, value) ->
+    validKeys = ['top', 'right', 'bottom', 'left', 'width', 'height']
+    if validKeys.indexOf(key) isnt -1
+      unless ((key is 'top') or (key is 'left')) and value is 'center'
+        value = parseInt(value)
+      @css[key] = value
     return
 
-  setOpacity: (@opacity) ->
+  setOpacity: (opacity = 1) ->
+    opacity = parseFloat(opacity)
+    if opacity is NaN then opacity = 1
+    if opacity < 0 then opacity = 0
+    if opacity > 1 then opacity = 1
+    @opacity = opacity
+    return
 
-  setReference: (@reference) ->
+  setReference: (@reference, @_childID) ->
 
   # Helpers -------------------------------------------------------------------
 
@@ -106,11 +121,11 @@ class Pane extends Entity
       if @css.height then height = @css.height
 
       # Horizontal positioning
-      if @css.left? and @css.right?
+      if (@css.left is 'center') and width
+        x = Math.floor((@reference.getWidth() - width) / 2)
+      else if @css.left? and @css.right?
         width = @reference.getWidth() - @css.left - @css.right
         x = @css.left
-      else if (@css.left is 'center') and width
-        x = Math.floor((@reference.getWidth() - width) / 2)
       else if @css.left?
         x = @css.left
       else if @css.right? and width
@@ -119,11 +134,11 @@ class Pane extends Entity
         console.warn "Pane.onResize()", this, "invalid horizontal positioning"
 
       # Vertical positioning
-      if @css.top? and @css.bottom?
+      if (@css.top is 'center') and height
+        y = Math.floor((@reference.getHeight() - height) / 2)
+      else if @css.top? and @css.bottom?
         height = @reference.getHeight() - @css.top - @css.bottom
         y = @css.top
-      else if (@css.top is 'center') and height
-        y = Math.floor((@reference.getHeight() - height) / 2)
       else if @css.top?
         y = @css.top
       else if @css.bottom? and height
@@ -136,6 +151,8 @@ class Pane extends Entity
 
   # Children ------------------------------------------------------------------
 
+  # TODO
+  # Check if {child} is a valid Entity
   addChild: (child) ->
     @children.push(child)
     child.setReference this, @children.length - 1

@@ -351,6 +351,7 @@ Pane = (function(superClass) {
   function Pane() {
     Pane.__super__.constructor.call(this);
     this.reference = WINDOW;
+    this.children = [];
     this.position = {
       absolute: {
         x: 0,
@@ -367,8 +368,6 @@ Pane = (function(superClass) {
       surface: 0,
       circumference: 0
     };
-    this.opacity = 1;
-    this.children = [];
     this.css = {
       top: null,
       right: null,
@@ -377,6 +376,7 @@ Pane = (function(superClass) {
       width: null,
       height: null
     };
+    this.opacity = 1;
     this.isVisible = true;
     this.hasCSS = false;
   }
@@ -415,19 +415,37 @@ Pane = (function(superClass) {
     this.onResize();
   };
 
-  Pane.prototype.setCSSProperty = function(name, value) {
-    if (!(((name === 'top') || (name === 'left')) && value === 'center')) {
-      value = parseInt(value);
+  Pane.prototype.setCSSProperty = function(key, value) {
+    var validKeys;
+    validKeys = ['top', 'right', 'bottom', 'left', 'width', 'height'];
+    if (validKeys.indexOf(key) !== -1) {
+      if (!(((key === 'top') || (key === 'left')) && value === 'center')) {
+        value = parseInt(value);
+      }
+      this.css[key] = value;
     }
-    this.css[name] = value;
   };
 
-  Pane.prototype.setOpacity = function(opacity1) {
-    this.opacity = opacity1;
+  Pane.prototype.setOpacity = function(opacity) {
+    if (opacity == null) {
+      opacity = 1;
+    }
+    opacity = parseFloat(opacity);
+    if (opacity === NaN) {
+      opacity = 1;
+    }
+    if (opacity < 0) {
+      opacity = 0;
+    }
+    if (opacity > 1) {
+      opacity = 1;
+    }
+    this.opacity = opacity;
   };
 
-  Pane.prototype.setReference = function(reference) {
+  Pane.prototype.setReference = function(reference, _childID) {
     this.reference = reference;
+    this._childID = _childID;
   };
 
   Pane.prototype.getWidth = function() {
@@ -465,11 +483,11 @@ Pane = (function(superClass) {
       if (this.css.height) {
         height = this.css.height;
       }
-      if ((this.css.left != null) && (this.css.right != null)) {
+      if ((this.css.left === 'center') && width) {
+        x = Math.floor((this.reference.getWidth() - width) / 2);
+      } else if ((this.css.left != null) && (this.css.right != null)) {
         width = this.reference.getWidth() - this.css.left - this.css.right;
         x = this.css.left;
-      } else if ((this.css.left === 'center') && width) {
-        x = Math.floor((this.reference.getWidth() - width) / 2);
       } else if (this.css.left != null) {
         x = this.css.left;
       } else if ((this.css.right != null) && width) {
@@ -477,11 +495,11 @@ Pane = (function(superClass) {
       } else {
         console.warn("Pane.onResize()", this, "invalid horizontal positioning");
       }
-      if ((this.css.top != null) && (this.css.bottom != null)) {
+      if ((this.css.top === 'center') && height) {
+        y = Math.floor((this.reference.getHeight() - height) / 2);
+      } else if ((this.css.top != null) && (this.css.bottom != null)) {
         height = this.reference.getHeight() - this.css.top - this.css.bottom;
         y = this.css.top;
-      } else if ((this.css.top === 'center') && height) {
-        y = Math.floor((this.reference.getHeight() - height) / 2);
       } else if (this.css.top != null) {
         y = this.css.top;
       } else if ((this.css.bottom != null) && height) {
