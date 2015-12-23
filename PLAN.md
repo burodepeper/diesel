@@ -10,6 +10,7 @@
     - [ ] Pixel vs grid snapping
     - [ ] Show grid
     - [ ] Optional browser window padding
+    - [ ] Full screen
 - `Entity`
 - `Pane`
   - [ ] Display debug bounding box, and optionally specify color
@@ -33,6 +34,10 @@
 - `SpriteSet`: a group of `Sprites` with methods to control which one is visible
 - `Text` extends `Pane`: text is rendered as `Letters` and contained within the `Pane`.
 - `Triangle`: a collection of three `Points` whose surface is filled with `Particles`
+
+## Examples
+
+02) Similar to [example-01], but with moving `Panes` and a debug-outline.
 
 ## Automated testing
 

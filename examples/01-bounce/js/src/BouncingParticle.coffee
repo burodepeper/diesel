@@ -19,9 +19,9 @@ class BouncingParticle extends Particle
     @momentum = {horizontal, vertical}
     return
 
+  # add momentum and check if the new position is within bounds,
+  # otherwise remain at old position and reverse momentum
   update: ->
-    # add momentum and check if particle is within bounds,
-    # otherwise calculate new position and reverse momentum
     newX = @position.relative.x + @momentum.horizontal
     newY = @position.relative.y + @momentum.vertical
 
