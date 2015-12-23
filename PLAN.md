@@ -13,6 +13,7 @@
   - [ ] `Engine`
   - [ ] `Entity`
   - [ ] `Pane`
+    - [ ] Display debug bounding box
   - [ ] `Particle`
   - [ ] `ParticlePane`
   - [ ] `Storage`
@@ -27,6 +28,8 @@
   - [ ] `Letter`
   - [ ] `Line`
   - [ ] `Multiline`
+  - [ ] `Polygon`
   - [ ] `Rectangle`
   - [ ] `Sprite`
   - [ ] `Text`
+  - [ ] `Triangle`
