@@ -27,7 +27,6 @@ module.exports = function(grunt) {
             'src/core/Engine.coffee',
             'src/core/Entity.coffee',
             'src/core/Controller.coffee',
-            'src/core/Entity.coffee',
             'src/core/Pane.coffee',
             'src/core/Particle.coffee',
             'src/core/Timer.coffee',
@@ -38,7 +37,8 @@ module.exports = function(grunt) {
       },
       examples: {
         files: {
-          'examples/01-bounce/js/app.js': ['examples/01-bounce/js/src/*.coffee']
+          'examples/01-bounce/js/app.js': ['examples/01-bounce/js/src/*.coffee'],
+          'examples/02-bounce/js/app.js': ['examples/02-bounce/js/src/*.coffee']
         }
       }
     }
