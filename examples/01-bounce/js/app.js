@@ -21,7 +21,7 @@ App = {
       });
       this.centerPane = new Pane();
       this.centerPane.setCSS({
-        left: 40,
+        left: 'center',
         top: 0,
         bottom: 0,
         width: 40

@@ -10,4 +10,4 @@ Currently in the process of being rewritten to become open-source. Current conte
 
 ### 1) Bouncing particles
 
-A 4:3 canvas is divided in three columns, and each column is populated with 40 randomly bouncing particles. [link](examples/01-bounce/index.html)
+The canvas is divided in three columns, and each column is populated with 40 randomly bouncing particles.

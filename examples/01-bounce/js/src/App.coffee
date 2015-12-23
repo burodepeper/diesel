@@ -15,7 +15,7 @@ App =
       @leftPane.setCSS({ left:0, top:0, bottom:0, width:40 })
 
       @centerPane = new Pane()
-      @centerPane.setCSS({ left:40, top:0, bottom:0, width:40 })
+      @centerPane.setCSS({ left:'center', top:0, bottom:0, width:40 })
 
       @rightPane = new Pane()
       @rightPane.setCSS({ right:0, top:0, bottom:0, width:40 })
