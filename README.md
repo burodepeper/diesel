@@ -1,14 +1,27 @@
 # diesel-engine
 
-A simple 2d, particle-based (game) engine using web-technology.
+A simple 2d, particle-based (game) engine using library independent web-technology.
 
 ## Work in progress
 
 Currently in the process of being rewritten to become open-source. Current content should all be considered temporary, but feel free to follow the progress.
 
-## API / Documentation
+## Documentation
 
-[Pane](docs/Pane.md)
+### Concepts
+
+TODO
+
+### Core API
+
+- Controller (TODO)
+- Engine (TODO)
+- Entity (TODO)
+- [Pane](docs/Pane.md): represents an area of the canvas and relates child entities to that area
+- Particle (TODO)
+- Storage (TODO)
+- Timer (TODO)
+- Tween (TODO)
 
 ## Examples
 
