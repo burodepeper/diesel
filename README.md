@@ -26,3 +26,4 @@ Three square panes (with different sizes) are created and filled with bouncing p
 
 - Horizontal movement of each `Pane` is controlled by a `Tween`
 - Each `Pane` is controller by a custom `PaneController`
+- Each `Pane` is set to debug-mode, where its unsnapped absolute position and size is drawn on the canvas
