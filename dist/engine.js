@@ -686,19 +686,16 @@ Timer = (function(superClass) {
     this.duration = duration;
     this.easing = easing != null ? easing : 'linear';
     Timer.__super__.constructor.call(this);
-    this.start = Engine.now;
+    this.start = NOW;
     this.stop = this.start + this.duration;
     this.isComplete = false;
     this.percentage = 0;
     this.value = 0;
   }
 
-  Timer.prototype.update = function(now) {
-    if (now == null) {
-      now = Engine.now;
-    }
+  Timer.prototype.update = function() {
     if (!this.isComplete) {
-      this.percentage = (now - this.start) / this.duration;
+      this.percentage = (NOW - this.start) / this.duration;
       this.value = this.applyEasing();
       if (this.percentage >= 1) {
         this.percentage = 1;
@@ -762,7 +759,7 @@ Tween = (function(superClass) {
   Tween.prototype.getValue = function(name) {
     var item, value;
     item = this.items[name];
-    if (this.value) {
+    if (this.value >= 0) {
       value = item.from + (this.value * item.difference);
       if (value < item.min) {
         value = item.min;

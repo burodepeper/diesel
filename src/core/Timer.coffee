@@ -6,18 +6,18 @@
 # any kind of movement.
 
 class Timer extends Entity
-  
+
   constructor: (@duration, @easing = 'linear') ->
     super()
-    @start = Engine.now
+    @start = NOW
     @stop = @start + @duration
     @isComplete = false
     @percentage = 0
     @value = 0
 
-  update: (now = Engine.now) ->
+  update: ->
     unless @isComplete
-      @percentage = (now - @start) / @duration
+      @percentage = (NOW - @start) / @duration
       @value = @applyEasing()
       if @percentage >= 1
         @percentage = 1

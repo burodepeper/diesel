@@ -5,7 +5,7 @@
 # change of one or more values based on a single Timer.
 
 class Tween extends Timer
-  
+
   constructor: (data, @duration, @easing = 'linear') ->
     super(@duration, @easing)
     @parseParameters(data)
@@ -25,7 +25,7 @@ class Tween extends Timer
 
   getValue: (name) ->
     item = @items[name]
-    if @value
+    if @value >= 0
       value = item.from + (@value * item.difference)
       if value < item.min then value = item.min
       if value > item.max then value = item.max
