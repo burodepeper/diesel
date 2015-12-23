@@ -38,14 +38,17 @@ App = {
         this.leftPane.addChild(red);
         red.setColor("#e10");
         red.setRandomPosition();
+        red.setRandomMomentum();
         green = new BouncingParticle();
         this.centerPane.addChild(green);
         green.setColor("#5d0");
         green.setRandomPosition();
+        green.setRandomMomentum();
         blue = new BouncingParticle();
         this.rightPane.addChild(blue);
         blue.setColor("#05d");
         blue.setRandomPosition();
+        blue.setRandomMomentum();
       }
     }
   }
@@ -57,6 +60,11 @@ BouncingParticle = (function(superClass) {
   function BouncingParticle() {
     return BouncingParticle.__super__.constructor.apply(this, arguments);
   }
+
+  BouncingParticle.prototype.momentum = {
+    horizontal: 0,
+    vertical: 0
+  };
 
   BouncingParticle.prototype.setRandomPosition = function() {
     var x, y;
@@ -72,7 +80,30 @@ BouncingParticle = (function(superClass) {
     return this.addMomentum(horizontal, vertical);
   };
 
+  BouncingParticle.prototype.addMomentum = function(horizontal, vertical) {
+    this.momentum = {
+      horizontal: horizontal,
+      vertical: vertical
+    };
+  };
+
   BouncingParticle.prototype.update = function() {
+    var newX, newY, x, y;
+    newX = this.position.relative.x + this.momentum.horizontal;
+    newY = this.position.relative.y + this.momentum.vertical;
+    if (this.isWithinHorizontalBounds(newX)) {
+      x = newX;
+    } else {
+      x = this.position.relative.x;
+      this.momentum.horizontal = 0 - this.momentum.horizontal;
+    }
+    if (this.isWithinVerticalBounds(newY)) {
+      y = newY;
+    } else {
+      y = this.position.relative.y;
+      this.momentum.vertical = 0 - this.momentum.vertical;
+    }
+    this.setPosition(x, y);
     return BouncingParticle.__super__.update.call(this);
   };
 

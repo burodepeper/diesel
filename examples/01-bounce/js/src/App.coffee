@@ -25,16 +25,19 @@ App =
         @leftPane.addChild(red)
         red.setColor("#e10")
         red.setRandomPosition()
+        red.setRandomMomentum()
 
         green = new BouncingParticle()
         @centerPane.addChild(green)
         green.setColor("#5d0")
         green.setRandomPosition()
+        green.setRandomMomentum()
 
         blue = new BouncingParticle()
         @rightPane.addChild(blue)
         blue.setColor("#05d")
         blue.setRandomPosition()
+        blue.setRandomMomentum()
 
       # TODO
       # Create bouncing particles inside those panes
