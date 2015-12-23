@@ -16,7 +16,6 @@
   - [ ] `Pane.getOpacity()`
   - [ ] `Pane.setCSSProperty()`: allow percentages (or floats) as values. Will need an update of `Pane.onResize()` as well.
 - [ ] `Particle`
-- [ ] `ParticlePane`
 - [ ] `Storage`
 - [ ] `Timer`
 - [ ] `Tween`
