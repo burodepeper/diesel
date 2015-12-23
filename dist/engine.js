@@ -164,7 +164,7 @@ Engine = {
   },
   draw: function() {
     var entities, entity, i, k, l, len, len1, ref;
-    this.context.clearRect(0, 0, this.width, this.height);
+    this.context.clearRect(0, 0, this.width * PX, this.height * PX);
     ref = this.entities;
     for (i = k = 0, len = ref.length; k < len; i = ++k) {
       entities = ref[i];
@@ -530,10 +530,6 @@ Particle = (function(superClass) {
       width: 1,
       height: 1
     };
-    this.momentum = {
-      horizontal: 0,
-      vertical: 0
-    };
     this.reference = WINDOW;
     this.isVisible = true;
   }
@@ -585,17 +581,6 @@ Particle = (function(superClass) {
     }
   };
 
-  Particle.prototype.addMomentum = function(horizontal, vertical) {
-    if (horizontal == null) {
-      horizontal = 0;
-    }
-    if (vertical == null) {
-      vertical = 0;
-    }
-    this.momentum.horizontal += horizontal;
-    this.momentum.vertical += vertical;
-  };
-
   Particle.prototype.update = function() {
     this.position.absolute.x = this.reference.getX() + this.position.relative.x;
     this.position.absolute.y = this.reference.getY() + this.position.relative.y;
@@ -629,17 +614,23 @@ Particle = (function(superClass) {
     return this.isWithinHorizontalBounds() && this.isWithinVerticalBounds();
   };
 
-  Particle.prototype.isWithinHorizontalBounds = function() {
+  Particle.prototype.isWithinHorizontalBounds = function(x) {
     var aboveLower, belowUpper;
-    aboveLower = this.position.relative.x >= 0;
-    belowUpper = this.position.relative.x <= (this.reference.getWidth() - 1);
+    if (x == null) {
+      x = this.position.relative.x;
+    }
+    aboveLower = x >= 0;
+    belowUpper = x <= (this.reference.getWidth() - 1);
     return aboveLower && belowUpper;
   };
 
-  Particle.prototype.isWithinVerticalBounds = function() {
+  Particle.prototype.isWithinVerticalBounds = function(y) {
     var aboveLower, belowUpper;
-    aboveLower = this.position.relative.y >= 0;
-    belowUpper = this.position.relative.y <= (this.reference.getHeight() - 1);
+    if (y == null) {
+      y = this.position.relative.y;
+    }
+    aboveLower = y >= 0;
+    belowUpper = y <= (this.reference.getHeight() - 1);
     return aboveLower && belowUpper;
   };
 
