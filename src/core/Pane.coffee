@@ -6,7 +6,7 @@
 
 class Pane extends Entity
 
-  constructor: ->
+  constructor: (@_layer = 0) ->
     super()
 
     @reference = WINDOW
@@ -36,6 +36,8 @@ class Pane extends Entity
     @opacity = 1
     @isVisible = true
     @hasCSS = false
+    @hasBoundingBox = false
+    @boundingBox = null
 
   # Setters -------------------------------------------------------------------
 
@@ -165,3 +167,18 @@ class Pane extends Entity
     child.setReference this, @children.length - 1
     child.isVisible = @isVisible
     return
+
+  # Debug ---------------------------------------------------------------------
+
+  enableBoundingBox: (color) ->
+    @hasBoundingBox = true
+    @boundingBox = new BoundingBox()
+    @boundingBox.setColor(color)
+    @addChild(@boundingBox)
+
+  # NOTE untested
+  disableBoundingBox: ->
+    @hasBoundingBox = false
+    if @boundingBox
+      @boundingBox.remove()
+      @boundingBox = false

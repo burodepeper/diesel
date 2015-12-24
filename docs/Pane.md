@@ -22,6 +22,12 @@ particle = new Particle()
 pane.addChild(particle)
 ```
 
+<!-- ### disableBoundingBox -->
+
+### enableBoundingBox
+
+Creates a `BoundingBox` instance that draws a 1px box around the actual unsnapped area the `Pane` reflects. <!-- See [BoundingBox](BoundingBox.md) for more details. -->
+
 ### getHeight
 
 Returns the height of the `Pane` in `PX`.

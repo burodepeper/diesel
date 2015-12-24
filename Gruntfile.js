@@ -31,7 +31,8 @@ module.exports = function(grunt) {
             'src/core/Particle.coffee',
             'src/core/Timer.coffee',
             'src/core/Tween.coffee',
-            'src/core/Storage.coffee'
+            'src/core/Storage.coffee',
+            'src/extended/BoundingBox.coffee'
           ]
         }
       },

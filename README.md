@@ -22,7 +22,7 @@ Three square panes (with different sizes) are created and filled with bouncing p
 
 - Horizontal movement of each `Pane` is controlled by a `Tween`
 - Each `Pane` is controller by a custom `PaneController`
-- Each `Pane` is set to debug-mode, where its unsnapped absolute position and size is drawn on the canvas
+- For debugging purposes, each `Pane` has its `BoundingBox` enabled, which shows the unsnapped size and position of the `Pane` as an outline
 
 ## Documentation
 
@@ -36,3 +36,7 @@ Three square panes (with different sizes) are created and filled with bouncing p
 - Storage (TODO)
 - Timer (TODO)
 - Tween (TODO)
+
+### Extended API
+
+- BoundingBox (TODO)

@@ -1,4 +1,4 @@
-var CONTEXT, Controller, DEBUG, Engine, Entity, NOW, PX, Pane, Particle, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
+var BoundingBox, CONTEXT, Controller, DEBUG, Engine, Entity, NOW, PX, Pane, Particle, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -338,7 +338,8 @@ Controller = (function(superClass) {
 Pane = (function(superClass) {
   extend(Pane, superClass);
 
-  function Pane() {
+  function Pane(_layer) {
+    this._layer = _layer != null ? _layer : 0;
     Pane.__super__.constructor.call(this);
     this.reference = WINDOW;
     this.children = [];
@@ -369,6 +370,8 @@ Pane = (function(superClass) {
     this.opacity = 1;
     this.isVisible = true;
     this.hasCSS = false;
+    this.hasBoundingBox = false;
+    this.boundingBox = null;
   }
 
   Pane.prototype.setPosition = function(x, y) {
@@ -529,6 +532,21 @@ Pane = (function(superClass) {
     this.children.push(child);
     child.setReference(this, this.children.length - 1);
     child.isVisible = this.isVisible;
+  };
+
+  Pane.prototype.enableBoundingBox = function(color) {
+    this.hasBoundingBox = true;
+    this.boundingBox = new BoundingBox();
+    this.boundingBox.setColor(color);
+    return this.addChild(this.boundingBox);
+  };
+
+  Pane.prototype.disableBoundingBox = function() {
+    this.hasBoundingBox = false;
+    if (this.boundingBox) {
+      this.boundingBox.remove();
+      return this.boundingBox = false;
+    }
   };
 
   return Pane;
@@ -803,3 +821,39 @@ Storage = (function() {
   return Storage;
 
 })();
+
+BoundingBox = (function(superClass) {
+  extend(BoundingBox, superClass);
+
+  BoundingBox.prototype.color = '#000';
+
+  function BoundingBox() {
+    BoundingBox.__super__.constructor.call(this, 1);
+  }
+
+  BoundingBox.prototype.setColor = function(color1) {
+    this.color = color1;
+  };
+
+  BoundingBox.prototype.update = function() {
+    this.left = this.reference.getX() * PX;
+    this.top = this.reference.getY() * PX;
+    this.right = this.left + (this.reference.getWidth() * PX);
+    return this.bottom = this.top + (this.reference.getHeight() * PX);
+  };
+
+  BoundingBox.prototype.draw = function() {
+    CONTEXT.strokeStyle = this.color;
+    CONTEXT.beginPath();
+    CONTEXT.moveTo(this.left - 1, this.top - 1);
+    CONTEXT.lineTo(this.right + 1, this.top - 1);
+    CONTEXT.lineTo(this.right + 1, this.bottom + 1);
+    CONTEXT.lineTo(this.left - 1, this.bottom + 1);
+    CONTEXT.lineTo(this.left - 1, this.top - 1);
+    CONTEXT.closePath();
+    CONTEXT.stroke();
+  };
+
+  return BoundingBox;
+
+})(Pane);
