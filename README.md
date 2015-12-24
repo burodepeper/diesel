@@ -30,7 +30,7 @@ Three square panes (with different sizes) are created and filled with bouncing p
 
 - Controller (TODO)
 - Engine (TODO)
-- Entity (TODO)
+- [Entity](docs/Entity.md): is a parent to everything that wants to exist within the `Engine` context
 - [Pane](docs/Pane.md): represents an area of the canvas and relates child entities to that area
 - Particle (TODO)
 - Storage (TODO)
