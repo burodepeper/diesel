@@ -30,6 +30,7 @@
 - `Animation` extends `SpriteSet`
 - `BoundingBox`
 - `Button` extends `Pane`: registers as a listener for click/touch events
+- `Circle`: outline or filled
 - `Letter` extends `Sprite`
 - `Line`: a list of connected `Points`
 - `Point`: a coordinate
