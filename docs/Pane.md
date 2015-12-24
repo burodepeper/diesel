@@ -56,7 +56,28 @@ Returns the absolute y coordinate of the `Pane` in `PX`.
 top = WINDOW.getY() * PX
 ```
 
-<!-- ### isWithinBounds -->
+### isWithinBounds
+
+```js
+boolean isWithinBounds ( float x, float y, float width, float height )
+```
+
+Returns whether this instance of `Pane` is within the boundaries of its reference. The parameters default to their current values. Manually setting these parameters allows you to check if a virtual version of a `Pane` is within the bounds of the reference of the current instance.
+
+```coffeescript
+pane = new Pane()
+pane.setPosition(-1, -1)
+pane.isWithinBounds() # returns false, because it falls outside of WINDOW
+```
+
+```coffeescript
+pane = new Pane()
+pane.setPosition(0, 0)
+pane.setSize(10, 10)
+newX = 10
+if pane.isWithinBounds(newX, 0)
+  pane.setPosition(newX, 0)
+```
 
 ### setCSS
 
