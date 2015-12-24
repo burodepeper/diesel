@@ -1,10 +1,12 @@
 # diesel-engine
 
-A simple 2d, particle-based (game) engine using library independent web-technology.
+**Work in progress...**
 
-## Work in progress
+A sketchpad for interactive ideas; a Javascript based game-engine.
 
-Currently in the process of being rewritten to become open-source. Current content should all be considered temporary, but feel free to follow the progress.
+`diesel-engine` provides a set of barebones tools that allow you to easily create games. The particle based approach initially limits the emphasis on looks in favor of gameplay. However, don't let the retro look-and-feel fool you into thinking you can't create stunningly beautiful works of art with this engine.
+
+---
 
 ## Examples
 
@@ -23,6 +25,15 @@ Three square panes (with different sizes) are created and filled with bouncing p
 - Horizontal movement of each `Pane` is controlled by a `Tween`
 - Each `Pane` is controller by a custom `PaneController`
 - For debugging purposes, each `Pane` has its `BoundingBox` enabled, which shows the unsnapped size and position of the `Pane` as an outline
+
+### 03) Galaxy visualization (work in progress)
+
+- Dynamically sized canvas
+- Layers of particles moving in parallax to create a sense of depth
+
+<!-- ### 04) Radar bleeps -->
+
+---
 
 ## Documentation
 
