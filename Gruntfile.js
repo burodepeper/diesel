@@ -40,7 +40,7 @@ module.exports = function(grunt) {
         files: {
           'examples/01-bounce/js/app.js': ['examples/01-bounce/js/src/*.coffee'],
           'examples/02-bounce/js/app.js': ['examples/02-bounce/js/src/*.coffee'],
-          'examples/03-bounce/js/app.js': ['examples/03-bounce/js/src/*.coffee']
+          'examples/03-stars/js/app.js': ['examples/03-stars/js/src/*.coffee']
         }
       }
     }
