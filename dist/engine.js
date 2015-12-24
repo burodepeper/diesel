@@ -113,7 +113,10 @@ DEBUG = false;
 
 Engine = {
   config: {
-    viewport: {}
+    viewport: {
+      width: null,
+      height: null
+    }
   },
   entities: [],
   context: false,
@@ -224,6 +227,14 @@ Engine = {
         this.px = Math.floor(this.windowHeight / this.config.viewport.height);
       }
       this.width = this.config.viewport.width;
+      this.height = this.config.viewport.height;
+    } else if (this.config.viewport.width) {
+      this.px = Math.floor(this.windowWidth / this.config.viewport.width);
+      this.width = this.config.viewport.width;
+      this.height = Math.floor(this.windowHeight / this.px);
+    } else if (this.config.viewport.height) {
+      this.px = Math.floor(this.windowHeight / this.config.viewport.height);
+      this.width = Math.floor(this.windowWidth / this.px);
       this.height = this.config.viewport.height;
     }
     window.PX = this.px;

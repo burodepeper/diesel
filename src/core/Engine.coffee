@@ -17,7 +17,9 @@ DEBUG = false
 Engine =
 
   config:
-    viewport: {}
+    viewport:
+      width: null
+      height: null
   entities: []
   context: false
   canvas: false
@@ -113,12 +115,25 @@ Engine =
     @windowRatio = @windowWidth / @windowHeight
 
     if @config.viewport.width and @config.viewport.height
+
       viewportRatio = @config.viewport.width / @config.viewport.height
       if viewportRatio >= @windowRatio
         @px = Math.floor(@windowWidth / @config.viewport.width)
       else
         @px = Math.floor(@windowHeight / @config.viewport.height)
       @width = @config.viewport.width
+      @height = @config.viewport.height
+
+    else if @config.viewport.width
+
+      @px = Math.floor(@windowWidth / @config.viewport.width)
+      @width = @config.viewport.width
+      @height = Math.floor(@windowHeight / @px)
+
+    else if @config.viewport.height
+
+      @px = Math.floor(@windowHeight / @config.viewport.height)
+      @width = Math.floor(@windowWidth / @px)
       @height = @config.viewport.height
 
     window.PX = @px
