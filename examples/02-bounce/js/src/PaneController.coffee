@@ -11,6 +11,7 @@ class PaneController extends Controller
       @pane = new Pane()
       @pane.setSize(@size, @size)
       @pane.setPosition(0, @y)
+      @pane.enableBoundingBox(@color)
 
       for i in [1 .. @size]
         particle = new BouncingParticle()

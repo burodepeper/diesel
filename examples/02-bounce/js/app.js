@@ -109,6 +109,7 @@ PaneController = (function(superClass) {
       this.pane = new Pane();
       this.pane.setSize(this.size, this.size);
       this.pane.setPosition(0, this.y);
+      this.pane.enableBoundingBox(this.color);
       for (i = j = 1, ref = this.size; 1 <= ref ? j <= ref : j >= ref; i = 1 <= ref ? ++j : --j) {
         particle = new BouncingParticle();
         this.pane.addChild(particle);
