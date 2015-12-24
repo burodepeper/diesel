@@ -28,7 +28,7 @@ Three square panes (with different sizes) are created and filled with bouncing p
 
 ### 03) Galaxy visualization (work in progress)
 
-- Dynamically sized canvas
+- Dynamically sized canvas (vertically fixed, max PX)
 - Layers of particles moving in parallax to create a sense of depth
 
 <!-- ### 04) Radar bleeps -->
