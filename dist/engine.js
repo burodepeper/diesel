@@ -694,6 +694,14 @@ Particle = (function(superClass) {
     return aboveLower && belowUpper;
   };
 
+  Particle.prototype.getX = function() {
+    return this.position.relative.x;
+  };
+
+  Particle.prototype.getY = function() {
+    return this.position.relative.y;
+  };
+
   return Particle;
 
 })(Entity);

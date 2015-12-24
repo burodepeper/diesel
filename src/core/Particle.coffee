@@ -104,3 +104,9 @@ class Particle extends Entity
     aboveLower = y >= 0
     belowUpper = y <= (@reference.getHeight() - 1)
     return (aboveLower and belowUpper)
+
+  getX: ->
+    return @position.relative.x
+
+  getY: ->
+    return @position.relative.y
