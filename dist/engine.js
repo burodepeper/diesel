@@ -307,8 +307,6 @@ Entity = (function() {
 
   Entity.prototype.draw = function() {};
 
-  Entity.prototype.onResize = function() {};
-
   Entity.prototype.setEntityID = function(_entityID) {
     this._entityID = _entityID;
   };
@@ -316,14 +314,6 @@ Entity = (function() {
   Entity.prototype.setState = function(state, nextState) {
     this.state = state;
     this.nextState = nextState != null ? nextState : "idle";
-  };
-
-  Entity.prototype.listenForResize = function() {
-    window.addEventListener("resize", (function(_this) {
-      return function() {
-        _this.onResize();
-      };
-    })(this));
   };
 
   Entity.prototype.remove = function() {

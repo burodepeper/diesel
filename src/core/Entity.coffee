@@ -18,15 +18,15 @@ class Entity
 
   draw: -> return
 
-  onResize: -> return
+  # onResize: -> return
 
   setEntityID: (@_entityID) ->
 
   setState: (@state, @nextState = "idle") ->
 
-  listenForResize: ->
-    window.addEventListener "resize", => @onResize(); return
-    return
+  # listenForResize: ->
+  #   window.addEventListener "resize", => @onResize(); return
+  #   return
 
   remove: ->
     Engine.removeEntity(this)
