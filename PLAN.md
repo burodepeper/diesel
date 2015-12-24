@@ -6,6 +6,8 @@
 - `Engine`
   - [ ] Set configuration when initializing
     - [ ] Resizing and windowing
+      - [ ] `extend`: (default = false) if only a width or height is specified, extend allows that value to be increased to fill the window as optimal as possible
+      - [ ] `maxPX`: (default = false) if set, the value of PX will be limited
     - [ ] Color channel limitations
     - [ ] Show grid
     - [ ] Optional browser window padding
