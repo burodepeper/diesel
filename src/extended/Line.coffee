@@ -2,6 +2,7 @@ class Line extends Pane
 
   _from: null
   _to: null
+  _angle: null
   length: 0
 
   constructor: (@_layer = 1) ->
@@ -13,11 +14,19 @@ class Line extends Pane
   to: (@_to) ->
     return this
 
+  # @_angle is between 0 and 360 degrees,
+  # 0 is up, 90 is right, 180 is down, 270 is left
+  # @offset is a optional float that specifies from what percentage the line should be drawn (if not from the origine, but if origine is known)
+  atAngle: (@_angle, @length, @offset = 0) ->
+    # TODO calculate @_to
+    return this
+
   calculateLength: ->
     if @_from? and @_to?
       @diffX = @_to.x - @_from.x
       @diffY = @_to.y - @_from.y
       @length = Math.sqrt((@diffX * @diffX) + (@diffY * @diffY))
+      # TODO calculate @_angle
     return @length
 
   update: ->
