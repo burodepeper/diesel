@@ -86,11 +86,11 @@ class Particle extends Entity
 
   show: ->
     @isVisible = true
-    return
+    return this
 
   hide: ->
     @isVisible = false
-    return
+    return this
 
   isWithinBounds: ->
     return (@isWithinHorizontalBounds() and @isWithinVerticalBounds())

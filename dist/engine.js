@@ -664,10 +664,12 @@ Particle = (function(superClass) {
 
   Particle.prototype.show = function() {
     this.isVisible = true;
+    return this;
   };
 
   Particle.prototype.hide = function() {
     this.isVisible = false;
+    return this;
   };
 
   Particle.prototype.isWithinBounds = function() {
@@ -709,17 +711,45 @@ Particle = (function(superClass) {
 Point = (function(superClass) {
   extend(Point, superClass);
 
-  function Point() {
-    return Point.__super__.constructor.apply(this, arguments);
-  }
-
   Point.prototype.x = null;
 
   Point.prototype.y = null;
 
-  Point.prototype.setPosition = function(x1, y1) {
+  function Point(x1, y1) {
     this.x = x1;
     this.y = y1;
+    Point.__super__.constructor.call(this, 0);
+  }
+
+  Point.prototype.moveTo = function(x, y, duration, easing) {
+    var parameters;
+    if (easing == null) {
+      easing = 'ease-in-out';
+    }
+    parameters = [];
+    parameters.push({
+      name: 'x',
+      from: this.x,
+      to: x
+    });
+    parameters.push({
+      name: 'y',
+      from: this.y,
+      to: y
+    });
+    this.tween = new Tween(parameters, duration, easing);
+    return this.setState('tween', 'idle');
+  };
+
+  Point.prototype.update = function() {
+    switch (this.state) {
+      case 'tween':
+        this.x = Math.round(this.tween.getValue('x'));
+        this.y = Math.round(this.tween.getValue('y'));
+        if (this.tween.isComplete) {
+          this.setState(this.nextState);
+        }
+    }
   };
 
   return Point;
@@ -729,9 +759,9 @@ Point = (function(superClass) {
 Timer = (function(superClass) {
   extend(Timer, superClass);
 
-  function Timer(duration, easing) {
-    this.duration = duration;
-    this.easing = easing != null ? easing : 'linear';
+  function Timer(duration1, easing1) {
+    this.duration = duration1;
+    this.easing = easing1 != null ? easing1 : 'linear';
     Timer.__super__.constructor.call(this);
     this.start = NOW;
     this.stop = this.start + this.duration;
@@ -779,9 +809,9 @@ Timer = (function(superClass) {
 Tween = (function(superClass) {
   extend(Tween, superClass);
 
-  function Tween(data, duration, easing) {
-    this.duration = duration;
-    this.easing = easing != null ? easing : 'linear';
+  function Tween(data, duration1, easing1) {
+    this.duration = duration1;
+    this.easing = easing1 != null ? easing1 : 'linear';
     Tween.__super__.constructor.call(this, this.duration, this.easing);
     this.parseParameters(data);
   }
@@ -900,44 +930,79 @@ BoundingBox = (function(superClass) {
 Line = (function(superClass) {
   extend(Line, superClass);
 
-  Line.prototype.from = null;
+  Line.prototype._from = null;
 
-  Line.prototype.to = null;
+  Line.prototype._to = null;
 
   Line.prototype.length = 0;
 
-  Line.prototype.pane = null;
-
-  function Line(layer) {
-    if (layer == null) {
-      layer = 1;
-    }
-    Line.__super__.constructor.call(this);
-    this.pane = new Pane(layer);
+  function Line(_layer) {
+    this._layer = _layer != null ? _layer : 1;
+    Line.__super__.constructor.call(this, this._layer);
   }
 
-  Line.prototype.setFrom = function(from) {
-    this.from = from;
-    this.updatePane();
+  Line.prototype.from = function(_from) {
+    this._from = _from;
+    return this;
   };
 
-  Line.prototype.setTo = function(to) {
-    this.to = to;
-    this.updatePane();
-  };
-
-  Line.prototype.updatePane = function() {
-    if ((this.from != null) && (this.to != null) && (this.pane != null)) {
-      return console.log("Something else");
-    }
+  Line.prototype.to = function(_to) {
+    this._to = _to;
+    return this;
   };
 
   Line.prototype.calculateLength = function() {
-    if ((this.from != null) && (this.to != null)) {
-      return console.log("Something");
+    if ((this._from != null) && (this._to != null)) {
+      this.diffX = this._to.x - this._from.x;
+      this.diffY = this._to.y - this._from.y;
+      this.length = Math.sqrt((this.diffX * this.diffX) + (this.diffY * this.diffY));
+    }
+    return this.length;
+  };
+
+  Line.prototype.update = function() {
+    var i, increment, j, k, l, m, particle, ref, ref1, ref2, ref3, ref4, ref5, results, x, y;
+    i = 0;
+    this.calculateLength();
+    if (Math.abs(this.diffX) >= Math.abs(this.diffY)) {
+      y = this._from.y;
+      increment = this.diffY / Math.abs(this.diffX);
+      for (x = k = ref = this._from.x, ref1 = this._to.x; ref <= ref1 ? k <= ref1 : k >= ref1; x = ref <= ref1 ? ++k : --k) {
+        particle = this.getParticle(i);
+        particle.setPosition(x, y);
+        y += increment;
+        i++;
+      }
+    } else {
+      x = this._from.x;
+      increment = this.diffX / Math.abs(this.diffY);
+      for (y = l = ref2 = this._from.y, ref3 = this._to.y; ref2 <= ref3 ? l <= ref3 : l >= ref3; y = ref2 <= ref3 ? ++l : --l) {
+        particle = this.getParticle(i);
+        particle.setPosition(x, y);
+        x += increment;
+        i++;
+      }
+    }
+    if ((this.children.length - 1) > i) {
+      results = [];
+      for (j = m = ref4 = i, ref5 = this.children.length - 1; ref4 <= ref5 ? m <= ref5 : m >= ref5; j = ref4 <= ref5 ? ++m : --m) {
+        results.push(this.getParticle(j).hide());
+      }
+      return results;
+    }
+  };
+
+  Line.prototype.getParticle = function(i) {
+    var particle;
+    if (this.children[i]) {
+      return this.children[i].show();
+    } else {
+      particle = new Particle(this._layer);
+      this.addChild(particle);
+      return particle;
     }
   };
 
   return Line;
 
-})(Entity);
+})(Pane);
