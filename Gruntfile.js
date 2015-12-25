@@ -29,6 +29,7 @@ module.exports = function(grunt) {
             'src/core/Controller.coffee',
             'src/core/Pane.coffee',
             'src/core/Particle.coffee',
+            'src/core/Point.coffee',
             'src/core/Timer.coffee',
             'src/core/Tween.coffee',
             'src/core/Storage.coffee',

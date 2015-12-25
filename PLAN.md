@@ -21,6 +21,7 @@
   - [ ] `Pane.setCSSProperty()`: allow percentages (or floats) as values. Will need an update of `Pane.onResize()` as well.
   - [ ] `Pane.setOverflow()`: defaults to 'visible'
 - `Particle`
+- `Point`: a coordinate
 - `Storage`
 - `Timer`
 - `Tween`
@@ -32,8 +33,8 @@
 - `Button` extends `Pane`: registers as a listener for click/touch events
 - `Circle`: outline or filled
 - `Letter` extends `Sprite`
-- `Line`: a list of connected `Points`
-- `Point`: a coordinate
+- `Line`: the visual connection between two `Points`
+- `Path`: a list of connected `Points`
 - `Polygon` extends `Line`: a collection of `Points` that are grouped in `Triangles` so that complex shapes can be drawn
 - `Rectangle` extends `Pane`: either filled with `Particles` or a single stretched `Particle`
 - `Sprite` extends `Pane`: contains particle data that resembles an image
