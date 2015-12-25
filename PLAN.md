@@ -33,8 +33,8 @@
 - `Button` extends `Pane`: registers as a listener for click/touch events
 - `Circle`: outline or filled
 - `Letter` extends `Sprite`
-- `Line`: the visual connection between two `Points`
-- `Path`: a list of connected `Points`
+- `Line`: the visual connection between two `Points`, distinction between absolute and relative coordinates
+- `Path`: a list of connected `Points`, visualized as `Lines`
 - `Polygon` extends `Line`: a collection of `Points` that are grouped in `Triangles` so that complex shapes can be drawn
 - `Rectangle` extends `Pane`: either filled with `Particles` or a single stretched `Particle`
 - `Sprite` extends `Pane`: contains particle data that resembles an image
