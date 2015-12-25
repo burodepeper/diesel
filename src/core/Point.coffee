@@ -6,7 +6,7 @@ class Point extends Entity
   constructor: (@x, @y) ->
     super(0)
 
-  moveTo: (x, y, duration, easing = 'ease-in-out') ->
+  moveTo: (x, y, duration = 1000, easing = 'ease-in-out') ->
 
     parameters = []
     parameters.push({ name:'x', from:@x, to:x })

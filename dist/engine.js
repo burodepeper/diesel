@@ -723,6 +723,9 @@ Point = (function(superClass) {
 
   Point.prototype.moveTo = function(x, y, duration, easing) {
     var parameters;
+    if (duration == null) {
+      duration = 1000;
+    }
     if (easing == null) {
       easing = 'ease-in-out';
     }
