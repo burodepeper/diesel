@@ -1,4 +1,4 @@
-var BoundingBox, CONTEXT, Controller, DEBUG, Engine, Entity, NOW, PX, Pane, Particle, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
+var BoundingBox, CONTEXT, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Point, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -706,6 +706,26 @@ Particle = (function(superClass) {
 
 })(Entity);
 
+Point = (function(superClass) {
+  extend(Point, superClass);
+
+  function Point() {
+    return Point.__super__.constructor.apply(this, arguments);
+  }
+
+  Point.prototype.x = null;
+
+  Point.prototype.y = null;
+
+  Point.prototype.setPosition = function(x1, y1) {
+    this.x = x1;
+    this.y = y1;
+  };
+
+  return Point;
+
+})(Entity);
+
 Timer = (function(superClass) {
   extend(Timer, superClass);
 
@@ -876,3 +896,48 @@ BoundingBox = (function(superClass) {
   return BoundingBox;
 
 })(Pane);
+
+Line = (function(superClass) {
+  extend(Line, superClass);
+
+  Line.prototype.from = null;
+
+  Line.prototype.to = null;
+
+  Line.prototype.length = 0;
+
+  Line.prototype.pane = null;
+
+  function Line(layer) {
+    if (layer == null) {
+      layer = 1;
+    }
+    Line.__super__.constructor.call(this);
+    this.pane = new Pane(layer);
+  }
+
+  Line.prototype.setFrom = function(from) {
+    this.from = from;
+    this.updatePane();
+  };
+
+  Line.prototype.setTo = function(to) {
+    this.to = to;
+    this.updatePane();
+  };
+
+  Line.prototype.updatePane = function() {
+    if ((this.from != null) && (this.to != null) && (this.pane != null)) {
+      return console.log("Something else");
+    }
+  };
+
+  Line.prototype.calculateLength = function() {
+    if ((this.from != null) && (this.to != null)) {
+      return console.log("Something");
+    }
+  };
+
+  return Line;
+
+})(Entity);
