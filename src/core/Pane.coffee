@@ -112,6 +112,12 @@ class Pane extends Entity
     else
       return @position.relative.y
 
+  getCenter: ->
+    @center =
+      x: @size.width / 2
+      y: @size.height / 2
+    return @center
+
   isWithinBounds: (x = @position.relative.x, y = @position.relative.y, width = @getWidth(), height = @getHeight()) ->
     if @reference
       if (x >= 0) and (y >= 0)

@@ -476,6 +476,14 @@ Pane = (function(superClass) {
     }
   };
 
+  Pane.prototype.getCenter = function() {
+    this.center = {
+      x: this.size.width / 2,
+      y: this.size.height / 2
+    };
+    return this.center;
+  };
+
   Pane.prototype.isWithinBounds = function(x, y, width, height) {
     if (x == null) {
       x = this.position.relative.x;
@@ -941,6 +949,8 @@ Line = (function(superClass) {
 
   Line.prototype.length = 0;
 
+  Line.prototype.offset = 0;
+
   function Line(_layer) {
     this._layer = _layer != null ? _layer : 1;
     Line.__super__.constructor.call(this, this._layer);
@@ -957,9 +967,22 @@ Line = (function(superClass) {
   };
 
   Line.prototype.atAngle = function(_angle, length, offset) {
+    var degrees, radians, x, y;
     this._angle = _angle;
     this.length = length;
     this.offset = offset != null ? offset : 0;
+    x = this._from.x;
+    y = this._from.y;
+    degrees = ((360 - this._angle) + 90) % 360;
+    radians = degrees * (Math.PI / 180);
+    x += Math.cos(radians) * this.length;
+    y -= Math.sin(radians) * this.length;
+    if (!this._to) {
+      this._to = new Point(x, y);
+    } else {
+      this._to.x = x;
+      this._to.y = y;
+    }
     return this;
   };
 
@@ -973,7 +996,7 @@ Line = (function(superClass) {
   };
 
   Line.prototype.update = function() {
-    var i, increment, j, k, l, m, particle, ref, ref1, ref2, ref3, ref4, ref5, results, x, y;
+    var i, increment, j, k, l, m, n, particle, ref, ref1, ref2, ref3, ref4, ref5, ref6, results, x, y;
     i = 0;
     this.calculateLength();
     if (Math.abs(this.diffX) >= Math.abs(this.diffY)) {
@@ -982,6 +1005,7 @@ Line = (function(superClass) {
       for (x = k = ref = this._from.x, ref1 = this._to.x; ref <= ref1 ? k <= ref1 : k >= ref1; x = ref <= ref1 ? ++k : --k) {
         particle = this.getParticle(i);
         particle.setPosition(x, y);
+        particle.show();
         y += increment;
         i++;
       }
@@ -991,13 +1015,19 @@ Line = (function(superClass) {
       for (y = l = ref2 = this._from.y, ref3 = this._to.y; ref2 <= ref3 ? l <= ref3 : l >= ref3; y = ref2 <= ref3 ? ++l : --l) {
         particle = this.getParticle(i);
         particle.setPosition(x, y);
+        particle.show();
         x += increment;
         i++;
       }
     }
+    if (this.offset) {
+      for (j = m = 0, ref4 = Math.round(i * this.offset); 0 <= ref4 ? m <= ref4 : m >= ref4; j = 0 <= ref4 ? ++m : --m) {
+        this.getParticle(j).hide();
+      }
+    }
     if ((this.children.length - 1) > i) {
       results = [];
-      for (j = m = ref4 = i, ref5 = this.children.length - 1; ref4 <= ref5 ? m <= ref5 : m >= ref5; j = ref4 <= ref5 ? ++m : --m) {
+      for (j = n = ref5 = i, ref6 = this.children.length - 1; ref5 <= ref6 ? n <= ref6 : n >= ref6; j = ref5 <= ref6 ? ++n : --n) {
         results.push(this.getParticle(j).hide());
       }
       return results;
