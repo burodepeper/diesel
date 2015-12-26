@@ -1,4 +1,4 @@
-var BoundingBox, CONTEXT, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Point, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
+var BoundingBox, CONTEXT, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Path, Point, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -937,6 +937,8 @@ Line = (function(superClass) {
 
   Line.prototype._to = null;
 
+  Line.prototype._angle = null;
+
   Line.prototype.length = 0;
 
   function Line(_layer) {
@@ -951,6 +953,13 @@ Line = (function(superClass) {
 
   Line.prototype.to = function(_to) {
     this._to = _to;
+    return this;
+  };
+
+  Line.prototype.atAngle = function(_angle, length, offset) {
+    this._angle = _angle;
+    this.length = length;
+    this.offset = offset != null ? offset : 0;
     return this;
   };
 
@@ -1007,5 +1016,37 @@ Line = (function(superClass) {
   };
 
   return Line;
+
+})(Pane);
+
+Path = (function(superClass) {
+  extend(Path, superClass);
+
+  function Path() {
+    return Path.__super__.constructor.apply(this, arguments);
+  }
+
+  Path.prototype.points = [];
+
+  Path.prototype.lines = [];
+
+  Path.prototype.addPoint = function(point) {
+    this.points.push(point);
+    if (this.points.length > 1) {
+      this.addLine();
+    }
+  };
+
+  Path.prototype.addLine = function() {
+    var line;
+    this.a = this.points[this.points.length - 2];
+    this.b = this.points[this.points.length - 1];
+    line = new Line();
+    line.from(this.a).to(this.b);
+    this.lines.push(line);
+    this.addChild(line);
+  };
+
+  return Path;
 
 })(Pane);
