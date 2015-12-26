@@ -1,4 +1,4 @@
-var App, SpectrumAnalyzer,
+var App, Clock, SpectrumAnalyzer,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -12,10 +12,61 @@ App = {
       }
     };
     if (Engine.init(settings)) {
+      this.clock = new Clock();
+      this.clock.setCSS({
+        top: 1,
+        right: 1,
+        width: 59,
+        height: 59
+      });
       this.analyzer = new SpectrumAnalyzer();
     }
   }
 };
+
+Clock = (function(superClass) {
+  extend(Clock, superClass);
+
+  Clock.prototype.center = null;
+
+  Clock.prototype.hours = null;
+
+  Clock.prototype.minutes = null;
+
+  function Clock() {
+    Clock.__super__.constructor.call(this);
+    this.center = new Point();
+    this.hours = new Line();
+    this.minutes = new Line();
+    this.seconds = new Line();
+    this.addChild(this.hours);
+    this.addChild(this.minutes);
+    this.addChild(this.seconds);
+  }
+
+  Clock.prototype.update = function() {
+    var center, hours, minutes, seconds, time;
+    center = this.getCenter();
+    this.center.x = center.x;
+    this.center.y = center.y;
+    this.hours.from(this.center);
+    this.minutes.from(this.center);
+    this.seconds.from(this.center);
+    time = new Date();
+    seconds = time.getSeconds();
+    minutes = time.getMinutes() + (seconds / 60);
+    hours = time.getHours() + (minutes / 60);
+    hours = 360 * ((hours % 12) / 12);
+    this.hours.atAngle(hours, 20, 0.05);
+    minutes = 360 * (minutes / 60);
+    this.minutes.atAngle(minutes, 30, 0.0333);
+    seconds = 360 * (seconds / 60);
+    return this.seconds.atAngle(seconds, 25);
+  };
+
+  return Clock;
+
+})(Pane);
 
 SpectrumAnalyzer = (function(superClass) {
   extend(SpectrumAnalyzer, superClass);

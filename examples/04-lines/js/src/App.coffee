@@ -9,10 +9,10 @@ App =
 
     if Engine.init(settings)
 
-      # TODO
       # Clock in top right corner
+      @clock = new Clock()
+      @clock.setCSS({ top:1, right:1, width:59, height:59 })
 
-      # TODO
       # SpectrumAnalyzer at the bottom
       @analyzer = new SpectrumAnalyzer()
 
