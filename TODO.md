@@ -16,12 +16,12 @@
   - [ ] Keyboard and mouse input
 - `Entity`
 - `Pane`
-  - [ ] Display debug bounding box, and optionally specify color
+  - [x] Display debug bounding box, and optionally specify color
   - [ ] `Pane.getOpacity()`
   - [ ] `Pane.setCSSProperty()`: allow percentages (or floats) as values. Will need an update of `Pane.onResize()` as well.
   - [ ] `Pane.setOverflow()`: defaults to 'visible'
 - `Particle`
-- `Point`: a coordinate
+- `Point`
 - `Storage`
 - `Timer`
 - `Tween`
@@ -34,7 +34,17 @@
 - `Circle`: outline or filled
 - `Letter` extends `Sprite`
 - `Line`: the visual connection between two `Points`, distinction between absolute and relative coordinates
+  - [ ] Allow `to()` and `from()` to accept arrays instead of `Points`; arrays are converted to a point internally
+  - [ ] Add relative positioning (of entire line)
+  - [ ] Add relative positioning (of `@_from`)
+  - [ ] `setColor()`
+  - [ ] `setOpacity()`
+  - [ ] Clean up children
 - `Path`: a list of connected `Points`, visualized as `Lines`
+  - [ ] `setOpacity()`
+  - [ ] `setColor()`
+  - [ ] `close()`; attached first to last points
+  - [ ] `fill()`
 - `Polygon` extends `Line`: a collection of `Points` that are grouped in `Triangles` so that complex shapes can be drawn
 - `Rectangle` extends `Pane`: either filled with `Particles` or a single stretched `Particle`
 - `Sprite` extends `Pane`: contains particle data that resembles an image
