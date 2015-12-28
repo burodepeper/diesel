@@ -37,11 +37,12 @@ Clock = (function(superClass) {
     Clock.__super__.constructor.call(this);
     this.center = new Point();
     this.hours = new Line();
-    this.minutes = new Line();
-    this.seconds = new Line();
     this.addChild(this.hours);
+    this.minutes = new Line();
     this.addChild(this.minutes);
+    this.seconds = new Line();
     this.addChild(this.seconds);
+    this.seconds.setColor('#e10');
   }
 
   Clock.prototype.update = function() {

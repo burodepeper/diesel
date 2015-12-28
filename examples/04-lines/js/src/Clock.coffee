@@ -8,13 +8,16 @@ class Clock extends Pane
     super()
 
     @center = new Point()
-    @hours = new Line()
-    @minutes = new Line()
-    @seconds = new Line()
 
+    @hours = new Line()
     @addChild(@hours)
+
+    @minutes = new Line()
     @addChild(@minutes)
+
+    @seconds = new Line()
     @addChild(@seconds)
+    @seconds.setColor('#e10')
 
   update: ->
     center = @getCenter()
