@@ -566,8 +566,8 @@ Pane = (function(superClass) {
 
   Pane.prototype.getCenter = function() {
     this.center = {
-      x: this.size.width / 2,
-      y: this.size.height / 2
+      x: (this.size.width - 1) / 2,
+      y: (this.size.height - 1) / 2
     };
     return this.center;
   };
