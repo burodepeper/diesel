@@ -33,6 +33,7 @@ class Pane extends Entity
       width: null
       height: null
 
+    @color = new Color()
     @opacity = 1
     @isVisible = true
     @hasCSS = false
@@ -91,6 +92,13 @@ class Pane extends Entity
     return
 
   setReference: (@reference, @_childID) ->
+
+  setColor: (color) ->
+    if typeof color is 'object'
+      @color = color
+    else
+      @color.set(color)
+    @updateChildren('setColor', @color)
 
   # Helpers -------------------------------------------------------------------
 
@@ -172,6 +180,12 @@ class Pane extends Entity
     @children.push(child)
     child.setReference this, @children.length - 1
     child.isVisible = @isVisible
+    child.color = @color
+    return
+
+  updateChildren: (method, value) ->
+    for child in @children
+      child[method](value)
     return
 
   # Debug ---------------------------------------------------------------------

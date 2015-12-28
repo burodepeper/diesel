@@ -1,4 +1,4 @@
-var BoundingBox, CONTEXT, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Path, Point, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
+var BoundingBox, CONTEXT, Color, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Path, Point, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -346,6 +346,84 @@ Controller = (function(superClass) {
 
 })(Entity);
 
+Color = (function(superClass) {
+  extend(Color, superClass);
+
+  Color.prototype.r = 255;
+
+  Color.prototype.g = 255;
+
+  Color.prototype.b = 255;
+
+  Color.prototype.a = 1;
+
+  Color.prototype.asString = null;
+
+  function Color(color) {
+    if (color == null) {
+      color = '#fff';
+    }
+    Color.__super__.constructor.call(this);
+    this.set(color);
+  }
+
+  Color.prototype.set = function(color) {
+    var b, g, match, r;
+    color = color.replace(/[ ]+/g, '').toLowerCase();
+    if ((color.length === 7) && color.match(/#[0-9a-f]{6}/)) {
+      this.r = parseInt(color.substring(1, 3), 16);
+      this.g = parseInt(color.substring(3, 5), 16);
+      this.b = parseInt(color.substring(5, 7), 16);
+      this.a = 1;
+      return this.compile();
+    } else if ((color.length === 4) && color.match(/#[0-9a-f]{3}/)) {
+      r = parseInt(color.substring(1, 2), 16);
+      g = parseInt(color.substring(2, 3), 16);
+      b = parseInt(color.substring(3, 4), 16);
+      this.r = (r * 16) + r;
+      this.g = (g * 16) + g;
+      this.b = (b * 16) + b;
+      this.a = 1;
+      return this.compile();
+    } else if (match = color.match(/rgba\(([0-9]+),([0-9]+),([0-9]+),([\.0-9]+)\)/)) {
+      this.r = parseInt(match[1]);
+      this.g = parseInt(match[2]);
+      this.b = parseInt(match[3]);
+      this.a = parseFloat(match[4]);
+      return this.compile();
+    } else {
+      console.log("Color.set()", color + "' is not valid");
+      return false;
+    }
+  };
+
+  Color.prototype.setOpacity = function(opacity) {
+    opacity = parseFloat(opacity);
+    if (opacity === NaN) {
+      opacity = 1;
+    }
+    if (opacity < 0) {
+      opacity = 0;
+    }
+    if (opacity > 1) {
+      opacity = 1;
+    }
+    this.a = opacity;
+    return this.compile();
+  };
+
+  Color.prototype.compile = function() {
+    return this.asString = "rgba(" + this.r + ", " + this.g + ", " + this.b + ", " + this.a + ")";
+  };
+
+  Color.prototype.toString = function() {
+    return this.asString;
+  };
+
+  return Color;
+
+})(Entity);
+
 Pane = (function(superClass) {
   extend(Pane, superClass);
 
@@ -378,6 +456,7 @@ Pane = (function(superClass) {
       width: null,
       height: null
     };
+    this.color = new Color();
     this.opacity = 1;
     this.isVisible = true;
     this.hasCSS = false;
@@ -450,6 +529,15 @@ Pane = (function(superClass) {
   Pane.prototype.setReference = function(reference, _childID) {
     this.reference = reference;
     this._childID = _childID;
+  };
+
+  Pane.prototype.setColor = function(color) {
+    if (typeof color === 'object') {
+      this.color = color;
+    } else {
+      this.color.set(color);
+    }
+    return this.updateChildren('setColor', this.color);
   };
 
   Pane.prototype.getWidth = function() {
@@ -551,6 +639,16 @@ Pane = (function(superClass) {
     this.children.push(child);
     child.setReference(this, this.children.length - 1);
     child.isVisible = this.isVisible;
+    child.color = this.color;
+  };
+
+  Pane.prototype.updateChildren = function(method, value) {
+    var child, k, len, ref;
+    ref = this.children;
+    for (k = 0, len = ref.length; k < len; k++) {
+      child = ref[k];
+      child[method](value);
+    }
   };
 
   Pane.prototype.enableBoundingBox = function(color) {
@@ -588,12 +686,7 @@ Particle = (function(superClass) {
         y: 0
       }
     };
-    this.color = {
-      r: 255,
-      g: 255,
-      b: 255,
-      a: 1
-    };
+    this.color = new Color();
     this.size = {
       width: 1,
       height: 1
@@ -622,30 +715,14 @@ Particle = (function(superClass) {
   };
 
   Particle.prototype.setOpacity = function(opacity) {
-    this.color.a = parseFloat(opacity);
+    return this.color.setOpacity(opacity);
   };
 
   Particle.prototype.setColor = function(color) {
-    var b, g, match, r;
-    color = color.replace(/[ ]+/g, '').toLowerCase();
-    if ((color.length === 7) && color.match(/#[0-9a-f]{6}/)) {
-      this.color.r = parseInt(color.substring(1, 3), 16);
-      this.color.g = parseInt(color.substring(3, 5), 16);
-      this.color.b = parseInt(color.substring(5, 7), 16);
-    } else if ((color.length === 4) && color.match(/#[0-9a-f]{3}/)) {
-      r = parseInt(color.substring(1, 2), 16);
-      g = parseInt(color.substring(2, 3), 16);
-      b = parseInt(color.substring(3, 4), 16);
-      this.color.r = (r * 16) + r;
-      this.color.g = (g * 16) + g;
-      this.color.b = (b * 16) + b;
-    } else if (match = color.match(/rgba\(([0-9]+),([0-9]+),([0-9]+),([\.0-9]+)\)/)) {
-      this.color.r = parseInt(match[1]);
-      this.color.g = parseInt(match[2]);
-      this.color.b = parseInt(match[3]);
-      this.color.a = parseFloat(match[4]);
+    if (typeof color === 'object') {
+      return this.color = color;
     } else {
-      console.log("Particle.setColor()", this, "color '" + color + "' is not valid");
+      return this.color.set(color);
     }
   };
 
@@ -661,13 +738,9 @@ Particle = (function(superClass) {
       top = snap(this.position.absolute.y * PX);
       width = snap(this.size.width * PX);
       height = snap(this.size.height * PX);
-      CONTEXT.fillStyle = this.getColor();
+      CONTEXT.fillStyle = this.color;
       CONTEXT.fillRect(left, top, width, height);
     }
-  };
-
-  Particle.prototype.getColor = function() {
-    return "rgba(" + this.color.r + ", " + this.color.g + ", " + this.color.b + ", " + this.color.a + ")";
   };
 
   Particle.prototype.show = function() {
