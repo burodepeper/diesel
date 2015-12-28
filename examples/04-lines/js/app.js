@@ -36,13 +36,14 @@ Clock = (function(superClass) {
   function Clock() {
     Clock.__super__.constructor.call(this);
     this.center = new Point();
+    this.createDial();
     this.hours = new Line();
     this.addChild(this.hours);
     this.minutes = new Line();
     this.addChild(this.minutes);
     this.seconds = new Line();
     this.addChild(this.seconds);
-    this.seconds.setColor('#e10');
+    this.seconds.setColor(new Color('#e10'));
   }
 
   Clock.prototype.update = function() {
@@ -58,11 +59,26 @@ Clock = (function(superClass) {
     minutes = time.getMinutes() + (seconds / 60);
     hours = time.getHours() + (minutes / 60);
     hours = 360 * ((hours % 12) / 12);
-    this.hours.atAngle(hours, 20, 0.05);
+    this.hours.atAngle(hours, 20);
     minutes = 360 * (minutes / 60);
-    this.minutes.atAngle(minutes, 30, 0.0333);
+    this.minutes.atAngle(minutes, 27.5);
     seconds = 360 * (seconds / 60);
-    return this.seconds.atAngle(seconds, 25);
+    return this.seconds.atAngle(seconds, 24);
+  };
+
+  Clock.prototype.createDial = function() {
+    var center, color, degrees, i, j, line, results;
+    color = new Color('#333');
+    center = new Point(29, 29);
+    results = [];
+    for (i = j = 0; j <= 11; i = ++j) {
+      degrees = i * 30;
+      line = new Line();
+      this.addChild(line);
+      line.from(center).atAngle(degrees, 29, 0.8);
+      results.push(line.setColor(color));
+    }
+    return results;
   };
 
   return Clock;
