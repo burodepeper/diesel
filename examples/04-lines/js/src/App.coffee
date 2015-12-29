@@ -4,14 +4,14 @@ App =
 
     settings =
       viewport:
-        width: 240
-        height: 180
+        width: 480
+        height: 270
 
     if Engine.init(settings)
 
       # Clock in top right corner
       @clock = new Clock()
-      @clock.setCSS({ top:1, right:1, width:59, height:59 })
+      @clock.setCSS({ top:1, left:1, width:59, height:59 })
 
       # TODO
       # Make the clock more pretty

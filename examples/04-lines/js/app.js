@@ -7,15 +7,15 @@ App = {
     var settings;
     settings = {
       viewport: {
-        width: 240,
-        height: 180
+        width: 480,
+        height: 270
       }
     };
     if (Engine.init(settings)) {
       this.clock = new Clock();
       this.clock.setCSS({
         top: 1,
-        right: 1,
+        left: 1,
         width: 59,
         height: 59
       });
@@ -67,9 +67,15 @@ Clock = (function(superClass) {
   };
 
   Clock.prototype.createDial = function() {
-    var center, color, degrees, i, j, line, results;
-    color = new Color('#333');
+    var center, color, degrees, i, j, line, radius, results;
     center = new Point(29, 29);
+    radius = 30;
+    this.background = new Circle();
+    this.background.setCenter(center);
+    this.background.setRadius(radius);
+    this.background.setColor(new Color('#666'));
+    this.addChild(this.background);
+    color = new Color('#333');
     results = [];
     for (i = j = 0; j <= 11; i = ++j) {
       degrees = i * 30;

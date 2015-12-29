@@ -19,7 +19,6 @@ class Clock extends Pane
 
     @seconds = new Line()
     @addChild(@seconds)
-    # @seconds.setColor('#e10')
     @seconds.setColor(new Color('#e10'))
 
   update: ->
@@ -47,8 +46,19 @@ class Clock extends Pane
     @seconds.atAngle(seconds, 24)
 
   createDial: ->
-    color = new Color('#333')
+
     center = new Point(29, 29)
+
+    # Background circle thing
+    radius = 30
+    @background = new Circle()
+    @background.setCenter(center)
+    @background.setRadius(radius)
+    @background.setColor(new Color('#666'))
+    @addChild(@background)
+
+    # Hour marks
+    color = new Color('#333')
     for i in [0 .. 11]
       degrees = i * 30
       line = new Line()
