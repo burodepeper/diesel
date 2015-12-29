@@ -1,4 +1,4 @@
-var BoundingBox, CONTEXT, Color, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Path, Point, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
+var BoundingBox, CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Path, Point, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -1008,6 +1008,59 @@ BoundingBox = (function(superClass) {
   };
 
   return BoundingBox;
+
+})(Pane);
+
+Circle = (function(superClass) {
+  extend(Circle, superClass);
+
+  Circle.prototype.radius = null;
+
+  Circle.prototype.center = null;
+
+  function Circle(_layer) {
+    this._layer = _layer != null ? _layer : 1;
+    Circle.__super__.constructor.call(this, this._layer);
+  }
+
+  Circle.prototype.setCenter = function(center) {
+    this.center = center;
+  };
+
+  Circle.prototype.setRadius = function(radius) {
+    this.radius = radius;
+  };
+
+  Circle.prototype.update = function() {
+    var angle, i, k, particle, radians, results, x, y;
+    if (this.center && this.radius) {
+      i = 0;
+      results = [];
+      for (angle = k = 0; k <= 359; angle = ++k) {
+        radians = angle * (Math.PI / 180);
+        x = this.center.x + (Math.cos(radians) * this.radius);
+        y = this.center.y - (Math.sin(radians) * this.radius);
+        particle = this.getParticle(i);
+        particle.setPosition(x, y);
+        particle.show();
+        results.push(i++);
+      }
+      return results;
+    }
+  };
+
+  Circle.prototype.getParticle = function(i) {
+    var particle;
+    if (this.children[i]) {
+      return this.children[i].show();
+    } else {
+      particle = new Particle(this._layer);
+      this.addChild(particle);
+      return particle;
+    }
+  };
+
+  return Circle;
 
 })(Pane);
 

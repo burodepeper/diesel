@@ -35,6 +35,7 @@ module.exports = function(grunt) {
             'src/core/Tween.coffee',
             'src/core/Storage.coffee',
             'src/extended/BoundingBox.coffee',
+            'src/extended/Circle.coffee',
             'src/extended/Line.coffee',
             'src/extended/Path.coffee'
           ]
