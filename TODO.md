@@ -46,6 +46,7 @@
   - [ ] `setColor()`
   - [ ] `close()`; attached first to last points
   - [ ] `fill()`
+  - [ ] `setThickness()`
 - `Polygon` extends `Line`: a collection of `Points` that are grouped in `Triangles` so that complex shapes can be drawn
 - `Rectangle` extends `Pane`: either filled with `Particles` or a single stretched `Particle`
 - `Sprite` extends `Pane`: contains particle data that resembles an image
