@@ -10,7 +10,7 @@
 
 ## API
 
-### Animation _(extends SpriteSet)_
+### Animation _extends_ SpriteSet
 
 ### BoundingBox
 
@@ -19,7 +19,7 @@
 - extends [Pane], or is a property of a [Pane]
 - registers as a listener for click/touch events
 
-### Circle _(extends Pane)_
+### Circle _extends_ Pane
 
 - [ ] Implement as child of [Oval]
 - [ ] `fill()`
@@ -78,6 +78,8 @@
 - [ ] Move `getParticle()` from [Line], [Circle], [Rectangle] etc. to [Pane]
 
 ### Particle _extends_ Entity
+
+- [ ] Optionally display [Particles] as separate rectangles, with a 1px margin
 
 ### Path _extends_ Pane
 
