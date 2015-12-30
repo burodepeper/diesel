@@ -5,6 +5,7 @@
 - Drawing [Rectangles] and [Squares]
 - Separate `color` and `opacity`, and combine with the parental `opacity`
 - Convert all coordinates (internally) to [Points], and accept arrays as coordinates
+- Update [README.md] and think of more practical examples
 
 ---
 
@@ -24,9 +25,9 @@
 - [ ] Implement as child of [Oval]
 - [ ] `fill()`
 - [ ] `outline()`
-  - [ ] Remove duplicate particles
+  - [ ] Remove duplicate particles; or calculate the amount of detail needed to draw an acceptable circle (ie, not necessarily all 360 degrees); or draw a quarter of the circle, and duplicate the other three quarters
   - [ ] Remove unneccessary particles (for a 1px outline)
-  - [ ] Set thickness of outline
+  - [ ] Set thickness of outline (possibly using a CompoundPane)
 
 ### Color
 
