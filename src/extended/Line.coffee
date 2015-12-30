@@ -5,6 +5,7 @@ class Line extends Pane
   _angle: null
   length: 0
   offset: 0
+  weight: 1
 
   constructor: (@_layer = 1) ->
     super(@_layer)
@@ -14,6 +15,9 @@ class Line extends Pane
 
   to: (@_to) ->
     return this
+
+  # TODO
+  setWeight: (@weight) ->
 
   # @_angle is between 0 and 360 degrees,
   # 0 is up, 90 is right, 180 is down, 270 is left

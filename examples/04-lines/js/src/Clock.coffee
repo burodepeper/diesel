@@ -13,6 +13,7 @@ class Clock extends Pane
 
     @hours = new Line()
     @addChild(@hours)
+    @hours.setWeight(2)
 
     @minutes = new Line()
     @addChild(@minutes)

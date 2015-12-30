@@ -39,6 +39,7 @@ Clock = (function(superClass) {
     this.createDial();
     this.hours = new Line();
     this.addChild(this.hours);
+    this.hours.setWeight(2);
     this.minutes = new Line();
     this.addChild(this.minutes);
     this.seconds = new Line();
