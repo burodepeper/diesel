@@ -20,6 +20,9 @@
   - [ ] `Pane.getOpacity()`
   - [ ] `Pane.setCSSProperty()`: allow percentages (or floats) as values. Will need an update of `Pane.onResize()` as well.
   - [ ] `Pane.setOverflow()`: defaults to 'visible'
+  - [ ] Mask (think of it as a combination of several shapes)
+    - [ ] `add()`
+    - [ ] `remove()`
 - `Particle`
 - `Point`
   - [ ] Convert all coordinates to `Points`
@@ -32,7 +35,13 @@
 - `Animation` extends `SpriteSet`
 - `BoundingBox`
 - `Button` extends `Pane`: registers as a listener for click/touch events
-- `Circle`: outline or filled
+- `Circle`
+  - [ ] Implement as child of `Oval`
+  - [ ] `fill()`
+  - [ ] `outline()`
+    - [ ] Remove duplicate particles
+    - [ ] Remove unneccessary particles (for a 1px outline)
+    - [ ] Set thickness of outline
 - `Letter` extends `Sprite`
 - `Line`: the visual connection between two `Points`, distinction between absolute and relative coordinates
   - [ ] Allow `to()` and `from()` to accept arrays instead of `Points`; arrays are converted to a point internally
@@ -48,7 +57,10 @@
   - [ ] `fill()`
   - [ ] `setThickness()`
 - `Polygon` extends `Line`: a collection of `Points` that are grouped in `Triangles` so that complex shapes can be drawn
-- `Rectangle` extends `Pane`: either filled with `Particles` or a single stretched `Particle`
+- `Rectangle` and `Square`
+  - [ ] `fill()`
+  - [ ] `stretch()`
+  - [ ] `outline()`
 - `Sprite` extends `Pane`: contains particle data that resembles an image
   - [ ] `Sprite.rotate()`: in increments of 90 degrees
 - `SpriteSet`: a group of `Sprites` with methods to control which one is visible
