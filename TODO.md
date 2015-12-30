@@ -5,8 +5,8 @@
 ## Priorities
 
 - Drawing [Rectangles] and [Squares]
-- Separate `color` and `opacity`
-- Convert all coordinates to [Points]
+- Separate `color` and `opacity`, and combine with the parental `opacity`
+- Convert all coordinates (internally) to [Points], and accept arrays as coordinates
 
 ---
 
@@ -29,6 +29,10 @@
   - [ ] Remove duplicate particles
   - [ ] Remove unneccessary particles (for a 1px outline)
   - [ ] Set thickness of outline
+
+### Color
+
+- [ ] Implement possibility for gradients
 
 ### Controller
 
@@ -69,6 +73,7 @@
 - [ ] Mask (think of it as a combination of several shapes)
   - [ ] `add()`
   - [ ] `remove()`
+- [ ] Move `getParticle()` from [Line], [Circle], [Rectangle] etc. to [Pane]
 
 ### Particle _(extends Entity)_
 
@@ -88,7 +93,7 @@
 
 - a collection of [Points], grouped in [Triangles], to draw more complex shapes
 
-### Rectangle (and Square) _(extends Pane)_
+### Rectangle _(extends Pane)_
 
 - [ ] `fill()`
 - [ ] `stretch()`
@@ -102,6 +107,8 @@
 ### SpriteSet _(extends Controller)_
 
 - a group of [Sprites] with methods to control which one is visible
+
+### Square _(extends Rectangle)_
 
 ### Storage
 
@@ -119,30 +126,117 @@
 
 ---
 
+## Helper functions
+
+- [ ] `addDiversity()`
+- [ ] `average()`
+- [ ] `delay()`
+- [ ] `getRandomFromArray()`
+- [ ] `getRandomFromObject()`
+- [ ] `getRandomInt()`
+- [ ] `getWeighedInt()`
+- [ ] `shuffle()`
+- [ ] `snap()`
+
+---
+
+## Getting started
+
+- How the [Engine] works (`update()` and `draw()`)
+- The concept of references and hierarchial inheritence
+- Setting up a new project
+
 ## Documentation
 
 - Animation
-- BoundingBox
+- (BoundingBox)
 - Button
 - Circle
-- Controller
+  - [ ] `new Circle()`
+  - [ ] `Circle.setCenter()`
+  - [ ] `Circle.setRadius()`
+- Color
+  - [ ] `Color.set()`
+  - [ ] `Color.setOpacity()`
+- (Controller)
 - Engine
+  - [ ] `window.PX`
+  - [ ] `window.CONTEXT`
+  - [ ] `window.WINDOW`
+  - [ ] `window.NOW`
+  - [ ] `window.DEBUG`
+  - [ ] `Engine.isTouchDevice`
+  - [ ] `Engine.init()`
+  - [ ] `Engine.addEntity()`
+  - [ ] `Engine.cleanUp()`
+  - [ ] `Engine.removeEntity()`
+  - [ ] `Engine.trigger()`
 - Entity
+  - [ ] `Entity.remove()`
+  - [ ] `Entity.setState()`
 - Letter
 - Line
+  - [ ] `Line.atAngle()`
+  - [ ] `Line.from()`
+  - [ ] `Line.to()`
 - Pane
+  - [ ] `Pane.position`
+  - [ ] `Pane.size`
+  - [ ] `Pane.addChild()`
+  - [ ] `Pane.disableBoundingBox()`
+  - [ ] `Pane.enableBoundingBox()`
+  - [ ] `Pane.getCenter()`
+  - [ ] `Pane.getHeight()`
+  - [ ] `Pane.getWidth()`
+  - [ ] `Pane.getX()`
+  - [ ] `Pane.getY()`
+  - [ ] `Pane.isWithinBounds()`
+  - [ ] `Pane.setColor()`
+  - [ ] `Pane.setCSS()`
+  - [ ] `Pane.setCSSProperty()`
+  - [ ] `Pane.setOpacity()`
+  - [ ] `Pane.setPosition()`
+  - [ ] `Pane.setSize()`
+  - [ ] `Pane.updateChildren()`
 - Particle
+  - [ ] `Particle.position`
+  - [ ] `Particle.size`
+  - [ ] `Particle.getX()`
+  - [ ] `Particle.getY()`
+  - [ ] `Particle.hide()`
+  - [ ] `Particle.isWithinBounds()`
+  - [ ] `Particle.isWithinHorizontalBounds()`
+  - [ ] `Particle.isWithinVerticalBounds()`
+  - [ ] `Particle.setPosition()`
+  - [ ] `Particle.show()`
+  - [ ] `Particle.setColor()`
+  - [ ] `Particle.setOpacity()`
+  - [ ] `Particle.setPosition()`
+  - [ ] `Particle.setSize()`
 - Path
+  - [ ] `Path.addPoint()`
 - Point
+  - [ ] `new Point()`
+  - [ ] `Point.moveTo()`
 - Polygon
 - Rectangle
+  - [ ] `new Rectangle()`
 - Sprite
 - SpriteSet
+- Square
+  - [ ] `new Square()`
 - Storage
+  - [ ] `new Storage()`
+  - [ ] `Storage.get()`
+  - [ ] `Storage.isAvailable()`
+  - [ ] `Storage.set()`
 - Text
 - Timer
+  - [ ] `new Timer()`
 - Triangle
 - Tween
+  - [ ] `new Tween()`
+  - [ ] `Tween.getValue()`
 
 ---
 
