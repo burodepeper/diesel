@@ -34,6 +34,10 @@
 
 - [ ] Implement possibility for gradients
 
+### CompoundPane
+
+- A collection of shapes, to are either added or removed, to create complex shapes
+
 ### Controller
 
 ### Engine
