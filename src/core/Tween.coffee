@@ -1,8 +1,6 @@
-
 # Tween
-# -----------------------------------------------------------------------------
-# A tween is an often used extension of a Timer, that represents the relative
-# change of one or more values based on a single Timer.
+# -----
+# A tween is an often used extension of a Timer, that represents the relative change of one or more values based on a single Timer.
 
 class Tween extends Timer
 

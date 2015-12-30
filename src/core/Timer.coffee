@@ -1,9 +1,6 @@
-
 # Timer
-# -----------------------------------------------------------------------------
-# A Timer is used the non-visual representation of the passing of time. It is
-# not impacted by the actual framerate of the Engine, so it is safe to use for
-# any kind of movement.
+# -----
+# A Timer is used the non-visual representation of the passing of time. It is not impacted by the actual framerate of the Engine, so it is safe to use for any kind of movement.
 
 class Timer extends Entity
 

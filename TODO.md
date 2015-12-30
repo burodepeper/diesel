@@ -1,8 +1,6 @@
 # Plan de campagne
 
----
-
-## Priorities
+## Short term focus
 
 - Drawing [Rectangles] and [Squares]
 - Separate `color` and `opacity`, and combine with the parental `opacity`
@@ -56,11 +54,11 @@
 
 ### Entity
 
-### Letter _(extends Sprite)_
+### Letter _extends_ Sprite
 
 - [ ] Create default typefaces at 9px, 11px and a uppercase only version at 5px.
 
-### Line _(extends Pane)_
+### Line _extends_ Pane
 
 - [ ] Allow `to()` and `from()` to accept arrays instead of [Points]; arrays are converted to a point internally
 - [ ] Add relative positioning (of entire line)
@@ -69,7 +67,7 @@
 - [ ] `setOpacity()`
 - [ ] Clean up children
 
-### Pane _(extends Entity)_
+### Pane _extends_ Entity
 
 - [ ] `getOpacity()`
 - [ ] `setCSSProperty()`: allow percentages (or floats) as values. Will need an update of `onResize()` as well.
@@ -79,9 +77,9 @@
   - [ ] `remove()`
 - [ ] Move `getParticle()` from [Line], [Circle], [Rectangle] etc. to [Pane]
 
-### Particle _(extends Entity)_
+### Particle _extends_ Entity
 
-### Path _(extends Pane)_
+### Path _extends_ Pane
 
 - [ ] `setOpacity()`
 - [ ] `setColor()`
@@ -89,44 +87,44 @@
 - [ ] `fill()`
 - [ ] `setThickness()`
 
-### Point _(extends Entity)_
+### Point _extends_ Entity
 
 - [ ] Convert all coordinates to [Points]
 
-### Polygon _(extends Pane)_
+### Polygon _extends_ Pane
 
 - a collection of [Points], grouped in [Triangles], to draw more complex shapes
 
-### Rectangle _(extends Pane)_
+### Rectangle _extends_ Pane
 
 - [ ] `fill()`
 - [ ] `stretch()`
 - [ ] `outline()`
 
-### Sprite _(extends Pane)_
+### Sprite _extends_ Pane
 
 - contains [Particles] (from a data source) that resemble an image
 - [ ] `rotate()`: in increments of 90 degrees
 
-### SpriteSet _(extends Controller)_
+### SpriteSet _extends_ Controller
 
 - a group of [Sprites] with methods to control which one is visible
 
-### Square _(extends Rectangle)_
+### Square _extends_ Rectangle
 
 ### Storage
 
-### Text _(extends Pane)_
+### Text _extends_ Pane
 
 - text is rendered as [Letters] and contained within a [Pane]
 
-### Timer _(extends Entity)_
+### Timer _extends_ Entity
 
-### Triangle _(extends Pane)_
+### Triangle _extends_ Pane
 
 - a collection of three [Points] whose surface is filled with [Particles] (or possibly an outline)
 
-### Tween _(extends Timer)_
+### Tween _extends_ Timer
 
 ---
 
@@ -155,15 +153,15 @@
 - Animation
 - (BoundingBox)
 - Button
-- Circle
+- [Circle]
   - [ ] `new Circle()`
   - [ ] `Circle.setCenter()`
   - [ ] `Circle.setRadius()`
-- Color
+- [Color]
   - [ ] `Color.set()`
   - [ ] `Color.setOpacity()`
 - (Controller)
-- Engine
+- [Engine]
   - [ ] `window.PX`
   - [ ] `window.CONTEXT`
   - [ ] `window.WINDOW`
@@ -175,15 +173,15 @@
   - [ ] `Engine.cleanUp()`
   - [ ] `Engine.removeEntity()`
   - [ ] `Engine.trigger()`
-- Entity
+- [Entity]
   - [ ] `Entity.remove()`
   - [ ] `Entity.setState()`
 - Letter
-- Line
+- [Line]
   - [ ] `Line.atAngle()`
   - [ ] `Line.from()`
   - [ ] `Line.to()`
-- Pane
+- [Pane]
   - [ ] `Pane.position`
   - [ ] `Pane.size`
   - [ ] `Pane.addChild()`
@@ -202,7 +200,7 @@
   - [ ] `Pane.setPosition()`
   - [ ] `Pane.setSize()`
   - [ ] `Pane.updateChildren()`
-- Particle
+- [Particle]
   - [ ] `Particle.position`
   - [ ] `Particle.size`
   - [ ] `Particle.getX()`
@@ -217,28 +215,29 @@
   - [ ] `Particle.setOpacity()`
   - [ ] `Particle.setPosition()`
   - [ ] `Particle.setSize()`
-- Path
+- [Path]
   - [ ] `Path.addPoint()`
-- Point
+- [Point]
   - [ ] `new Point()`
   - [ ] `Point.moveTo()`
 - Polygon
-- Rectangle
+- [Rectangle]
   - [ ] `new Rectangle()`
 - Sprite
 - SpriteSet
-- Square
+- [Square]
   - [ ] `new Square()`
-- Storage
+- [Storage]
+  - [ ] types of storage available
   - [ ] `new Storage()`
   - [ ] `Storage.get()`
   - [ ] `Storage.isAvailable()`
   - [ ] `Storage.set()`
 - Text
-- Timer
+- [Timer]
   - [ ] `new Timer()`
 - Triangle
-- Tween
+- [Tween]
   - [ ] `new Tween()`
   - [ ] `Tween.getValue()`
 

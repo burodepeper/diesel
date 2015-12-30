@@ -1,4 +1,3 @@
-
 # Constants and globals
 PX = 6              # Particle size, 6 is nice
 CONTEXT = false     # shorthand for Engine.context
@@ -7,12 +6,8 @@ NOW = false
 DEBUG = false
 
 # Engine
-# -----------------------------------------------------------------------------
-# The global Engine variable is both the container for all entities and the
-# controller that updates them on every tick. By default, this tick is defined
-# by the browser's requestAnimationFrame() method and is limited at 60 fps. All
-# entities added to the Engine will have their update() and draw() methods
-# invoked on every tick.
+# ------
+# The global Engine variable is both the container for all entities and the controller that updates them on every tick. By default, this tick is defined by the browser's requestAnimationFrame() method and is limited at 60 fps. All entities added to the Engine will have their update() and draw() methods invoked on every tick.
 
 Engine =
 

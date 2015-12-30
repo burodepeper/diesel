@@ -1,4 +1,3 @@
-
 class Particle extends Entity
 
   constructor: (@_layer = 1) ->

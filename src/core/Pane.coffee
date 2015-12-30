@@ -1,8 +1,6 @@
-
 # Pane
-# -----------------------------------------------------------------------------
-# A pane is a representation of an area, and of possible entities grouped
-# within that area. The Pane itself is not visible.
+# ----
+# A pane is a representation of an area, and of possible entities grouped within that area. The Pane itself is not visible.
 
 class Pane extends Entity
 

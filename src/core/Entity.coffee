@@ -1,9 +1,6 @@
-
 # Entity
-# -----------------------------------------------------------------------------
-# An entity is the grandparent of anything that exists in the Engine's cycle.
-# It is merely an abstract form of a 'thing' and its methods only have to do
-# with its existence.
+# ------
+# An entity is the grandparent of anything that exists in the Engine's cycle. It is merely an abstract form of a 'thing' and its methods only have to do with its existence.
 
 class Entity
 

@@ -6,18 +6,13 @@ snap = (value) ->
 # Wrapper to make setTimeout() more convenient in Coffeescript
 delay = (ms, func) -> setTimeout func, ms
 
-# Returns a random int between and including low and high.
-# Assumes low < high, and that both are integers.
+# Returns a random int between and including low and high. Assumes low < high, and that both are integers.
 getRandomInt = (low, high) ->
   diff = (high - low) + 1
   diff = Math.random() * diff
   return low + Math.floor diff
 
-# Returns a random int between and including low and high.
-# Assumes low < high, and that both are integers.
-# Gravity dictates whether the result will be more towards low, high, or middle.
-# I am no mathematician, but it seems to work. The average weight of a low/high
-# seems to be at about a third.
+# Returns a random int between and including low and high. Assumes low < high, and that both are integers. Gravity dictates whether the result will be more towards low, high, or middle. I am no mathematician, but it seems to work. The average weight of a low/high seems to be at about a third.
 getWeighedInt = (low, high, gravity, i) ->
   r = Math.random()
   chance = Math.sqrt(Math.random())

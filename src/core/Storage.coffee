@@ -1,10 +1,9 @@
-
 # Storage
-# -----------------------------------------------------------------------------
+# -------
 # Abstraction for window.localStorage
 
 class Storage
-  
+
   constructor: (@type = 'localStorage') ->
     @storage = window[@type]
     unless @isAvailable()
