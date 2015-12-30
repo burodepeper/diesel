@@ -1,4 +1,4 @@
-var BoundingBox, CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Path, Point, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
+var BoundingBox, CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Path, Point, Rectangle, Square, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -890,54 +890,6 @@ Timer = (function(superClass) {
 
 })(Entity);
 
-Tween = (function(superClass) {
-  extend(Tween, superClass);
-
-  function Tween(data, duration1, easing1) {
-    this.duration = duration1;
-    this.easing = easing1 != null ? easing1 : 'linear';
-    Tween.__super__.constructor.call(this, this.duration, this.easing);
-    this.parseParameters(data);
-  }
-
-  Tween.prototype.parseParameters = function(data) {
-    var item, k, len;
-    this.items = {};
-    this.parameters = [];
-    for (k = 0, len = data.length; k < len; k++) {
-      item = data[k];
-      this.parameters.push(item.name);
-      this.items[item.name] = {
-        from: item.from,
-        to: item.to,
-        difference: item.to - item.from,
-        min: Math.min(item.from, item.to),
-        max: Math.max(item.from, item.to)
-      };
-    }
-  };
-
-  Tween.prototype.getValue = function(name) {
-    var item, value;
-    item = this.items[name];
-    if (this.value >= 0) {
-      value = item.from + (this.value * item.difference);
-      if (value < item.min) {
-        value = item.min;
-      }
-      if (value > item.max) {
-        value = item.max;
-      }
-    } else {
-      value = item.min;
-    }
-    return value;
-  };
-
-  return Tween;
-
-})(Timer);
-
 Storage = (function() {
   function Storage(type) {
     this.type = type != null ? type : 'localStorage';
@@ -1077,6 +1029,8 @@ Line = (function(superClass) {
 
   Line.prototype.offset = 0;
 
+  Line.prototype.weight = 1;
+
   function Line(_layer) {
     this._layer = _layer != null ? _layer : 1;
     Line.__super__.constructor.call(this, this._layer);
@@ -1090,6 +1044,10 @@ Line = (function(superClass) {
   Line.prototype.to = function(_to) {
     this._to = _to;
     return this;
+  };
+
+  Line.prototype.setWeight = function(weight) {
+    this.weight = weight;
   };
 
   Line.prototype.atAngle = function(_angle, length, offset) {
@@ -1206,3 +1164,102 @@ Path = (function(superClass) {
   return Path;
 
 })(Pane);
+
+Rectangle = (function(superClass) {
+  extend(Rectangle, superClass);
+
+  function Rectangle() {
+    return Rectangle.__super__.constructor.apply(this, arguments);
+  }
+
+  Rectangle.prototype.constuctor = function(_layer) {
+    this._layer = _layer != null ? _layer : 1;
+    return Rectangle.__super__.constuctor.call(this, this._layer);
+  };
+
+  Rectangle.prototype.update = function() {
+    var i, j, k, l, m, particle, ref, ref1, ref2, ref3, results, x, y;
+    i = 0;
+    for (x = k = 0, ref = this.size.width; 0 <= ref ? k <= ref : k >= ref; x = 0 <= ref ? ++k : --k) {
+      for (y = l = 0, ref1 = this.size.height; 0 <= ref1 ? l <= ref1 : l >= ref1; y = 0 <= ref1 ? ++l : --l) {
+        particle = this.getParticle(i);
+        particle.setPosition(x, y);
+        particle.show();
+        i++;
+      }
+    }
+    if ((this.children.length - 1) > i) {
+      results = [];
+      for (j = m = ref2 = i, ref3 = this.children.length - 1; ref2 <= ref3 ? m <= ref3 : m >= ref3; j = ref2 <= ref3 ? ++m : --m) {
+        results.push(this.getParticle(j).hide());
+      }
+      return results;
+    }
+  };
+
+  return Rectangle;
+
+})(Pane);
+
+Square = (function(superClass) {
+  extend(Square, superClass);
+
+  function Square() {
+    return Square.__super__.constructor.apply(this, arguments);
+  }
+
+  Square.prototype.setSize = function(size) {
+    Square.__super__.setSize.call(this, size, size);
+  };
+
+  return Square;
+
+})(Rectangle);
+
+Tween = (function(superClass) {
+  extend(Tween, superClass);
+
+  function Tween(data, duration1, easing1) {
+    this.duration = duration1;
+    this.easing = easing1 != null ? easing1 : 'linear';
+    Tween.__super__.constructor.call(this, this.duration, this.easing);
+    this.parseParameters(data);
+  }
+
+  Tween.prototype.parseParameters = function(data) {
+    var item, k, len;
+    this.items = {};
+    this.parameters = [];
+    for (k = 0, len = data.length; k < len; k++) {
+      item = data[k];
+      this.parameters.push(item.name);
+      this.items[item.name] = {
+        from: item.from,
+        to: item.to,
+        difference: item.to - item.from,
+        min: Math.min(item.from, item.to),
+        max: Math.max(item.from, item.to)
+      };
+    }
+  };
+
+  Tween.prototype.getValue = function(name) {
+    var item, value;
+    item = this.items[name];
+    if (this.value >= 0) {
+      value = item.from + (this.value * item.difference);
+      if (value < item.min) {
+        value = item.min;
+      }
+      if (value > item.max) {
+        value = item.max;
+      }
+    } else {
+      value = item.min;
+    }
+    return value;
+  };
+
+  return Tween;
+
+})(Timer);

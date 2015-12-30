@@ -24,6 +24,7 @@ module.exports = function(grunt) {
         files: {
           'dist/engine.js': [
             'src/lib/functions.coffee',
+
             'src/core/Engine.coffee',
             'src/core/Entity.coffee',
             'src/core/Controller.coffee',
@@ -32,12 +33,15 @@ module.exports = function(grunt) {
             'src/core/Particle.coffee',
             'src/core/Point.coffee',
             'src/core/Timer.coffee',
-            'src/core/Tween.coffee',
             'src/core/Storage.coffee',
+
             'src/extended/BoundingBox.coffee',
             'src/extended/Circle.coffee',
             'src/extended/Line.coffee',
-            'src/extended/Path.coffee'
+            'src/extended/Path.coffee',
+            'src/extended/Rectangle.coffee',
+            'src/extended/Square.coffee',
+            'src/extended/Tween.coffee'
           ]
         }
       },
