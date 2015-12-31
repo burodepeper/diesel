@@ -14,13 +14,16 @@ class Clock extends Pane
     @hours = new Line()
     @addChild(@hours)
     @hours.setWeight(2)
+    @hours.enableBoundingBox('#fff')
 
     @minutes = new Line()
     @addChild(@minutes)
+    @minutes.enableBoundingBox('#fff')
 
     @seconds = new Line()
     @addChild(@seconds)
     @seconds.setColor(new Color('#e10'))
+    @seconds.enableBoundingBox('#e10')
 
   update: ->
     center = @getCenter()
@@ -57,10 +60,12 @@ class Clock extends Pane
     # @dial.setCenter(29, 29)
     @dial.setRadius(radius)
     @dial.type = 'fill'
-    @dial.setColor(new Color('#222'))
+    # @dial.setColor(new Color('#222'))
+    @dial.setColor(new Color('rgba(255, 255, 255, 0.15)'))
 
     # Hour marks
-    color = new Color('#444')
+    # color = new Color('#444')
+    color = new Color('rgba(255, 255, 255, 0.3)')
     for i in [0 .. 11]
       degrees = i * 30
       line = new Line(2)

@@ -10,8 +10,14 @@ class BoundingBox extends Pane
       @color = new Color(color)
 
   update: ->
-    @left = @reference.getX() * PX
-    @top = @reference.getY() * PX
+
+    if @reference.constructor.name is 'Line'
+      @left = @reference.position.absolute.x * PX
+      @top = @reference.position.absolute.y * PX
+    else
+      @left = @reference.getX() * PX
+      @top = @reference.getY() * PX
+      
     @right = @left + (@reference.getWidth() * PX)
     @bottom = @top + (@reference.getHeight() * PX)
 

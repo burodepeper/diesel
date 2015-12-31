@@ -29,7 +29,6 @@ class Line extends Pane
   # 0 is up, 90 is right, 180 is down, 270 is left
   # @offset is a optional float that specifies from what percentage the line should be drawn (if not from the origin, but if origin is known)
   atAngle: (@_angle, @length, @offset = 0) ->
-    # TODO calculate @_to
     x = @_from.x
     y = @_from.y
 
@@ -47,18 +46,24 @@ class Line extends Pane
 
     return this
 
-  calculateLength: ->
+  calculateDimensions: ->
     if @_from? and @_to?
       @diffX = @_to.x - @_from.x
       @diffY = @_to.y - @_from.y
-      @length = Math.sqrt((@diffX * @diffX) + (@diffY * @diffY))
+      @width = Math.abs(@diffX)
+      @height = Math.abs(@diffY)
+      @length = Math.sqrt((@width * @width) + (@height * @height))
+      x = Math.min(@_to.x, @_from.x)
+      y = Math.min(@_to.y, @_from.y)
+      @setAbsolutePosition(@getX() + x, @getY() + y)
+      @setSize(@width, @height)
       # TODO calculate @_angle
-    return @length
+    return
 
   update: ->
 
     i = 0
-    @calculateLength()
+    @calculateDimensions()
 
     if Math.abs(@diffX) >= Math.abs(@diffY)
       y = @_from.y

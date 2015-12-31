@@ -29,14 +29,14 @@ App =
       @rectangle.setPosition(120, 80)
       @rectangle.setSize(120, 80)
       @rectangle.setColor(red)
-      @rectangle.setOpacity(0.5)
+      @rectangle.setOpacity(0.75)
       @rectangle.enableBoundingBox(white)
 
       @square = new Square(1)
       @square.setPosition(160, 100)
       @square.setSize(100)
       @square.setColor(green)
-      @square.setOpacity(0.5)
+      @square.setOpacity(0.75)
       @square.enableBoundingBox(white)
 
       # SpectrumAnalyzer at the bottom

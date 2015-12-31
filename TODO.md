@@ -19,7 +19,7 @@
 
 ### BoundingBox
 
-- [ ] Does this work on a [Line]?
+- [ ] Extend lines a little bit
 
 ### Button
 

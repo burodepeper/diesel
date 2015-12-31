@@ -537,6 +537,13 @@ Pane = (function(superClass) {
     }
   };
 
+  Pane.prototype.setAbsolutePosition = function(x, y) {
+    return this.position.absolute = {
+      x: x,
+      y: y
+    };
+  };
+
   Pane.prototype.setSize = function(width, height) {
     this.size.width = width;
     this.size.height = height;
@@ -1074,8 +1081,13 @@ BoundingBox = (function(superClass) {
   };
 
   BoundingBox.prototype.update = function() {
-    this.left = this.reference.getX() * PX;
-    this.top = this.reference.getY() * PX;
+    if (this.reference.constructor.name === 'Line') {
+      this.left = this.reference.position.absolute.x * PX;
+      this.top = this.reference.position.absolute.y * PX;
+    } else {
+      this.left = this.reference.getX() * PX;
+      this.top = this.reference.getY() * PX;
+    }
     this.right = this.left + (this.reference.getWidth() * PX);
     return this.bottom = this.top + (this.reference.getHeight() * PX);
   };
@@ -1222,19 +1234,25 @@ Line = (function(superClass) {
     return this;
   };
 
-  Line.prototype.calculateLength = function() {
+  Line.prototype.calculateDimensions = function() {
+    var x, y;
     if ((this._from != null) && (this._to != null)) {
       this.diffX = this._to.x - this._from.x;
       this.diffY = this._to.y - this._from.y;
-      this.length = Math.sqrt((this.diffX * this.diffX) + (this.diffY * this.diffY));
+      this.width = Math.abs(this.diffX);
+      this.height = Math.abs(this.diffY);
+      this.length = Math.sqrt((this.width * this.width) + (this.height * this.height));
+      x = Math.min(this._to.x, this._from.x);
+      y = Math.min(this._to.y, this._from.y);
+      this.setAbsolutePosition(this.getX() + x, this.getY() + y);
+      this.setSize(this.width, this.height);
     }
-    return this.length;
   };
 
   Line.prototype.update = function() {
     var i, increment, j, k, l, m, n, particle, ref, ref1, ref2, ref3, ref4, ref5, ref6, results, x, y;
     i = 0;
-    this.calculateLength();
+    this.calculateDimensions();
     if (Math.abs(this.diffX) >= Math.abs(this.diffY)) {
       y = this._from.y;
       increment = this.diffY / Math.abs(this.diffX);

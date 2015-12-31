@@ -57,6 +57,11 @@ class Pane extends Entity
 
     return
 
+  # NOTE
+  # It is best not to rely on this method. It is used by the {Line} class to draw its {BoundingBox}. Relative positioning should be used wherever possible.
+  setAbsolutePosition: (x, y) ->
+    @position.absolute = {x, y}
+
   # TODO
   # Check validaty of width and height
   setSize: (width, height) ->
