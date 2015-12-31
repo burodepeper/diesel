@@ -53,6 +53,7 @@
 - [ ] `pause()`
 - [ ] Keyboard and mouse input (via a separate [Controller])
 - [ ] Allow multiple canvases/contexts, and in extension, allow a canvas to be linked to an existing DOM-element.
+- [ ] `getAllInstancesOf(class, layer)`: returns all instances of `class`; `layer` is optional
 
 ### Entity
 
@@ -78,6 +79,7 @@
   - [ ] `add()`
   - [ ] `remove()`
 - [x] Move `getChild()` from [Line], [Circle], [Rectangle] etc. to [Pane]
+- [ ] `setColor()` does not work when called before the `addChild()` is executed on that [Pane]
 
 ### Particle _extends_ Entity
 

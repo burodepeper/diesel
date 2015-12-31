@@ -83,18 +83,18 @@ Clock = (function(superClass) {
     var center, color, degrees, i, j, line, radius, results;
     center = new Point(29, 29);
     radius = 30;
-    this.background = new Circle();
-    this.background.setCenter(center);
-    this.background.setRadius(radius);
-    this.background.setColor(new Color('#666'));
-    this.addChild(this.background);
-    color = new Color('#333');
+    this.dial = new Circle(1);
+    this.addChild(this.dial);
+    this.dial.setCenter(center);
+    this.dial.setRadius(radius);
+    this.dial.setColor(new Color('#333'));
+    color = new Color('#f00');
     results = [];
     for (i = j = 0; j <= 11; i = ++j) {
       degrees = i * 30;
-      line = new Line();
+      line = new Line(2);
       this.addChild(line);
-      line.from(center).atAngle(degrees, 29, 0.8);
+      line.from(center).atAngle(degrees, 30, 0.8);
       results.push(line.setColor(color));
     }
     return results;

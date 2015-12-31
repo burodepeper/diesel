@@ -52,17 +52,17 @@ class Clock extends Pane
 
     # Background circle thing
     radius = 30
-    @background = new Circle()
-    @background.setCenter(center)
-    @background.setRadius(radius)
-    @background.setColor(new Color('#666'))
-    @addChild(@background)
+    @dial = new Circle(1)
+    @addChild(@dial)
+    @dial.setCenter(center)
+    @dial.setRadius(radius)
+    @dial.setColor(new Color('#333'))
 
     # Hour marks
-    color = new Color('#333')
+    color = new Color('#f00')
     for i in [0 .. 11]
       degrees = i * 30
-      line = new Line()
+      line = new Line(2)
       @addChild(line)
-      line.from(center).atAngle(degrees, 29, 0.8)
+      line.from(center).atAngle(degrees, 30, 0.8)
       line.setColor(color)

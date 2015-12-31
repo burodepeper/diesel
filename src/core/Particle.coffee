@@ -19,6 +19,7 @@ class Particle extends Entity
     @isVisible = true
 
   setReference: (@reference, @_particleID) ->
+    @color = @reference.getColor()
 
   setPosition: (x, y) ->
     @position.relative = {x, y}

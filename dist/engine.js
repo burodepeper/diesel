@@ -577,6 +577,10 @@ Pane = (function(superClass) {
     return this.center;
   };
 
+  Pane.prototype.getColor = function() {
+    return this.color;
+  };
+
   Pane.prototype.isWithinBounds = function(x, y, width, height) {
     if (x == null) {
       x = this.position.relative.x;
@@ -714,6 +718,7 @@ Particle = (function(superClass) {
   Particle.prototype.setReference = function(reference, _particleID) {
     this.reference = reference;
     this._particleID = _particleID;
+    return this.color = this.reference.getColor();
   };
 
   Particle.prototype.setPosition = function(x, y) {
