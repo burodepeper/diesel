@@ -2,7 +2,7 @@
 
 ## Short term focus
 
-- [ ] [BoundingBox] on a [Line], [Rectangle] and [Circle]
+- [x] [BoundingBox] on a [Line], [Rectangle] and [Circle]
   - [x] Differentiate between `children` and `particles`
 - [ ] Separate `color` and `opacity`
 - [ ] Update [README.md] and think of more practical examples

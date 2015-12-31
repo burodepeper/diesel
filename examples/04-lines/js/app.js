@@ -95,6 +95,7 @@ Clock = (function(superClass) {
     this.dial.setRadius(radius);
     this.dial.type = 'fill';
     this.dial.setColor(new Color('rgba(255, 255, 255, 0.15)'));
+    this.dial.enableBoundingBox('#fd0');
     color = new Color('rgba(255, 255, 255, 0.3)');
     results = [];
     for (i = j = 0; j <= 11; i = ++j) {

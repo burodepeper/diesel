@@ -1133,12 +1133,24 @@ Circle = (function(superClass) {
     this.center = isPoint(x, y);
     if (!this.center) {
       return console.warn("Circle.setCenter() is not valid");
+    } else {
+      return this.updateDimensions();
     }
   };
 
   Circle.prototype.setRadius = function(radius) {
     this.radius = radius;
+    this.updateDimensions();
     return this.hasChanged = true;
+  };
+
+  Circle.prototype.updateDimensions = function() {
+    var diameter;
+    if (this.center && this.radius) {
+      diameter = this.radius * 2;
+      this.setPosition(this.center.x - this.radius, this.center.y - this.radius);
+      return this.setSize(diameter, diameter);
+    }
   };
 
   Circle.prototype.update = function() {

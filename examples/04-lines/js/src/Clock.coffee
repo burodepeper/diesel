@@ -62,6 +62,7 @@ class Clock extends Pane
     @dial.type = 'fill'
     # @dial.setColor(new Color('#222'))
     @dial.setColor(new Color('rgba(255, 255, 255, 0.15)'))
+    @dial.enableBoundingBox('#fd0')
 
     # Hour marks
     # color = new Color('#444')

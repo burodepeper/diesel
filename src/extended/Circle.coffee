@@ -11,9 +11,18 @@ class Circle extends Pane
     @center = isPoint(x, y)
     unless @center
       console.warn "Circle.setCenter() is not valid"
+    else
+      @updateDimensions()
 
   setRadius: (@radius) ->
+    @updateDimensions()
     @hasChanged = true
+
+  updateDimensions: ->
+    if @center and @radius
+      diameter = @radius * 2
+      @setPosition(@center.x - @radius, @center.y - @radius)
+      @setSize(diameter, diameter)
 
   update: ->
 
