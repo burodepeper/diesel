@@ -1,5 +1,8 @@
 class BoundingBox extends Pane
 
+  extension: 5
+  padding: 2
+
   constructor: ->
     super(1)
 
@@ -17,18 +20,27 @@ class BoundingBox extends Pane
     else
       @left = @reference.getX() * PX
       @top = @reference.getY() * PX
-      
+
     @right = @left + (@reference.getWidth() * PX)
     @bottom = @top + (@reference.getHeight() * PX)
 
   draw: ->
     CONTEXT.strokeStyle = @color
+
     CONTEXT.beginPath()
-    CONTEXT.moveTo(@left - 1, @top - 1)
-    CONTEXT.lineTo(@right + 1, @top - 1)
-    CONTEXT.lineTo(@right + 1, @bottom + 1)
-    CONTEXT.lineTo(@left - 1, @bottom + 1)
-    CONTEXT.lineTo(@left - 1, @top - 1)
+    CONTEXT.moveTo(@left - @extension, @top - @padding)
+    CONTEXT.lineTo(@right + @extension, @top - @padding)
+
+    CONTEXT.moveTo(@right + @padding, @top - @extension)
+    CONTEXT.lineTo(@right + @padding, @bottom + @extension)
+
+    CONTEXT.moveTo(@right + @extension, @bottom + @padding)
+    CONTEXT.lineTo(@left - @extension, @bottom + @padding)
+
+    CONTEXT.moveTo(@left - @padding, @bottom + @extension)
+    CONTEXT.lineTo(@left - @padding, @top - @extension)
+
     CONTEXT.closePath()
     CONTEXT.stroke()
+
     return

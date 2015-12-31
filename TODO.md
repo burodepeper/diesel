@@ -19,7 +19,7 @@
 
 ### BoundingBox
 
-- [ ] Extend lines a little bit
+- [x] Add `extension` and `padding`
 
 ### Button
 

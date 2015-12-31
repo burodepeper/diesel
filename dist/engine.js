@@ -1068,6 +1068,10 @@ Storage = (function() {
 BoundingBox = (function(superClass) {
   extend(BoundingBox, superClass);
 
+  BoundingBox.prototype.extension = 5;
+
+  BoundingBox.prototype.padding = 2;
+
   function BoundingBox() {
     BoundingBox.__super__.constructor.call(this, 1);
   }
@@ -1095,11 +1099,14 @@ BoundingBox = (function(superClass) {
   BoundingBox.prototype.draw = function() {
     CONTEXT.strokeStyle = this.color;
     CONTEXT.beginPath();
-    CONTEXT.moveTo(this.left - 1, this.top - 1);
-    CONTEXT.lineTo(this.right + 1, this.top - 1);
-    CONTEXT.lineTo(this.right + 1, this.bottom + 1);
-    CONTEXT.lineTo(this.left - 1, this.bottom + 1);
-    CONTEXT.lineTo(this.left - 1, this.top - 1);
+    CONTEXT.moveTo(this.left - this.extension, this.top - this.padding);
+    CONTEXT.lineTo(this.right + this.extension, this.top - this.padding);
+    CONTEXT.moveTo(this.right + this.padding, this.top - this.extension);
+    CONTEXT.lineTo(this.right + this.padding, this.bottom + this.extension);
+    CONTEXT.moveTo(this.right + this.extension, this.bottom + this.padding);
+    CONTEXT.lineTo(this.left - this.extension, this.bottom + this.padding);
+    CONTEXT.moveTo(this.left - this.padding, this.bottom + this.extension);
+    CONTEXT.lineTo(this.left - this.padding, this.top - this.extension);
     CONTEXT.closePath();
     CONTEXT.stroke();
   };
