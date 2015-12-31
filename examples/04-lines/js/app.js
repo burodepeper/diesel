@@ -87,8 +87,9 @@ Clock = (function(superClass) {
     this.addChild(this.dial);
     this.dial.setCenter(center);
     this.dial.setRadius(radius);
-    this.dial.setColor(new Color('#333'));
-    color = new Color('#f00');
+    this.dial.type = 'fill';
+    this.dial.setColor(new Color('#222'));
+    color = new Color('#444');
     results = [];
     for (i = j = 0; j <= 11; i = ++j) {
       degrees = i * 30;

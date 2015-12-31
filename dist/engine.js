@@ -462,6 +462,7 @@ Pane = (function(superClass) {
     this.hasCSS = false;
     this.hasBoundingBox = false;
     this.boundingBox = null;
+    this.hasChanged = false;
   }
 
   Pane.prototype.setPosition = function(x, y) {
@@ -991,6 +992,8 @@ Circle = (function(superClass) {
 
   Circle.prototype.center = null;
 
+  Circle.prototype.type = 'outline';
+
   function Circle(_layer) {
     this._layer = _layer != null ? _layer : 1;
     Circle.__super__.constructor.call(this, this._layer);
@@ -998,27 +1001,47 @@ Circle = (function(superClass) {
 
   Circle.prototype.setCenter = function(center) {
     this.center = center;
+    return this.hasChanged = true;
   };
 
   Circle.prototype.setRadius = function(radius) {
     this.radius = radius;
+    return this.hasChanged = true;
   };
 
   Circle.prototype.update = function() {
-    var angle, i, k, particle, radians, results, x, y;
-    if (this.center && this.radius) {
-      i = 0;
-      results = [];
-      for (angle = k = 0; k <= 359; angle = ++k) {
-        radians = angle * (Math.PI / 180);
-        x = this.center.x + (Math.cos(radians) * this.radius);
-        y = this.center.y - (Math.sin(radians) * this.radius);
-        particle = this.getChild(i);
-        particle.setPosition(x, y);
-        particle.show();
-        results.push(i++);
+    var angle, diffX, diffY, distanceFromCenter, i, k, l, m, particle, radians, ref, ref1, x, y;
+    if (this.hasChanged) {
+      if (this.center && this.radius) {
+        if (this.type === 'outline') {
+          i = 0;
+          for (angle = k = 0; k <= 359; angle = ++k) {
+            radians = angle * (Math.PI / 180);
+            x = this.center.x + (Math.cos(radians) * this.radius);
+            y = this.center.y - (Math.sin(radians) * this.radius);
+            particle = this.getChild(i);
+            particle.setPosition(x, y);
+            particle.show();
+            i++;
+          }
+        } else if (this.type === 'fill') {
+          i = 0;
+          for (x = l = 0, ref = this.radius * 2; 0 <= ref ? l <= ref : l >= ref; x = 0 <= ref ? ++l : --l) {
+            for (y = m = 0, ref1 = this.radius * 2; 0 <= ref1 ? m <= ref1 : m >= ref1; y = 0 <= ref1 ? ++m : --m) {
+              diffX = this.center.x - x;
+              diffY = this.center.y - y;
+              distanceFromCenter = Math.sqrt((diffX * diffX) + (diffY * diffY));
+              if (distanceFromCenter < this.radius) {
+                particle = this.getChild(i);
+                particle.setPosition(x, y);
+                particle.show();
+                i++;
+              }
+            }
+          }
+        }
+        return this.hasChanged = false;
       }
-      return results;
     }
   };
 

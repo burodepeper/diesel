@@ -37,6 +37,7 @@ class Pane extends Entity
     @hasCSS = false
     @hasBoundingBox = false
     @boundingBox = null
+    @hasChanged = false
 
   # Setters -------------------------------------------------------------------
 

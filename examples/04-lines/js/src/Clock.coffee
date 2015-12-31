@@ -56,10 +56,11 @@ class Clock extends Pane
     @addChild(@dial)
     @dial.setCenter(center)
     @dial.setRadius(radius)
-    @dial.setColor(new Color('#333'))
+    @dial.type = 'fill'
+    @dial.setColor(new Color('#222'))
 
     # Hour marks
-    color = new Color('#f00')
+    color = new Color('#444')
     for i in [0 .. 11]
       degrees = i * 30
       line = new Line(2)
