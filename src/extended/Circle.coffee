@@ -18,15 +18,7 @@ class Circle extends Pane
         radians = angle * (Math.PI / 180)
         x = @center.x + (Math.cos(radians) * @radius)
         y = @center.y - (Math.sin(radians) * @radius)
-        particle = @getParticle(i)
+        particle = @getChild(i)
         particle.setPosition(x, y)
         particle.show()
         i++
-
-  getParticle: (i) ->
-    if @children[i]
-      return @children[i].show()
-    else
-      particle = new Particle(@_layer)
-      @addChild(particle)
-      return particle

@@ -58,7 +58,7 @@ class Line extends Pane
       y = @_from.y
       increment = @diffY / Math.abs(@diffX)
       for x in [@_from.x .. @_to.x]
-        particle = @getParticle(i)
+        particle = @getChild(i)
         particle.setPosition(x, y)
         particle.show()
         y += increment
@@ -68,7 +68,7 @@ class Line extends Pane
       x = @_from.x
       increment = @diffX / Math.abs(@diffY)
       for y in [@_from.y .. @_to.y]
-        particle = @getParticle(i)
+        particle = @getChild(i)
         particle.setPosition(x, y)
         particle.show()
         x += increment
@@ -76,16 +76,8 @@ class Line extends Pane
 
     if @offset
       for j in [0 .. Math.round(i * @offset)]
-        @getParticle(j).hide()
+        @getChild(j).hide()
 
     if (@children.length - 1) > i
       for j in [i .. @children.length - 1]
-        @getParticle(j).hide()
-
-  getParticle: (i) ->
-    if @children[i]
-      return @children[i].show()
-    else
-      particle = new Particle(@_layer)
-      @addChild(particle)
-      return particle
+        @getChild(j).hide()

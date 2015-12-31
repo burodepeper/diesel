@@ -190,6 +190,14 @@ class Pane extends Entity
       child[method](value)
     return
 
+  getChild: (i) ->
+    if @children[i]
+      return @children[i].show()
+    else
+      particle = new Particle(@_layer)
+      @addChild(particle)
+      return particle
+
   # Debug ---------------------------------------------------------------------
 
   enableBoundingBox: (color) ->

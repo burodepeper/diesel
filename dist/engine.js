@@ -656,6 +656,17 @@ Pane = (function(superClass) {
     }
   };
 
+  Pane.prototype.getChild = function(i) {
+    var particle;
+    if (this.children[i]) {
+      return this.children[i].show();
+    } else {
+      particle = new Particle(this._layer);
+      this.addChild(particle);
+      return particle;
+    }
+  };
+
   Pane.prototype.enableBoundingBox = function(color) {
     this.hasBoundingBox = true;
     this.boundingBox = new BoundingBox();
@@ -997,23 +1008,12 @@ Circle = (function(superClass) {
         radians = angle * (Math.PI / 180);
         x = this.center.x + (Math.cos(radians) * this.radius);
         y = this.center.y - (Math.sin(radians) * this.radius);
-        particle = this.getParticle(i);
+        particle = this.getChild(i);
         particle.setPosition(x, y);
         particle.show();
         results.push(i++);
       }
       return results;
-    }
-  };
-
-  Circle.prototype.getParticle = function(i) {
-    var particle;
-    if (this.children[i]) {
-      return this.children[i].show();
-    } else {
-      particle = new Particle(this._layer);
-      this.addChild(particle);
-      return particle;
     }
   };
 
@@ -1092,7 +1092,7 @@ Line = (function(superClass) {
       y = this._from.y;
       increment = this.diffY / Math.abs(this.diffX);
       for (x = k = ref = this._from.x, ref1 = this._to.x; ref <= ref1 ? k <= ref1 : k >= ref1; x = ref <= ref1 ? ++k : --k) {
-        particle = this.getParticle(i);
+        particle = this.getChild(i);
         particle.setPosition(x, y);
         particle.show();
         y += increment;
@@ -1102,7 +1102,7 @@ Line = (function(superClass) {
       x = this._from.x;
       increment = this.diffX / Math.abs(this.diffY);
       for (y = l = ref2 = this._from.y, ref3 = this._to.y; ref2 <= ref3 ? l <= ref3 : l >= ref3; y = ref2 <= ref3 ? ++l : --l) {
-        particle = this.getParticle(i);
+        particle = this.getChild(i);
         particle.setPosition(x, y);
         particle.show();
         x += increment;
@@ -1111,26 +1111,15 @@ Line = (function(superClass) {
     }
     if (this.offset) {
       for (j = m = 0, ref4 = Math.round(i * this.offset); 0 <= ref4 ? m <= ref4 : m >= ref4; j = 0 <= ref4 ? ++m : --m) {
-        this.getParticle(j).hide();
+        this.getChild(j).hide();
       }
     }
     if ((this.children.length - 1) > i) {
       results = [];
       for (j = n = ref5 = i, ref6 = this.children.length - 1; ref5 <= ref6 ? n <= ref6 : n >= ref6; j = ref5 <= ref6 ? ++n : --n) {
-        results.push(this.getParticle(j).hide());
+        results.push(this.getChild(j).hide());
       }
       return results;
-    }
-  };
-
-  Line.prototype.getParticle = function(i) {
-    var particle;
-    if (this.children[i]) {
-      return this.children[i].show();
-    } else {
-      particle = new Particle(this._layer);
-      this.addChild(particle);
-      return particle;
     }
   };
 
@@ -1187,13 +1176,13 @@ Rectangle = (function(superClass) {
   Rectangle.prototype.update = function() {
     var i, j, k, l, m, n, particle, ref, ref1, ref2, ref3, ref4, results, results1, x, y;
     if (this.type === 'stretch') {
-      particle = this.getParticle(0).show();
+      particle = this.getChild(0).show();
       particle.setPosition(this.position.absolute.x, this.position.absolute.y);
       particle.setSize(this.size.width, this.size.height);
       if (this.children.length > 1) {
         results = [];
         for (j = k = 1, ref = this.children.length - 1; 1 <= ref ? k <= ref : k >= ref; j = 1 <= ref ? ++k : --k) {
-          results.push(this.getParticle(j).hide());
+          results.push(this.getChild(j).hide());
         }
         return results;
       }
@@ -1201,7 +1190,7 @@ Rectangle = (function(superClass) {
       i = 0;
       for (x = l = 0, ref1 = this.size.width; 0 <= ref1 ? l <= ref1 : l >= ref1; x = 0 <= ref1 ? ++l : --l) {
         for (y = m = 0, ref2 = this.size.height; 0 <= ref2 ? m <= ref2 : m >= ref2; y = 0 <= ref2 ? ++m : --m) {
-          particle = this.getParticle(i);
+          particle = this.getChild(i);
           particle.setPosition(x, y);
           particle.show();
           i++;
@@ -1210,21 +1199,10 @@ Rectangle = (function(superClass) {
       if ((this.children.length - 1) > i) {
         results1 = [];
         for (j = n = ref3 = i, ref4 = this.children.length - 1; ref3 <= ref4 ? n <= ref4 : n >= ref4; j = ref3 <= ref4 ? ++n : --n) {
-          results1.push(this.getParticle(j).hide());
+          results1.push(this.getChild(j).hide());
         }
         return results1;
       }
-    }
-  };
-
-  Rectangle.prototype.getParticle = function(i) {
-    var particle;
-    if (this.children[i]) {
-      return this.children[i].show();
-    } else {
-      particle = new Particle(this._layer);
-      this.addChild(particle);
-      return particle;
     }
   };
 

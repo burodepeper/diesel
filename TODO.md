@@ -77,7 +77,7 @@
 - [ ] Mask (think of it as a combination of several shapes)
   - [ ] `add()`
   - [ ] `remove()`
-- [ ] Move `getParticle()` from [Line], [Circle], [Rectangle] etc. to [Pane]
+- [x] Move `getChild()` from [Line], [Circle], [Rectangle] etc. to [Pane]
 
 ### Particle _extends_ Entity
 
