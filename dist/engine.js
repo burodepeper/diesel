@@ -357,8 +357,6 @@ Color = (function(superClass) {
 
   Color.prototype.a = 1;
 
-  Color.prototype.asString = null;
-
   function Color(color) {
     if (color == null) {
       color = '#fff';
@@ -374,8 +372,7 @@ Color = (function(superClass) {
       this.r = parseInt(color.substring(1, 3), 16);
       this.g = parseInt(color.substring(3, 5), 16);
       this.b = parseInt(color.substring(5, 7), 16);
-      this.a = 1;
-      return this.compile();
+      return this.a = 1;
     } else if ((color.length === 4) && color.match(/#[0-9a-f]{3}/)) {
       r = parseInt(color.substring(1, 2), 16);
       g = parseInt(color.substring(2, 3), 16);
@@ -383,14 +380,12 @@ Color = (function(superClass) {
       this.r = (r * 16) + r;
       this.g = (g * 16) + g;
       this.b = (b * 16) + b;
-      this.a = 1;
-      return this.compile();
+      return this.a = 1;
     } else if (match = color.match(/rgba\(([0-9]+),([0-9]+),([0-9]+),([\.0-9]+)\)/)) {
       this.r = parseInt(match[1]);
       this.g = parseInt(match[2]);
       this.b = parseInt(match[3]);
-      this.a = parseFloat(match[4]);
-      return this.compile();
+      return this.a = parseFloat(match[4]);
     } else {
       console.log("Color.set()", color + "' is not valid");
       return false;
@@ -408,16 +403,21 @@ Color = (function(superClass) {
     if (opacity > 1) {
       opacity = 1;
     }
-    this.a = opacity;
-    return this.compile();
+    return this.a = opacity;
   };
 
-  Color.prototype.compile = function() {
-    return this.asString = "rgba(" + this.r + ", " + this.g + ", " + this.b + ", " + this.a + ")";
+  Color.prototype.setReference = function(reference) {
+    this.reference = reference;
   };
 
   Color.prototype.toString = function() {
-    return this.asString;
+    var opacity;
+    if (this.reference) {
+      opacity = this.reference.getOpacity() * this.a;
+    } else {
+      opacity = this.a;
+    }
+    return "rgba(" + this.r + ", " + this.g + ", " + this.b + ", " + opacity + ")";
   };
 
   return Color;
@@ -537,6 +537,7 @@ Pane = (function(superClass) {
     } else {
       this.color.set(color);
     }
+    this.color.setReference(this);
     return this.updateChildren('setColor', this.color);
   };
 
@@ -562,6 +563,10 @@ Pane = (function(superClass) {
     } else {
       return this.position.relative.y;
     }
+  };
+
+  Pane.prototype.getOpacity = function() {
+    return this.opacity;
   };
 
   Pane.prototype.getCenter = function() {
@@ -1172,28 +1177,54 @@ Rectangle = (function(superClass) {
     return Rectangle.__super__.constructor.apply(this, arguments);
   }
 
+  Rectangle.prototype.type = 'stretch';
+
   Rectangle.prototype.constuctor = function(_layer) {
     this._layer = _layer != null ? _layer : 1;
     return Rectangle.__super__.constuctor.call(this, this._layer);
   };
 
   Rectangle.prototype.update = function() {
-    var i, j, k, l, m, particle, ref, ref1, ref2, ref3, results, x, y;
-    i = 0;
-    for (x = k = 0, ref = this.size.width; 0 <= ref ? k <= ref : k >= ref; x = 0 <= ref ? ++k : --k) {
-      for (y = l = 0, ref1 = this.size.height; 0 <= ref1 ? l <= ref1 : l >= ref1; y = 0 <= ref1 ? ++l : --l) {
-        particle = this.getParticle(i);
-        particle.setPosition(x, y);
-        particle.show();
-        i++;
+    var i, j, k, l, m, n, particle, ref, ref1, ref2, ref3, ref4, results, results1, x, y;
+    if (this.type === 'stretch') {
+      particle = this.getParticle(0).show();
+      particle.setPosition(this.position.absolute.x, this.position.absolute.y);
+      particle.setSize(this.size.width, this.size.height);
+      if (this.children.length > 1) {
+        results = [];
+        for (j = k = 1, ref = this.children.length - 1; 1 <= ref ? k <= ref : k >= ref; j = 1 <= ref ? ++k : --k) {
+          results.push(this.getParticle(j).hide());
+        }
+        return results;
+      }
+    } else if (this.type === 'fill') {
+      i = 0;
+      for (x = l = 0, ref1 = this.size.width; 0 <= ref1 ? l <= ref1 : l >= ref1; x = 0 <= ref1 ? ++l : --l) {
+        for (y = m = 0, ref2 = this.size.height; 0 <= ref2 ? m <= ref2 : m >= ref2; y = 0 <= ref2 ? ++m : --m) {
+          particle = this.getParticle(i);
+          particle.setPosition(x, y);
+          particle.show();
+          i++;
+        }
+      }
+      if ((this.children.length - 1) > i) {
+        results1 = [];
+        for (j = n = ref3 = i, ref4 = this.children.length - 1; ref3 <= ref4 ? n <= ref4 : n >= ref4; j = ref3 <= ref4 ? ++n : --n) {
+          results1.push(this.getParticle(j).hide());
+        }
+        return results1;
       }
     }
-    if ((this.children.length - 1) > i) {
-      results = [];
-      for (j = m = ref2 = i, ref3 = this.children.length - 1; ref2 <= ref3 ? m <= ref3 : m >= ref3; j = ref2 <= ref3 ? ++m : --m) {
-        results.push(this.getParticle(j).hide());
-      }
-      return results;
+  };
+
+  Rectangle.prototype.getParticle = function(i) {
+    var particle;
+    if (this.children[i]) {
+      return this.children[i].show();
+    } else {
+      particle = new Particle(this._layer);
+      this.addChild(particle);
+      return particle;
     }
   };
 

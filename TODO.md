@@ -2,10 +2,10 @@
 
 ## Short term focus
 
-- Drawing [Rectangles] and [Squares]
-- Separate `color` and `opacity`, and combine with the parental `opacity`
-- Convert all coordinates (internally) to [Points], and accept arrays as coordinates
-- Update [README.md] and think of more practical examples
+- [x] Drawing [Rectangles] and [Squares] width `stretch`
+- [ ] Separate `color` and `opacity`, and combine with the parental `opacity`
+- [ ] Convert all coordinates (internally) to [Points], and accept arrays as coordinates
+- [ ] Update [README.md] and think of more practical examples
 
 ---
 

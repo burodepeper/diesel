@@ -96,6 +96,7 @@ class Pane extends Entity
       @color = color
     else
       @color.set(color)
+    @color.setReference(this)
     @updateChildren('setColor', @color)
 
   # Helpers -------------------------------------------------------------------
@@ -117,6 +118,9 @@ class Pane extends Entity
       return @reference.getY() + @position.relative.y
     else
       return @position.relative.y
+
+  getOpacity: ->
+    return @opacity
 
   getCenter: ->
     @center =
