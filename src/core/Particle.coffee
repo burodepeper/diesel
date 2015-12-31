@@ -1,19 +1,23 @@
 class Particle extends Entity
 
+  color: null
+  size:
+    width: 1
+    height: 1
+  reference: WINDOW
+
+  isVisible: true
+  hasChanged: false
+
   constructor: (@_layer = 1) ->
     super()
-
     @position =
       relative: new Point(0, 0)
-      absolute: new Point(0, 0)
-    @color = new Color()
-    @size =
-      width: 1
-      height: 1
-    @reference = WINDOW
-
-    @isVisible = true
-    @hasChanged = false
+      # NOTE
+      # position.absolute is not a {Point}, because the absolute position is merely a placeholder for the relative position of this {Particle} and all its parents in the hierarchy
+      absolute:
+        x: 0
+        y: 0
 
   setReference: (@reference, @_particleID) ->
     @color = @reference.getColor()

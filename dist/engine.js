@@ -739,21 +739,29 @@ Pane = (function(superClass) {
 Particle = (function(superClass) {
   extend(Particle, superClass);
 
+  Particle.prototype.color = null;
+
+  Particle.prototype.size = {
+    width: 1,
+    height: 1
+  };
+
+  Particle.prototype.reference = WINDOW;
+
+  Particle.prototype.isVisible = true;
+
+  Particle.prototype.hasChanged = false;
+
   function Particle(_layer) {
     this._layer = _layer != null ? _layer : 1;
     Particle.__super__.constructor.call(this);
     this.position = {
       relative: new Point(0, 0),
-      absolute: new Point(0, 0)
+      absolute: {
+        x: 0,
+        y: 0
+      }
     };
-    this.color = new Color();
-    this.size = {
-      width: 1,
-      height: 1
-    };
-    this.reference = WINDOW;
-    this.isVisible = true;
-    this.hasChanged = false;
   }
 
   Particle.prototype.setReference = function(reference, _particleID) {

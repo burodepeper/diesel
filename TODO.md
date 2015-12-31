@@ -2,7 +2,6 @@
 
 ## Short term focus
 
-- [ ] [example-04] has 11268 (!) entities on just the first layer, which is quite unaccountable for, possibly an overkill of [Points]. The second layer has 3000+ entities because of the pixels the circle is made out of.
 - [ ] [BoundingBox] on a [Line]
 - [ ] Separate `color` and `opacity`
 - [ ] Update [README.md] and think of more practical examples
