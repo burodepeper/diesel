@@ -25,14 +25,12 @@ App = {
       this.rectangle = new Rectangle(1);
       this.rectangle.setPosition(120, 80);
       this.rectangle.setSize(120, 80);
-      this.rectangle.setColor(red);
-      this.rectangle.setOpacity(0.75);
+      this.rectangle.setColor(red, 0.75);
       this.rectangle.enableBoundingBox(white);
       this.square = new Square(1);
       this.square.setPosition(160, 100);
       this.square.setSize(100);
-      this.square.setColor(green);
-      this.square.setOpacity(0.75);
+      this.square.setColor(green, 0.5);
       this.square.enableBoundingBox(white);
       this.analyzer = new SpectrumAnalyzer();
     }

@@ -1370,6 +1370,26 @@ Rectangle = (function(superClass) {
     return Rectangle.__super__.constuctor.call(this, this._layer);
   };
 
+  Rectangle.prototype.fill = function(color) {
+    if (color == null) {
+      color = null;
+    }
+    this.type = 'fill';
+  };
+
+  Rectangle.prototype.stretch = function(color) {
+    if (color == null) {
+      color = null;
+    }
+    this.type = 'stretch';
+  };
+
+  Rectangle.prototype.outline = function(color, size) {
+    if (size == null) {
+      size = 1;
+    }
+  };
+
   Rectangle.prototype.update = function() {
     var i, j, k, l, m, n, particle, ref, ref1, ref2, ref3, ref4, results, results1, x, y;
     if (this.type === 'stretch') {

@@ -5,6 +5,17 @@ class Rectangle extends Pane
   constuctor: (@_layer = 1) ->
     super(@_layer)
 
+  fill: (color = null) ->
+    @type = 'fill'
+    return
+
+  stretch: (color = null) ->
+    @type = 'stretch'
+    return
+
+  outline: (color, size = 1) ->
+
+
   update: ->
 
     if @type is 'stretch'

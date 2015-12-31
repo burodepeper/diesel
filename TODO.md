@@ -3,6 +3,12 @@
 ## Short term focus
 
 - [ ] Implement `fill()`, `outline()` and `stretch()` for [Circle] and [Rectangle]
+  - [x] `Rectangle.fill()`
+  - [x] `Rectangle.stretch()`
+  - [ ] `Rectangle.outline()`
+  - [x] `Circle.fill()`
+  - [ ] `Circle.stretch()`
+  - [x] `Circle.outline()`
 - [ ] Implement `hasChanged` consistently across [Panes]
 - [ ] Add [Sprites], [Letters] and [Text]
 - [ ] Add keyboard, mouse and touch events
