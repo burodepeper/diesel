@@ -57,6 +57,7 @@
 - [ ] Keyboard and mouse input (via a separate [Controller])
 - [ ] Allow multiple canvases/contexts, and in extension, allow a canvas to be linked to an existing DOM-element.
 - [ ] `getAllInstancesOf(class, layer)`: returns all instances of `class`; `layer` is optional
+- [x] `analyze(layer)`: returns an inventory of the type and count of classes (per layer)
 - [ ] Draw each layer of entities on a separate <canvas> element
 
 ### Entity

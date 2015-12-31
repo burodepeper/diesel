@@ -266,6 +266,28 @@ Engine = {
   trigger: function(eventType) {
     window.dispatchEvent(new Event(eventType));
   },
+  analyze: function(focusOn) {
+    var entity, i, inventory, k, l, layer, len, len1, name, ref;
+    if (focusOn == null) {
+      focusOn = -1;
+    }
+    inventory = {};
+    ref = this.entities;
+    for (i = k = 0, len = ref.length; k < len; i = ++k) {
+      layer = ref[i];
+      if ((focusOn === i) || focusOn === -1) {
+        for (l = 0, len1 = layer.length; l < len1; l++) {
+          entity = layer[l];
+          name = entity.constructor.name;
+          if (inventory[name] == null) {
+            inventory[name] = 0;
+          }
+          inventory[name]++;
+        }
+      }
+    }
+    return console.log(inventory);
+  },
   cleanUp: function() {
     var cleanedEntities, entity, i, j, k, l, layer, len, len1, ref;
     ref = this.entities;

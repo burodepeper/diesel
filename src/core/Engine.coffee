@@ -148,7 +148,20 @@ Engine =
     window.dispatchEvent(new Event(eventType))
     return
 
-  # Maintenance ---------------------------------------------------------------
+  # ----- Maintenance -----
+
+  analyze: (focusOn = -1) ->
+    inventory = {}
+    for layer, i in @entities
+      if (focusOn is i) or focusOn is -1
+        for entity in layer
+          name = entity.constructor.name
+          unless inventory[name]?
+            inventory[name] = 0
+          inventory[name]++
+    console.log inventory
+
+  # getAllInstancesOf: (name, layer = false) ->
 
   cleanUp: ->
     for layer, i in @entities
