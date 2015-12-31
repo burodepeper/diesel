@@ -1,7 +1,7 @@
 class BoundingBox extends Pane
 
-  extension: 5
-  padding: 2
+  extension: 7
+  padding: 3
 
   constructor: ->
     super(1)
@@ -28,6 +28,7 @@ class BoundingBox extends Pane
 
   draw: ->
     CONTEXT.strokeStyle = @color
+    CONTEXT.lineWidth = 0.5
 
     CONTEXT.beginPath()
     CONTEXT.moveTo(@left - @extension, @top - @padding)

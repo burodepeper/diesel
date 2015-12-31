@@ -1074,9 +1074,9 @@ Storage = (function() {
 BoundingBox = (function(superClass) {
   extend(BoundingBox, superClass);
 
-  BoundingBox.prototype.extension = 5;
+  BoundingBox.prototype.extension = 7;
 
-  BoundingBox.prototype.padding = 2;
+  BoundingBox.prototype.padding = 3;
 
   function BoundingBox() {
     BoundingBox.__super__.constructor.call(this, 1);
@@ -1104,6 +1104,7 @@ BoundingBox = (function(superClass) {
 
   BoundingBox.prototype.draw = function() {
     CONTEXT.strokeStyle = this.color;
+    CONTEXT.lineWidth = 0.5;
     CONTEXT.beginPath();
     CONTEXT.moveTo(this.left - this.extension, this.top - this.padding);
     CONTEXT.lineTo(this.right + this.extension, this.top - this.padding);
@@ -1367,7 +1368,8 @@ Rectangle = (function(superClass) {
 
   Rectangle.prototype.constuctor = function(_layer) {
     this._layer = _layer != null ? _layer : 1;
-    return Rectangle.__super__.constuctor.call(this, this._layer);
+    Rectangle.__super__.constuctor.call(this, this._layer);
+    return this.hasOutline = false;
   };
 
   Rectangle.prototype.fill = function(color) {
@@ -1384,38 +1386,84 @@ Rectangle = (function(superClass) {
     this.type = 'stretch';
   };
 
-  Rectangle.prototype.outline = function(color, size) {
-    if (size == null) {
-      size = 1;
-    }
+  Rectangle.prototype.outline = function(color) {
+    this.outlineColor = color;
+    this.hasOutline = true;
   };
 
   Rectangle.prototype.update = function() {
-    var i, j, k, l, m, n, particle, ref, ref1, ref2, ref3, ref4, results, results1, x, y;
+    var i, j, k, l, len, len1, m, n, o, p, particle, q, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, results, results1, s, x, y;
     if (this.type === 'stretch') {
       particle = this.getParticle(0).show();
       particle.setPosition(this.position.absolute.x, this.position.absolute.y);
       particle.setSize(this.size.width, this.size.height);
-      if (this.particles.length > 1) {
+      i = 1;
+      if (this.hasOutline) {
+        particle = this.getParticle(i);
+        particle.setPosition(0, 0);
+        particle.setSize(this.size.width, 1);
+        particle.setColor(this.outlineColor);
+        i++;
+        particle = this.getParticle(i);
+        particle.setPosition(0, this.size.height - 1);
+        particle.setSize(this.size.width, 1);
+        particle.setColor(this.outlineColor);
+        i++;
+        particle = this.getParticle(i);
+        particle.setPosition(0, 1);
+        particle.setSize(1, this.size.height - 2);
+        particle.setColor(this.outlineColor);
+        i++;
+        particle = this.getParticle(i);
+        particle.setPosition(this.size.width - 1, 1);
+        particle.setSize(1, this.size.height - 2);
+        particle.setColor(this.outlineColor);
+        i++;
+      }
+      if ((this.particles.length - 1) > i) {
         results = [];
-        for (j = k = 1, ref = this.particles.length - 1; 1 <= ref ? k <= ref : k >= ref; j = 1 <= ref ? ++k : --k) {
+        for (j = k = ref = i, ref1 = this.particles.length - 1; ref <= ref1 ? k <= ref1 : k >= ref1; j = ref <= ref1 ? ++k : --k) {
           results.push(this.getParticle(j).hide());
         }
         return results;
       }
     } else if (this.type === 'fill') {
       i = 0;
-      for (x = l = 0, ref1 = this.size.width; 0 <= ref1 ? l <= ref1 : l >= ref1; x = 0 <= ref1 ? ++l : --l) {
-        for (y = m = 0, ref2 = this.size.height; 0 <= ref2 ? m <= ref2 : m >= ref2; y = 0 <= ref2 ? ++m : --m) {
+      for (x = l = 0, ref2 = this.size.width - 1; 0 <= ref2 ? l <= ref2 : l >= ref2; x = 0 <= ref2 ? ++l : --l) {
+        for (y = m = 0, ref3 = this.size.height - 1; 0 <= ref3 ? m <= ref3 : m >= ref3; y = 0 <= ref3 ? ++m : --m) {
           particle = this.getParticle(i);
           particle.setPosition(x, y);
           particle.show();
           i++;
         }
       }
+      if (this.hasOutline) {
+        for (x = n = 0, ref4 = this.size.width - 1; 0 <= ref4 ? n <= ref4 : n >= ref4; x = 0 <= ref4 ? ++n : --n) {
+          ref5 = [0, this.size.height - 1];
+          for (o = 0, len = ref5.length; o < len; o++) {
+            y = ref5[o];
+            particle = this.getParticle(i);
+            particle.setPosition(x, y);
+            particle.setColor(this.outlineColor);
+            particle.show();
+            i++;
+          }
+        }
+        for (y = p = 1, ref6 = this.size.height - 2; 1 <= ref6 ? p <= ref6 : p >= ref6; y = 1 <= ref6 ? ++p : --p) {
+          ref7 = [0, this.size.width - 1];
+          for (q = 0, len1 = ref7.length; q < len1; q++) {
+            x = ref7[q];
+            particle = this.getParticle(i);
+            particle.setPosition(x, y);
+            particle.setColor(this.outlineColor);
+            particle.show();
+            i++;
+          }
+        }
+      }
       if ((this.particles.length - 1) > i) {
         results1 = [];
-        for (j = n = ref3 = i, ref4 = this.particles.length - 1; ref3 <= ref4 ? n <= ref4 : n >= ref4; j = ref3 <= ref4 ? ++n : --n) {
+        for (j = s = ref8 = i, ref9 = this.particles.length - 1; ref8 <= ref9 ? s <= ref9 : s >= ref9; j = ref8 <= ref9 ? ++s : --s) {
           results1.push(this.getParticle(j).hide());
         }
         return results1;

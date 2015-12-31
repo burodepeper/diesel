@@ -5,7 +5,8 @@
 - [ ] Implement `fill()`, `outline()` and `stretch()` for [Circle] and [Rectangle]
   - [x] `Rectangle.fill()`
   - [x] `Rectangle.stretch()`
-  - [ ] `Rectangle.outline()`
+  - [x] `Rectangle.outline()` + fill
+  - [x] `Rectangle.outline()` + stretch
   - [x] `Circle.fill()`
   - [ ] `Circle.stretch()`
   - [x] `Circle.outline()`
@@ -13,6 +14,7 @@
 - [ ] Add [Sprites], [Letters] and [Text]
 - [ ] Add keyboard, mouse and touch events
 - [ ] Think of more practical examples to showcase the tools and allow for visual regression testing
+- [ ] Check if `size` and `position` of [Panes] are as advertised
 
 ### References
 
