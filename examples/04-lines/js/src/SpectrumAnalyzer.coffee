@@ -1,4 +1,4 @@
-class SpectrumAnalyzer extends Controller
+class SpectrumAnalyzer extends Pane
 
   counter: 0
   points: []
@@ -12,6 +12,7 @@ class SpectrumAnalyzer extends Controller
     @pane.setCSS({ left:1, right:1, bottom:1, height:43 })
     @width = @pane.getWidth()
     @height = @pane.getHeight()
+    # @pane.enableBoundingBox('#fff')
 
     # TODO
     # Decorate the pane

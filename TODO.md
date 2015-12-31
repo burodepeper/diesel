@@ -3,6 +3,7 @@
 ## Short term focus
 
 - [ ] [BoundingBox] on a [Line], [Rectangle] and [Circle]
+  - [x] Differentiate between `children` and `particles`
 - [ ] Separate `color` and `opacity`
 - [ ] Update [README.md] and think of more practical examples
 - [ ] Implement `fill()`, `outline()` and `stretch()` for [Circle] and [Rectangle]
@@ -165,6 +166,7 @@
 ## Getting started
 
 - How the [Engine] works (`update()`, `draw()` and layers)
+- The difference between children and particles
 - The concept of references and hierarchial inheritence
 - Setting up a new project
 
@@ -207,13 +209,14 @@
   - [ ] `Pane.position`
   - [ ] `Pane.size`
   - [ ] `Pane.addChild()`
+  - [ ] `Pane.addParticle()`
   - [ ] `Pane.disableBoundingBox()`
   - [ ] `Pane.enableBoundingBox()`
   - [ ] `Pane.getCenter()`
-  - [ ] `Pane.getChild()`
   - [ ] `Pane.getColor()`
   - [ ] `Pane.getHeight()`
   - [ ] `Pane.getOpacity()`
+  - [ ] `Pane.getParticle()`
   - [ ] `Pane.getWidth()`
   - [ ] `Pane.getX()`
   - [ ] `Pane.getY()`
@@ -224,7 +227,7 @@
   - [ ] `Pane.setOpacity()`
   - [ ] `Pane.setPosition()`
   - [ ] `Pane.setSize()`
-  - [ ] `Pane.updateChildren()`
+  - [ ] `Pane.updateParticles()`
 - [Particle]
   - [ ] `Particle.position`
   - [ ] `Particle.size`

@@ -4,7 +4,7 @@ var App, Clock, SpectrumAnalyzer,
 
 App = {
   init: function() {
-    var green, red, settings;
+    var green, red, settings, white;
     settings = {
       viewport: {
         width: 480,
@@ -20,17 +20,20 @@ App = {
         height: 59
       });
       red = new Color('#e10');
+      green = new Color('#5d0');
+      white = new Color('#fff');
       this.rectangle = new Rectangle(1);
       this.rectangle.setPosition(120, 80);
       this.rectangle.setSize(120, 80);
       this.rectangle.setColor(red);
       this.rectangle.setOpacity(0.5);
-      green = new Color('#5d0');
+      this.rectangle.enableBoundingBox(white);
       this.square = new Square(1);
       this.square.setPosition(160, 100);
       this.square.setSize(100);
       this.square.setColor(green);
       this.square.setOpacity(0.5);
+      this.square.enableBoundingBox(white);
       this.analyzer = new SpectrumAnalyzer();
     }
   }
@@ -163,4 +166,4 @@ SpectrumAnalyzer = (function(superClass) {
 
   return SpectrumAnalyzer;
 
-})(Controller);
+})(Pane);

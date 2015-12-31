@@ -27,7 +27,7 @@ class Circle extends Pane
             radians = angle * (Math.PI / 180)
             x = @center.x + (Math.cos(radians) * @radius)
             y = @center.y - (Math.sin(radians) * @radius)
-            particle = @getChild(i)
+            particle = @getParticle(i)
             particle.setPosition(x, y)
             particle.show()
             i++
@@ -41,7 +41,7 @@ class Circle extends Pane
               diffY = @center.y - y
               distanceFromCenter = Math.sqrt((diffX * diffX) + (diffY * diffY))
               if distanceFromCenter < @radius
-                particle = @getChild(i)
+                particle = @getParticle(i)
                 particle.setPosition(x, y)
                 particle.show()
                 i++

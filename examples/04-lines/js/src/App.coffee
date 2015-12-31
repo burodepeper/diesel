@@ -22,18 +22,22 @@ App =
       # TODO
       # Draw some rectangular overlapping shapes as a test
       red = new Color('#e10')
+      green = new Color('#5d0')
+      white = new Color('#fff')
+
       @rectangle = new Rectangle(1)
       @rectangle.setPosition(120, 80)
       @rectangle.setSize(120, 80)
       @rectangle.setColor(red)
       @rectangle.setOpacity(0.5)
+      @rectangle.enableBoundingBox(white)
 
-      green = new Color('#5d0')
       @square = new Square(1)
       @square.setPosition(160, 100)
       @square.setSize(100)
       @square.setColor(green)
       @square.setOpacity(0.5)
+      @square.enableBoundingBox(white)
 
       # SpectrumAnalyzer at the bottom
       @analyzer = new SpectrumAnalyzer()

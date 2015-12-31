@@ -1,11 +1,13 @@
 class BoundingBox extends Pane
 
-  color: '#000'
-
   constructor: ->
     super(1)
 
-  setColor: (@color) ->
+  setColor: (color) ->
+    if typeof color is 'object'
+      @color = color
+    else
+      @color = new Color(color)
 
   update: ->
     @left = @reference.getX() * PX

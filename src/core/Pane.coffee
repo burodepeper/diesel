@@ -4,14 +4,12 @@
 
 class Pane extends Entity
 
+
   constructor: (@_layer = 0) ->
     super()
 
-    @reference = WINDOW
-    @children = []
-
     @position =
-      absolute: new Point(0, 0)
+      absolute: new Point(0, 0) # TODO not necessary (see Particle)
       relative: new Point(0, 0)
 
     @size =
@@ -19,6 +17,12 @@ class Pane extends Entity
       height: 0
       surface: 0
       circumference: 0
+
+    @color = new Color()
+    @reference = WINDOW
+
+    @children = []
+    @particles = []
 
     @css =
       top: null
@@ -28,7 +32,6 @@ class Pane extends Entity
       width: null
       height: null
 
-    @color = new Color()
     @opacity = 1
     @isVisible = true
     @hasCSS = false
@@ -104,7 +107,7 @@ class Pane extends Entity
     else
       @color.set(color)
     @color.setReference(this)
-    @updateChildren('setColor', @color)
+    @updateParticles('setColor', @color)
 
   # Helpers -------------------------------------------------------------------
 
@@ -184,33 +187,55 @@ class Pane extends Entity
       @setPosition(x, y)
       @setSize(width, height)
 
-  # Children ------------------------------------------------------------------
+  # ----- Children -----
 
   # TODO
   # Check if {child} is a valid Entity
   addChild: (child) ->
     @children.push(child)
-    child.setReference this, @children.length - 1
-    child.isVisible = @isVisible
-    child.color = @color
+    child.setReference this, @children.length + @particles.length - 1
+    # child.isVisible = @isVisible
+    # child.isVisible = true
     return
 
-  updateChildren: (method, value) ->
-    for child in @children
-      child[method](value)
+  # updateChildren: (method, value) ->
+  #   for child in @children
+  #     child[method](value)
+  #   return
+
+  # getChild: (i) ->
+  #   if @children[i]
+  #     return @children[i]
+  #   else
+  #     particle = new Particle(@_layer)
+  #     @addChild(particle)
+  #     return particle
+
+  # ----- Particles -----
+
+  addParticle: (particle) ->
+    @particles.push(particle)
+    particle.setReference this, @particles.length + @children.length - 1
+    particle.isVisible = @isVisible
+    particle.color = @color
     return
 
-  getChild: (i) ->
-    if @children[i]
-      return @children[i].show()
+  updateParticles: (method, value) ->
+    for particle in @particles
+      particle[method](value)
+    return
+
+  getParticle: (i) ->
+    if @particles[i]
+      return @particles[i]
     else
       particle = new Particle(@_layer)
-      @addChild(particle)
+      @addParticle(particle)
       return particle
 
-  # Debug ---------------------------------------------------------------------
+  # ----- Debug -----
 
-  enableBoundingBox: (color) ->
+  enableBoundingBox: (color = '#fff') ->
     @hasBoundingBox = true
     @boundingBox = new BoundingBox()
     @boundingBox.setColor(color)

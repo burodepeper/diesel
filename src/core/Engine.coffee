@@ -161,7 +161,15 @@ Engine =
           inventory[name]++
     console.log inventory
 
-  # getAllInstancesOf: (name, layer = false) ->
+  getAllInstancesOf: (name, focusOn = -1) ->
+    instances = []
+    for layer, i in @entities
+      if (focusOn is i) or focusOn is -1
+        for entity in layer
+          instanceName = entity.constructor.name
+          if instanceName is name
+            instances.push(entity)
+    return instances
 
   cleanUp: ->
     for layer, i in @entities

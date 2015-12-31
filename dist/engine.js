@@ -288,6 +288,27 @@ Engine = {
     }
     return console.log(inventory);
   },
+  getAllInstancesOf: function(name, focusOn) {
+    var entity, i, instanceName, instances, k, l, layer, len, len1, ref;
+    if (focusOn == null) {
+      focusOn = -1;
+    }
+    instances = [];
+    ref = this.entities;
+    for (i = k = 0, len = ref.length; k < len; i = ++k) {
+      layer = ref[i];
+      if ((focusOn === i) || focusOn === -1) {
+        for (l = 0, len1 = layer.length; l < len1; l++) {
+          entity = layer[l];
+          instanceName = entity.constructor.name;
+          if (instanceName === name) {
+            instances.push(entity);
+          }
+        }
+      }
+    }
+    return instances;
+  },
   cleanUp: function() {
     var cleanedEntities, entity, i, j, k, l, layer, len, len1, ref;
     ref = this.entities;
@@ -471,8 +492,6 @@ Pane = (function(superClass) {
   function Pane(_layer) {
     this._layer = _layer != null ? _layer : 0;
     Pane.__super__.constructor.call(this);
-    this.reference = WINDOW;
-    this.children = [];
     this.position = {
       absolute: new Point(0, 0),
       relative: new Point(0, 0)
@@ -483,6 +502,10 @@ Pane = (function(superClass) {
       surface: 0,
       circumference: 0
     };
+    this.color = new Color();
+    this.reference = WINDOW;
+    this.children = [];
+    this.particles = [];
     this.css = {
       top: null,
       right: null,
@@ -491,7 +514,6 @@ Pane = (function(superClass) {
       width: null,
       height: null
     };
-    this.color = new Color();
     this.opacity = 1;
     this.isVisible = true;
     this.hasCSS = false;
@@ -584,7 +606,7 @@ Pane = (function(superClass) {
       this.color.set(color);
     }
     this.color.setReference(this);
-    return this.updateChildren('setColor', this.color);
+    return this.updateParticles('setColor', this.color);
   };
 
   Pane.prototype.getWidth = function() {
@@ -692,32 +714,40 @@ Pane = (function(superClass) {
 
   Pane.prototype.addChild = function(child) {
     this.children.push(child);
-    child.setReference(this, this.children.length - 1);
-    child.isVisible = this.isVisible;
-    child.color = this.color;
+    child.setReference(this, this.children.length + this.particles.length - 1);
   };
 
-  Pane.prototype.updateChildren = function(method, value) {
-    var child, k, len, ref;
-    ref = this.children;
+  Pane.prototype.addParticle = function(particle) {
+    this.particles.push(particle);
+    particle.setReference(this, this.particles.length + this.children.length - 1);
+    particle.isVisible = this.isVisible;
+    particle.color = this.color;
+  };
+
+  Pane.prototype.updateParticles = function(method, value) {
+    var k, len, particle, ref;
+    ref = this.particles;
     for (k = 0, len = ref.length; k < len; k++) {
-      child = ref[k];
-      child[method](value);
+      particle = ref[k];
+      particle[method](value);
     }
   };
 
-  Pane.prototype.getChild = function(i) {
+  Pane.prototype.getParticle = function(i) {
     var particle;
-    if (this.children[i]) {
-      return this.children[i].show();
+    if (this.particles[i]) {
+      return this.particles[i];
     } else {
       particle = new Particle(this._layer);
-      this.addChild(particle);
+      this.addParticle(particle);
       return particle;
     }
   };
 
   Pane.prototype.enableBoundingBox = function(color) {
+    if (color == null) {
+      color = '#fff';
+    }
     this.hasBoundingBox = true;
     this.boundingBox = new BoundingBox();
     this.boundingBox.setColor(color);
@@ -1031,14 +1061,16 @@ Storage = (function() {
 BoundingBox = (function(superClass) {
   extend(BoundingBox, superClass);
 
-  BoundingBox.prototype.color = '#000';
-
   function BoundingBox() {
     BoundingBox.__super__.constructor.call(this, 1);
   }
 
-  BoundingBox.prototype.setColor = function(color1) {
-    this.color = color1;
+  BoundingBox.prototype.setColor = function(color) {
+    if (typeof color === 'object') {
+      return this.color = color;
+    } else {
+      return this.color = new Color(color);
+    }
   };
 
   BoundingBox.prototype.update = function() {
@@ -1100,7 +1132,7 @@ Circle = (function(superClass) {
             radians = angle * (Math.PI / 180);
             x = this.center.x + (Math.cos(radians) * this.radius);
             y = this.center.y - (Math.sin(radians) * this.radius);
-            particle = this.getChild(i);
+            particle = this.getParticle(i);
             particle.setPosition(x, y);
             particle.show();
             i++;
@@ -1113,7 +1145,7 @@ Circle = (function(superClass) {
               diffY = this.center.y - y;
               distanceFromCenter = Math.sqrt((diffX * diffX) + (diffY * diffY));
               if (distanceFromCenter < this.radius) {
-                particle = this.getChild(i);
+                particle = this.getParticle(i);
                 particle.setPosition(x, y);
                 particle.show();
                 i++;
@@ -1207,7 +1239,7 @@ Line = (function(superClass) {
       y = this._from.y;
       increment = this.diffY / Math.abs(this.diffX);
       for (x = k = ref = this._from.x, ref1 = this._to.x; ref <= ref1 ? k <= ref1 : k >= ref1; x = ref <= ref1 ? ++k : --k) {
-        particle = this.getChild(i);
+        particle = this.getParticle(i);
         particle.setPosition(x, y);
         particle.show();
         y += increment;
@@ -1217,7 +1249,7 @@ Line = (function(superClass) {
       x = this._from.x;
       increment = this.diffX / Math.abs(this.diffY);
       for (y = l = ref2 = this._from.y, ref3 = this._to.y; ref2 <= ref3 ? l <= ref3 : l >= ref3; y = ref2 <= ref3 ? ++l : --l) {
-        particle = this.getChild(i);
+        particle = this.getParticle(i);
         particle.setPosition(x, y);
         particle.show();
         x += increment;
@@ -1226,13 +1258,13 @@ Line = (function(superClass) {
     }
     if (this.offset) {
       for (j = m = 0, ref4 = Math.round(i * this.offset); 0 <= ref4 ? m <= ref4 : m >= ref4; j = 0 <= ref4 ? ++m : --m) {
-        this.getChild(j).hide();
+        this.getParticle(j).hide();
       }
     }
-    if ((this.children.length - 1) > i) {
+    if ((this.particles.length - 1) > i) {
       results = [];
-      for (j = n = ref5 = i, ref6 = this.children.length - 1; ref5 <= ref6 ? n <= ref6 : n >= ref6; j = ref5 <= ref6 ? ++n : --n) {
-        results.push(this.getChild(j).hide());
+      for (j = n = ref5 = i, ref6 = this.particles.length - 1; ref5 <= ref6 ? n <= ref6 : n >= ref6; j = ref5 <= ref6 ? ++n : --n) {
+        results.push(this.getParticle(j).hide());
       }
       return results;
     }
@@ -1298,13 +1330,13 @@ Rectangle = (function(superClass) {
   Rectangle.prototype.update = function() {
     var i, j, k, l, m, n, particle, ref, ref1, ref2, ref3, ref4, results, results1, x, y;
     if (this.type === 'stretch') {
-      particle = this.getChild(0).show();
+      particle = this.getParticle(0).show();
       particle.setPosition(this.position.absolute.x, this.position.absolute.y);
       particle.setSize(this.size.width, this.size.height);
-      if (this.children.length > 1) {
+      if (this.particles.length > 1) {
         results = [];
-        for (j = k = 1, ref = this.children.length - 1; 1 <= ref ? k <= ref : k >= ref; j = 1 <= ref ? ++k : --k) {
-          results.push(this.getChild(j).hide());
+        for (j = k = 1, ref = this.particles.length - 1; 1 <= ref ? k <= ref : k >= ref; j = 1 <= ref ? ++k : --k) {
+          results.push(this.getParticle(j).hide());
         }
         return results;
       }
@@ -1312,16 +1344,16 @@ Rectangle = (function(superClass) {
       i = 0;
       for (x = l = 0, ref1 = this.size.width; 0 <= ref1 ? l <= ref1 : l >= ref1; x = 0 <= ref1 ? ++l : --l) {
         for (y = m = 0, ref2 = this.size.height; 0 <= ref2 ? m <= ref2 : m >= ref2; y = 0 <= ref2 ? ++m : --m) {
-          particle = this.getChild(i);
+          particle = this.getParticle(i);
           particle.setPosition(x, y);
           particle.show();
           i++;
         }
       }
-      if ((this.children.length - 1) > i) {
+      if ((this.particles.length - 1) > i) {
         results1 = [];
-        for (j = n = ref3 = i, ref4 = this.children.length - 1; ref3 <= ref4 ? n <= ref4 : n >= ref4; j = ref3 <= ref4 ? ++n : --n) {
-          results1.push(this.getChild(j).hide());
+        for (j = n = ref3 = i, ref4 = this.particles.length - 1; ref3 <= ref4 ? n <= ref4 : n >= ref4; j = ref3 <= ref4 ? ++n : --n) {
+          results1.push(this.getParticle(j).hide());
         }
         return results1;
       }
