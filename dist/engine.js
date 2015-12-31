@@ -106,7 +106,7 @@ isPoint = function(x, y) {
     if (x.constructor.name === 'Point') {
       return x;
     } else if ((x.x && typeof x.x === 'number') && (x.y && typeof x.y === 'number')) {
-      return new Point(x.x, x.y);
+      return x;
     } else if (Array.isArray(x) && x.length === 2) {
       return new Point(x[0], x[1]);
     } else {
