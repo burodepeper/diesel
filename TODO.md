@@ -36,6 +36,7 @@
 ### CompoundPane
 
 - A collection of shapes, to are either added or removed, to create complex shapes
+- Better be renamed to [Shape]
 
 ### Controller
 
