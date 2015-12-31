@@ -49,8 +49,4 @@ class Color extends Entity
   setReference: (@reference) ->
 
   toString: ->
-    if @reference
-      opacity = @reference.getOpacity() * @a
-    else
-      opacity = @a
-    return "rgba(#{@r}, #{@g}, #{@b}, #{opacity})"
+    return "rgba(#{@r}, #{@g}, #{@b}, #{@a})"

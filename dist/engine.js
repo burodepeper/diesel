@@ -473,13 +473,7 @@ Color = (function(superClass) {
   };
 
   Color.prototype.toString = function() {
-    var opacity;
-    if (this.reference) {
-      opacity = this.reference.getOpacity() * this.a;
-    } else {
-      opacity = this.a;
-    }
-    return "rgba(" + this.r + ", " + this.g + ", " + this.b + ", " + opacity + ")";
+    return "rgba(" + this.r + ", " + this.g + ", " + this.b + ", " + this.a + ")";
   };
 
   return Color;
@@ -514,7 +508,6 @@ Pane = (function(superClass) {
       width: null,
       height: null
     };
-    this.opacity = 1;
     this.isVisible = true;
     this.hasCSS = false;
     this.hasBoundingBox = false;
@@ -588,17 +581,20 @@ Pane = (function(superClass) {
     if (opacity == null) {
       opacity = 1;
     }
-    opacity = parseFloat(opacity);
-    if (opacity === NaN) {
-      opacity = 1;
+    if (this.color) {
+      opacity = parseFloat(opacity);
+      if (opacity === NaN) {
+        opacity = 1;
+      }
+      if (opacity < 0) {
+        opacity = 0;
+      }
+      if (opacity > 1) {
+        opacity = 1;
+      }
+      this.color.setOpacity(opacity);
+      this.updateParticles('setColor', this.color);
     }
-    if (opacity < 0) {
-      opacity = 0;
-    }
-    if (opacity > 1) {
-      opacity = 1;
-    }
-    this.opacity = opacity;
   };
 
   Pane.prototype.setReference = function(reference, _childID) {
@@ -606,11 +602,17 @@ Pane = (function(superClass) {
     this._childID = _childID;
   };
 
-  Pane.prototype.setColor = function(color) {
+  Pane.prototype.setColor = function(color, opacity) {
+    if (opacity == null) {
+      opacity = null;
+    }
     if (typeof color === 'object') {
       this.color = color;
     } else {
       this.color.set(color);
+    }
+    if (opacity != null) {
+      this.color.setOpacity(opacity);
     }
     this.color.setReference(this);
     return this.updateParticles('setColor', this.color);
@@ -638,10 +640,6 @@ Pane = (function(superClass) {
     } else {
       return this.position.relative.y;
     }
-  };
-
-  Pane.prototype.getOpacity = function() {
-    return this.opacity;
   };
 
   Pane.prototype.getCenter = function() {
@@ -832,14 +830,22 @@ Particle = (function(superClass) {
   };
 
   Particle.prototype.setOpacity = function(opacity) {
-    return this.color.setOpacity(opacity);
+    if (this.color != null) {
+      this.color.setOpacity(opacity);
+    }
   };
 
-  Particle.prototype.setColor = function(color) {
+  Particle.prototype.setColor = function(color, opacity) {
+    if (opacity == null) {
+      opacity = null;
+    }
     if (typeof color === 'object') {
-      return this.color = color;
+      this.color = color;
     } else {
-      return this.color.set(color);
+      this.color.set(color);
+    }
+    if (opacity != null) {
+      this.setOpacity(opacity);
     }
   };
 

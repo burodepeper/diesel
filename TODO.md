@@ -2,12 +2,15 @@
 
 ## Short term focus
 
-- [ ] Separate `color` and `opacity`
 - [ ] Implement `fill()`, `outline()` and `stretch()` for [Circle] and [Rectangle]
 - [ ] Implement `hasChanged` consistently across [Panes]
 - [ ] Add [Sprites], [Letters] and [Text]
-- [ ] See: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas
+- [ ] Add keyboard, mouse and touch events
 - [ ] Think of more practical examples to showcase the tools and allow for visual regression testing
+
+### References
+
+- https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas
 
 ---
 
@@ -76,7 +79,6 @@
 
 ### Pane _extends_ Entity
 
-- [ ] `getOpacity()`
 - [ ] `setCSSProperty()`: allow percentages (or floats) as values. Will need an update of `onResize()` as well.
 - [ ] `setOverflow()`: defaults to 'visible'
 - [ ] `setColor()` does not work when called before the `addChild()` is executed on that [Pane]
@@ -213,7 +215,6 @@
   - [ ] `Pane.getCenter()`
   - [ ] `Pane.getColor()`
   - [ ] `Pane.getHeight()`
-  - [ ] `Pane.getOpacity()`
   - [ ] `Pane.getParticle()`
   - [ ] `Pane.getWidth()`
   - [ ] `Pane.getX()`

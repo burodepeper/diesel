@@ -36,8 +36,6 @@ Returns the height of the `Pane` in `PX`.
 rows = WINDOW.getHeight()
 ```
 
-<!-- ### getOpacity -->
-
 ### getWidth
 
 Returns the width of the `Pane` in `PX`.

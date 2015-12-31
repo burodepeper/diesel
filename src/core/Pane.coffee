@@ -32,7 +32,7 @@ class Pane extends Entity
       width: null
       height: null
 
-    @opacity = 1
+    # @opacity = 1
     @isVisible = true
     @hasCSS = false
     @hasBoundingBox = false
@@ -97,20 +97,23 @@ class Pane extends Entity
     return
 
   setOpacity: (opacity = 1) ->
-    opacity = parseFloat(opacity)
-    if opacity is NaN then opacity = 1
-    if opacity < 0 then opacity = 0
-    if opacity > 1 then opacity = 1
-    @opacity = opacity
+    if @color
+      opacity = parseFloat(opacity)
+      if opacity is NaN then opacity = 1
+      if opacity < 0 then opacity = 0
+      if opacity > 1 then opacity = 1
+      @color.setOpacity(opacity)
+      @updateParticles('setColor', @color)
     return
 
   setReference: (@reference, @_childID) ->
 
-  setColor: (color) ->
+  setColor: (color, opacity = null) ->
     if typeof color is 'object'
       @color = color
     else
       @color.set(color)
+    if opacity? then @color.setOpacity(opacity)
     @color.setReference(this)
     @updateParticles('setColor', @color)
 
@@ -133,9 +136,6 @@ class Pane extends Entity
       return @reference.getY() + @position.relative.y
     else
       return @position.relative.y
-
-  getOpacity: ->
-    return @opacity
 
   getCenter: ->
     @center =

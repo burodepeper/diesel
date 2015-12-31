@@ -6,6 +6,8 @@ class BoundingBox extends Pane
   constructor: ->
     super(1)
 
+  # TODO
+  # Remove the need to define a color for the BoundingBox by generating a default 'opposite' color, based on reference.color. setColor() can still exist to manually overwrite this.
   setColor: (color) ->
     if typeof color is 'object'
       @color = color
