@@ -1,14 +1,16 @@
 class Circle extends Pane
 
   radius: null
-  center: null
+  center: new Point(0, 0)
   type: 'outline'
 
   constructor: (@_layer = 1) ->
     super(@_layer)
 
-  setCenter: (@center) ->
-    @hasChanged = true
+  setCenter: (x, y) ->
+    @center = isPoint(x, y)
+    unless @center
+      console.warn "Circle.setCenter() is not valid"
 
   setRadius: (@radius) ->
     @hasChanged = true

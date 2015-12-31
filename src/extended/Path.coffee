@@ -4,10 +4,15 @@ class Path extends Pane
   lines: []
 
   addPoint: (point) ->
-    @points.push(point)
-    if @points.length > 1
-      @addLine()
-    return
+    point = isPoint(point)
+    if point
+      @points.push(point)
+      if @points.length > 1
+        @addLine()
+      return true
+    else
+      console.warn "Path.addPoint()", point, "is not valid"
+      return false
 
   addLine: ->
     @a = @points[@points.length - 2]

@@ -36,11 +36,9 @@ class Clock extends Pane
     hours = time.getHours() + (minutes / 60)
 
     hours = 360 * ((hours % 12) / 12)
-    # @hours.atAngle(hours, 20, 0.05)
     @hours.atAngle(hours, 20)
 
     minutes = 360 * (minutes / 60)
-    # @minutes.atAngle(minutes, 30, 0.0333)
     @minutes.atAngle(minutes, 27.5)
 
     seconds = 360 * (seconds / 60)
@@ -55,6 +53,8 @@ class Clock extends Pane
     @dial = new Circle(1)
     @addChild(@dial)
     @dial.setCenter(center)
+    # @dial.setCenter([29, 29])
+    # @dial.setCenter(29, 29)
     @dial.setRadius(radius)
     @dial.type = 'fill'
     @dial.setColor(new Color('#222'))

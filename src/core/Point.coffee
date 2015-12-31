@@ -3,7 +3,13 @@ class Point extends Entity
   x: null
   y: null
 
-  constructor: (@x, @y) ->
+  constructor: (x = 0, y = 0) ->
+    if x is NaN or y is NaN
+      console.log "Point()", x+","+y, "is not a valid Point"
+      return false
+    else
+      @x = x
+      @y = y
     super(0)
 
   moveTo: (x, y, duration = 1000, easing = 'ease-in-out') ->

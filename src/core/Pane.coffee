@@ -11,12 +11,9 @@ class Pane extends Entity
     @children = []
 
     @position =
-      absolute:
-        x: 0
-        y: 0
-      relative:
-        x: 0
-        y: 0
+      absolute: new Point(0, 0)
+      relative: new Point(0, 0)
+
     @size =
       width: 0
       height: 0
@@ -39,13 +36,22 @@ class Pane extends Entity
     @boundingBox = null
     @hasChanged = false
 
-  # Setters -------------------------------------------------------------------
+  # ----- Setters -----
 
-  # TODO
-  # Check validaty of x and y
   setPosition: (x, y) ->
-    @position.relative.x = x
-    @position.relative.y = y
+
+    x = parseFloat(x)
+    if x is NaN
+      console.warn "Pane.setPosition()", x, "is not a valid value for x"
+    else
+      @position.relative.x = x
+
+    y = parseFloat(y)
+    if y is NaN
+      console.warn "Pane.setPosition()", y, "is not a valid value for y"
+    else
+      @position.relative.y = y
+
     return
 
   # TODO

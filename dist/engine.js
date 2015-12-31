@@ -1,4 +1,4 @@
-var BoundingBox, CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Path, Point, Rectangle, Square, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, shuffle, snap,
+var BoundingBox, CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Path, Point, Rectangle, Square, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -99,6 +99,25 @@ addDiversity = function(value, diversity) {
     diversity = 0.5;
   }
   return (value * (1 - diversity)) + (value * Math.random() * diversity * 2);
+};
+
+isPoint = function(x, y) {
+  if (typeof x === 'object') {
+    if (x.constructor.name === 'Point') {
+      return x;
+    } else if ((x.x && typeof x.x === 'number') && (x.y && typeof x.y === 'number')) {
+      return new Point(x.x, x.y);
+    } else if (Array.isArray(x) && x.length === 2) {
+      return new Point(x[0], x[1]);
+    } else {
+      return console.warn("isPoint()", x, "is not valid");
+    }
+  } else if ((typeof x === 'number') && (typeof y === 'number')) {
+    return new Point(x, y);
+  } else {
+    console.warn("isPoint()", x + "," + y, "is not valid");
+    return false;
+  }
 };
 
 PX = 6;
@@ -433,14 +452,8 @@ Pane = (function(superClass) {
     this.reference = WINDOW;
     this.children = [];
     this.position = {
-      absolute: {
-        x: 0,
-        y: 0
-      },
-      relative: {
-        x: 0,
-        y: 0
-      }
+      absolute: new Point(0, 0),
+      relative: new Point(0, 0)
     };
     this.size = {
       width: 0,
@@ -466,8 +479,18 @@ Pane = (function(superClass) {
   }
 
   Pane.prototype.setPosition = function(x, y) {
-    this.position.relative.x = x;
-    this.position.relative.y = y;
+    x = parseFloat(x);
+    if (x === NaN) {
+      console.warn("Pane.setPosition()", x, "is not a valid value for x");
+    } else {
+      this.position.relative.x = x;
+    }
+    y = parseFloat(y);
+    if (y === NaN) {
+      console.warn("Pane.setPosition()", y, "is not a valid value for y");
+    } else {
+      this.position.relative.y = y;
+    }
   };
 
   Pane.prototype.setSize = function(width, height) {
@@ -698,14 +721,8 @@ Particle = (function(superClass) {
     this._layer = _layer != null ? _layer : 1;
     Particle.__super__.constructor.call(this);
     this.position = {
-      relative: {
-        x: 0,
-        y: 0
-      },
-      absolute: {
-        x: 0,
-        y: 0
-      }
+      relative: new Point(0, 0),
+      absolute: new Point(0, 0)
     };
     this.color = new Color();
     this.size = {
@@ -714,6 +731,7 @@ Particle = (function(superClass) {
     };
     this.reference = WINDOW;
     this.isVisible = true;
+    this.hasChanged = false;
   }
 
   Particle.prototype.setReference = function(reference, _particleID) {
@@ -723,10 +741,19 @@ Particle = (function(superClass) {
   };
 
   Particle.prototype.setPosition = function(x, y) {
-    this.position.relative = {
-      x: x,
-      y: y
-    };
+    x = parseFloat(x);
+    if (x === NaN) {
+      console.warn("Particle.setPosition()", x, "is not a valid value for x");
+    } else {
+      this.position.relative.x = x;
+    }
+    y = parseFloat(y);
+    if (y === NaN) {
+      console.warn("Particle.setPosition()", y, "is not a valid value for y");
+    } else {
+      this.position.relative.y = y;
+    }
+    return this.hasChanged = true;
   };
 
   Particle.prototype.setSize = function(width, height) {
@@ -734,6 +761,7 @@ Particle = (function(superClass) {
       width: width,
       height: height
     };
+    return this.hasChanged = true;
   };
 
   Particle.prototype.setOpacity = function(opacity) {
@@ -749,8 +777,18 @@ Particle = (function(superClass) {
   };
 
   Particle.prototype.update = function() {
-    this.position.absolute.x = this.reference.getX() + this.position.relative.x;
-    this.position.absolute.y = this.reference.getY() + this.position.relative.y;
+    var x, y;
+    if (this.hasChanged) {
+      x = this.reference.getX() + this.position.relative.x;
+      y = this.reference.getY() + this.position.relative.y;
+      if ((x !== NaN) && (y !== NaN)) {
+        this.position.absolute.x = x;
+        this.position.absolute.y = y;
+      } else {
+        console.warn("Particle.update()", x + "," + y, "is not a valid position");
+      }
+      this.hasChanged = false;
+    }
   };
 
   Particle.prototype.draw = function() {
@@ -818,9 +856,20 @@ Point = (function(superClass) {
 
   Point.prototype.y = null;
 
-  function Point(x1, y1) {
-    this.x = x1;
-    this.y = y1;
+  function Point(x, y) {
+    if (x == null) {
+      x = 0;
+    }
+    if (y == null) {
+      y = 0;
+    }
+    if (x === NaN || y === NaN) {
+      console.log("Point()", x + "," + y, "is not a valid Point");
+      return false;
+    } else {
+      this.x = x;
+      this.y = y;
+    }
     Point.__super__.constructor.call(this, 0);
   }
 
@@ -990,7 +1039,7 @@ Circle = (function(superClass) {
 
   Circle.prototype.radius = null;
 
-  Circle.prototype.center = null;
+  Circle.prototype.center = new Point(0, 0);
 
   Circle.prototype.type = 'outline';
 
@@ -999,9 +1048,11 @@ Circle = (function(superClass) {
     Circle.__super__.constructor.call(this, this._layer);
   }
 
-  Circle.prototype.setCenter = function(center) {
-    this.center = center;
-    return this.hasChanged = true;
+  Circle.prototype.setCenter = function(x, y) {
+    this.center = isPoint(x, y);
+    if (!this.center) {
+      return console.warn("Circle.setCenter() is not valid");
+    }
   };
 
   Circle.prototype.setRadius = function(radius) {
@@ -1069,13 +1120,19 @@ Line = (function(superClass) {
     Line.__super__.constructor.call(this, this._layer);
   }
 
-  Line.prototype.from = function(_from) {
-    this._from = _from;
+  Line.prototype.from = function(x, y) {
+    this._from = isPoint(x, y);
+    if (!this._from) {
+      console.warn("Line.from() is not valid");
+    }
     return this;
   };
 
-  Line.prototype.to = function(_to) {
-    this._to = _to;
+  Line.prototype.to = function(x, y) {
+    this._to = isPoint(x, y);
+    if (!this._to) {
+      console.warn("Line.to() is not valid");
+    }
     return this;
   };
 
@@ -1167,9 +1224,16 @@ Path = (function(superClass) {
   Path.prototype.lines = [];
 
   Path.prototype.addPoint = function(point) {
-    this.points.push(point);
-    if (this.points.length > 1) {
-      this.addLine();
+    point = isPoint(point);
+    if (point) {
+      this.points.push(point);
+      if (this.points.length > 1) {
+        this.addLine();
+      }
+      return true;
+    } else {
+      console.warn("Path.addPoint()", point, "is not valid");
+      return false;
     }
   };
 

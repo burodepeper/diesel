@@ -4,12 +4,8 @@ class Particle extends Entity
     super()
 
     @position =
-      relative:
-        x: 0
-        y: 0
-      absolute:
-        x: 0
-        y: 0
+      relative: new Point(0, 0)
+      absolute: new Point(0, 0)
     @color = new Color()
     @size =
       width: 1
@@ -17,17 +13,30 @@ class Particle extends Entity
     @reference = WINDOW
 
     @isVisible = true
+    @hasChanged = false
 
   setReference: (@reference, @_particleID) ->
     @color = @reference.getColor()
 
   setPosition: (x, y) ->
-    @position.relative = {x, y}
-    return
+
+    x = parseFloat(x)
+    if x is NaN
+      console.warn "Particle.setPosition()", x, "is not a valid value for x"
+    else
+      @position.relative.x = x
+
+    y = parseFloat(y)
+    if y is NaN
+      console.warn "Particle.setPosition()", y, "is not a valid value for y"
+    else
+      @position.relative.y = y
+
+    @hasChanged = true
 
   setSize: (width, height) ->
     @size = {width, height}
-    return
+    @hasChanged = true
 
   setOpacity: (opacity) ->
     @color.setOpacity(opacity)
@@ -39,8 +48,15 @@ class Particle extends Entity
       @color.set(color)
 
   update: ->
-    @position.absolute.x = @reference.getX() + @position.relative.x
-    @position.absolute.y = @reference.getY() + @position.relative.y
+    if @hasChanged
+      x = @reference.getX() + @position.relative.x
+      y = @reference.getY() + @position.relative.y
+      if (x isnt NaN) and (y isnt NaN)
+        @position.absolute.x = x
+        @position.absolute.y = y
+      else
+        console.warn "Particle.update()", x+","+y, "is not a valid position"
+      @hasChanged = false
     return
 
   draw: ->

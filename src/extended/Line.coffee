@@ -10,10 +10,16 @@ class Line extends Pane
   constructor: (@_layer = 1) ->
     super(@_layer)
 
-  from: (@_from) ->
+  from: (x, y) ->
+    @_from = isPoint(x, y)
+    unless @_from
+      console.warn "Line.from() is not valid"
     return this
 
-  to: (@_to) ->
+  to: (x, y) ->
+    @_to = isPoint(x, y)
+    unless @_to
+      console.warn "Line.to() is not valid"
     return this
 
   # TODO

@@ -24,6 +24,7 @@ module.exports = function(grunt) {
         files: {
           'dist/engine.js': [
             'src/lib/functions.coffee',
+            'src/lib/helpers.coffee',
 
             'src/core/Engine.coffee',
             'src/core/Entity.coffee',

@@ -4,7 +4,14 @@
 
 - [x] Drawing [Rectangles] and [Squares] width `stretch`
 - [ ] Separate `color` and `opacity`, and combine with the parental `opacity`
-- [ ] Convert all coordinates (internally) to [Points], and accept arrays as coordinates
+- [x] Convert all coordinates (internally) to [Points], and accept arrays as coordinates
+  - [x] `Pane.setPosition()`
+  - [x] `Particle.setPosition()`
+  - [x] `Particle.update()`
+  - [x] `Circle.setCenter()`
+  - [x] `Line.from()`
+  - [x] `Line.to()`
+  - [x] `Path.addPoint()`
 - [ ] Update [README.md] and think of more practical examples
 
 ---
@@ -28,6 +35,7 @@
   - [ ] Remove duplicate particles; or calculate the amount of detail needed to draw an acceptable circle (ie, not necessarily all 360 degrees); or draw a quarter of the circle, and duplicate the other three quarters
   - [ ] Remove unneccessary particles (for a 1px outline)
   - [ ] Set thickness of outline (possibly using a [CompoundPane])
+- [ ] `update()`: `hasChanged` should also check if its reference has changed
 
 ### Color
 
@@ -35,7 +43,7 @@
 
 ### CompoundPane
 
-- A collection of shapes, to are either added or removed, to create complex shapes
+- A collection of shapes, to are either be added or removed, to create complex shapes
 - Better be renamed to [Shape]
 
 ### Controller
@@ -76,9 +84,6 @@
 - [ ] `getOpacity()`
 - [ ] `setCSSProperty()`: allow percentages (or floats) as values. Will need an update of `onResize()` as well.
 - [ ] `setOverflow()`: defaults to 'visible'
-- [ ] Mask (think of it as a combination of several shapes)
-  - [ ] `add()`
-  - [ ] `remove()`
 - [x] Move `getChild()` from [Line], [Circle], [Rectangle] etc. to [Pane]
 - [ ] `setColor()` does not work when called before the `addChild()` is executed on that [Pane]
 
@@ -151,7 +156,7 @@
 
 ## Getting started
 
-- How the [Engine] works (`update()` and `draw()`)
+- How the [Engine] works (`update()`, `draw()` and layers)
 - The concept of references and hierarchial inheritence
 - Setting up a new project
 
