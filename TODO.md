@@ -2,14 +2,12 @@
 
 ## Short term focus
 
-- [x] [BoundingBox] on a [Line], [Rectangle] and [Circle]
-  - [x] Differentiate between `children` and `particles`
 - [ ] Separate `color` and `opacity`
-- [ ] Update [README.md] and think of more practical examples
 - [ ] Implement `fill()`, `outline()` and `stretch()` for [Circle] and [Rectangle]
-- [ ] Implement `hasChanged` consistently accross [Panes]
-- [ ] Text
+- [ ] Implement `hasChanged` consistently across [Panes]
+- [ ] Add [Sprites], [Letters] and [Text]
 - [ ] See: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas
+- [ ] Think of more practical examples to showcase the tools and allow for visual regression testing
 
 ---
 
