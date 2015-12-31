@@ -2,7 +2,7 @@
 
 ## Short term focus
 
-- [ ] [BoundingBox] on a [Line]
+- [ ] [BoundingBox] on a [Line], [Rectangle] and [Circle]
 - [ ] Separate `color` and `opacity`
 - [ ] Update [README.md] and think of more practical examples
 - [ ] Implement `fill()`, `outline()` and `stretch()` for [Circle] and [Rectangle]
@@ -82,6 +82,8 @@
 - [ ] `setOverflow()`: defaults to 'visible'
 - [ ] `setColor()` does not work when called before the `addChild()` is executed on that [Pane]
 - [ ] `setOpacity()` should apply to a [Pane] as a whole, and not as a value to be multiplied for each separate particle. In this sense, `setOpacity()`'s main function is to allow a compound shape to be faded in or out.
+- [ ] Add a hitbox property
+- [ ] Calculate overlap between this [Pane] and another, optionally on the level of its children
 
 ### Particle _extends_ Entity
 
