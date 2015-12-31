@@ -15,6 +15,8 @@
 - [ ] Add keyboard, mouse and touch events
 - [ ] Think of more practical examples to showcase the tools and allow for visual regression testing
 - [ ] Check if `size` and `position` of [Panes] are as advertised
+  - [ ] Hour marks and background on [Clock] don't exactly match up
+  - [ ] I believe [Rectangles] are 1 PX too high and wide
 
 ### References
 
