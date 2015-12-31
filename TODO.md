@@ -41,6 +41,7 @@
 
 - [ ] Implement possibility for gradients
 - [ ] `change()`, initiates a color transition tween
+- [ ] Extend `constructor()` and `set()` with an opacity option
 
 ### Controller
 
