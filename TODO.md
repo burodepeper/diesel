@@ -2,17 +2,14 @@
 
 ## Short term focus
 
-- [x] Drawing [Rectangles] and [Squares] width `stretch`
-- [ ] Separate `color` and `opacity`, and combine with the parental `opacity`
-- [x] Convert all coordinates (internally) to [Points], and accept arrays as coordinates
-  - [x] `Pane.setPosition()`
-  - [x] `Particle.setPosition()`
-  - [x] `Particle.update()`
-  - [x] `Circle.setCenter()`
-  - [x] `Line.from()`
-  - [x] `Line.to()`
-  - [x] `Path.addPoint()`
+- [ ] [example-04] has 11268 (!) entities on just the first layer, which is quite unaccountable for, possibly an overkill of [Points]. The second layer has 3000+ entities because of the pixels the circle is made out of.
+- [ ] [BoundingBox] on a [Line]
+- [ ] Separate `color` and `opacity`
 - [ ] Update [README.md] and think of more practical examples
+- [ ] Implement `fill()`, `outline()` and `stretch()` for [Circle] and [Rectangle]
+- [ ] Implement `hasChanged` consistently accross [Panes]
+- [ ] Text
+- [ ] See: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas
 
 ---
 
@@ -22,15 +19,17 @@
 
 ### BoundingBox
 
+- [ ] Does this work on a [Line]?
+
 ### Button
 
-- extends [Pane], or is a property of a [Pane]
-- registers as a listener for click/touch events
+- is a property of a [Pane] and as such registers itself to listen to click/touch events on WINDOW.
 
 ### Circle _extends_ Pane
 
 - [ ] Implement as child of [Oval]
 - [ ] `fill()`
+- [ ] `stretch()`: similar to `fill()` but the circle is composed of vertically stretched pixels. Best option to be used when not part of a [Shape] as it reduces the amount of [Particles] needed by well over 90%.
 - [ ] `outline()`
   - [ ] Remove duplicate particles; or calculate the amount of detail needed to draw an acceptable circle (ie, not necessarily all 360 degrees); or draw a quarter of the circle, and duplicate the other three quarters
   - [ ] Remove unneccessary particles (for a 1px outline)
@@ -40,11 +39,7 @@
 ### Color
 
 - [ ] Implement possibility for gradients
-
-### CompoundPane
-
-- A collection of shapes, to are either be added or removed, to create complex shapes
-- Better be renamed to [Shape]
+- [ ] `change()`, initiates a color transition tween
 
 ### Controller
 
@@ -62,6 +57,7 @@
 - [ ] Keyboard and mouse input (via a separate [Controller])
 - [ ] Allow multiple canvases/contexts, and in extension, allow a canvas to be linked to an existing DOM-element.
 - [ ] `getAllInstancesOf(class, layer)`: returns all instances of `class`; `layer` is optional
+- [ ] Draw each layer of entities on a separate <canvas> element
 
 ### Entity
 
@@ -84,8 +80,8 @@
 - [ ] `getOpacity()`
 - [ ] `setCSSProperty()`: allow percentages (or floats) as values. Will need an update of `onResize()` as well.
 - [ ] `setOverflow()`: defaults to 'visible'
-- [x] Move `getChild()` from [Line], [Circle], [Rectangle] etc. to [Pane]
 - [ ] `setColor()` does not work when called before the `addChild()` is executed on that [Pane]
+- [ ] `setOpacity()` should apply to a [Pane] as a whole, and not as a value to be multiplied for each separate particle. In this sense, `setOpacity()`'s main function is to allow a compound shape to be faded in or out.
 
 ### Particle _extends_ Entity
 
@@ -112,6 +108,10 @@
 - [ ] `fill()`
 - [ ] `stretch()`
 - [ ] `outline()`
+
+### Shape
+
+- A collection of [Panes], each of which is either added or removed. The particles on each [Pane] are initially interpreted as simple black/white additions/subtractions.
 
 ### Sprite _extends_ Pane
 
@@ -142,6 +142,8 @@
 
 ## Helper functions
 
+### General helpers
+
 - [ ] `addDiversity()`
 - [ ] `average()`
 - [ ] `delay()`
@@ -151,6 +153,10 @@
 - [ ] `getWeighedInt()`
 - [ ] `shuffle()`
 - [ ] `snap()`
+
+### Engine specific helpers
+
+- [ ] `isPoint()`
 
 ---
 
@@ -163,7 +169,7 @@
 ## Documentation
 
 - Animation
-- (BoundingBox)
+- (BoundingBox, not documented, for debugging only)
 - Button
 - [Circle]
   - [ ] `new Circle()`
@@ -172,7 +178,8 @@
 - [Color]
   - [ ] `Color.set()`
   - [ ] `Color.setOpacity()`
-- (Controller)
+  - [ ] `Color.change()`
+- (Controller, might be deprecated)
 - [Engine]
   - [ ] `window.PX`
   - [ ] `window.CONTEXT`
@@ -192,6 +199,7 @@
 - [Line]
   - [ ] `Line.atAngle()`
   - [ ] `Line.from()`
+  - [ ] `Line.setWeight()`
   - [ ] `Line.to()`
 - [Pane]
   - [ ] `Pane.position`
@@ -200,7 +208,10 @@
   - [ ] `Pane.disableBoundingBox()`
   - [ ] `Pane.enableBoundingBox()`
   - [ ] `Pane.getCenter()`
+  - [ ] `Pane.getChild()`
+  - [ ] `Pane.getColor()`
   - [ ] `Pane.getHeight()`
+  - [ ] `Pane.getOpacity()`
   - [ ] `Pane.getWidth()`
   - [ ] `Pane.getX()`
   - [ ] `Pane.getY()`
