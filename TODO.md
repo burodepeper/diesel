@@ -27,7 +27,7 @@
 - [ ] `outline()`
   - [ ] Remove duplicate particles; or calculate the amount of detail needed to draw an acceptable circle (ie, not necessarily all 360 degrees); or draw a quarter of the circle, and duplicate the other three quarters
   - [ ] Remove unneccessary particles (for a 1px outline)
-  - [ ] Set thickness of outline (possibly using a CompoundPane)
+  - [ ] Set thickness of outline (possibly using a [CompoundPane])
 
 ### Color
 
@@ -69,6 +69,7 @@
 - [ ] `setColor()`
 - [ ] `setOpacity()`
 - [ ] Clean up children
+- [ ] BUG: occassionally, particles stay in their old positions
 
 ### Pane _extends_ Entity
 

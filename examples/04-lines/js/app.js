@@ -14,8 +14,8 @@ App = {
     if (Engine.init(settings)) {
       this.clock = new Clock();
       this.clock.setCSS({
-        top: 1,
-        left: 1,
+        top: 5,
+        left: 5,
         width: 59,
         height: 59
       });

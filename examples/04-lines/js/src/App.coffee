@@ -11,7 +11,7 @@ App =
 
       # Clock in top right corner
       @clock = new Clock()
-      @clock.setCSS({ top:1, left:1, width:59, height:59 })
+      @clock.setCSS({ top:5, left:5, width:59, height:59 })
 
       # TODO
       # Make the clock more pretty
