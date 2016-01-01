@@ -43,7 +43,6 @@ class Circle extends Pane
         i = 0
 
         if @type is 'fill'
-
           for x in [0 .. @diameter]
             for y in [0 .. @diameter]
               diffX = @center.x - x
@@ -56,7 +55,6 @@ class Circle extends Pane
                 i++
 
         else if @type is 'stretch'
-
           minY = []
           for x in [0 .. @diameter - 1]
             minY.push(@diameter)
@@ -76,7 +74,6 @@ class Circle extends Pane
             i++
 
         if @hasOutline
-
           for angle in [0 .. 359]
             radians = angle * (Math.PI / 180)
             x = Math.round(@center.x + (Math.cos(radians) * @radius))
@@ -86,5 +83,8 @@ class Circle extends Pane
             particle.setColor(@outlineColor)
             particle.show()
             i++
+
+        # TODO
+        # hide particles larger than i
 
         @hasChanged = false

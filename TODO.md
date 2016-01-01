@@ -89,6 +89,8 @@
 - [ ] `setOpacity()` should apply to a [Pane] as a whole, and not as a value to be multiplied for each separate particle. In this sense, `setOpacity()`'s main function is to allow a compound shape to be faded in or out.
 - [ ] Add a hitbox property
 - [ ] Calculate overlap between this [Pane] and another, optionally on the level of its children
+- [ ] Rename `addChild()` to `add()`; the concept of children is technical, and not necessary on the front-end
+- [ ] `setCSS()`: allow fractional values < 1 as percentages (also as ..% ?)
 
 ### Particle _extends_ Entity
 
