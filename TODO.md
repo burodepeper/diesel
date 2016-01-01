@@ -2,10 +2,8 @@
 
 ## Short term focus
 
-- [ ] Implement `fill()`, `outline()` and `stretch()` for [Circle] and [Rectangle]
-  - [ ] Deprecate `setColor()` on [Rectangles] and [Circles] in favor of setting the color via `fill()`, `stretch()`, or `outline()`
-- [ ] Check if `size` and `position` of [Panes] are as advertised
-  - [ ] I believe [Rectangles] are 1 PX too high and wide
+- [ ] Deprecate `setColor()` on [Rectangles] and [Circles] in favor of setting the color via `fill()`, `stretch()`, or `outline()`
+- [ ] Check if `size` and `position` of [Panes] are as advertised; I have an inkling that [Rectangles] are a PX too high and wide
 - [ ] Implement `hasChanged` consistently across [Panes]
 - [ ] Add [Sprites], [Letters] and [Text]
 - [ ] Add keyboard, mouse and touch events
@@ -19,7 +17,7 @@
 
 ## API
 
-### Animation _extends_ SpriteSet
+### Animation
 
 ### BoundingBox
 
@@ -27,7 +25,7 @@
 
 - is a property of a [Pane] and as such registers itself to listen to click/touch events on WINDOW.
 
-### Circle _extends_ Pane
+### Circle
 
 - [ ] Implement as child of [Oval]
 - [ ] Set weight of outline (possibly using a [CompoundPane])
@@ -42,6 +40,8 @@
 
 ### Controller
 
+- [ ] Deprecate the concept of a [Controller] in favor of just extending an [Entity]?
+
 ### Engine
 
 - [ ] Set configuration when initializing
@@ -55,209 +55,90 @@
 - [ ] `pause()`
 - [ ] Keyboard and mouse input (via a separate [Controller])
 - [ ] Allow multiple canvases/contexts, and in extension, allow a canvas to be linked to an existing DOM-element.
-- [ ] Draw each layer of entities on a separate <canvas> element
+- [ ] Draw each layer of entities on a separate <canvas> element; see [Pane] for a possibly better implementation
 
 ### Entity
 
-### Letter _extends_ Sprite
+### Hitbox
+
+- Is a property of a [Pane]
+
+### Letter
 
 - [ ] Create default typefaces at 9px, 11px and a uppercase only version at 5px.
 
-### Line _extends_ Pane
+### Line
 
-- [ ] Allow `to()` and `from()` to accept arrays instead of [Points]; arrays are converted to a point internally
-- [ ] Add relative positioning (of entire line)
-- [ ] Add relative positioning (of `@_from`)
+- [ ] Allow `to()` and `from()` to accept two numbers instead of [Points]; values are converted to a [Point] behind the scenes
+- [ ] Add relative positioning (relative to `@_from`)
 - [ ] `setColor()`
-- [ ] `setOpacity()`
-- [ ] Clean up children
 - [ ] BUG: occassionally, particles stay in their old positions
 
-### Pane _extends_ Entity
+### Pane
 
 - [ ] `setCSSProperty()`: allow percentages (or floats) as values. Will need an update of `onResize()` as well.
 - [ ] `setOverflow()`: defaults to 'visible'
 - [ ] `setColor()` does not work when called before the `addChild()` is executed on that [Pane]
-- [ ] `setOpacity()` should apply to a [Pane] as a whole, and not as a value to be multiplied for each separate particle. In this sense, `setOpacity()`'s main function is to allow a compound shape to be faded in or out.
-- [ ] Add a hitbox property
 - [ ] Calculate overlap between this [Pane] and another, optionally on the level of its children
 - [ ] Rename `addChild()` to `add()`; the concept of children is technical, and not necessary on the front-end
-- [ ] `setCSS()`: allow fractional values < 1 as percentages (also as ..% ?)
 - [ ] FUTURE PLAN: Create a separate canvas/context for every [Pane] that is created with when a `_layer` is specified. All children and particles added to that instance will be drawn on its private context. This will inherently mean that any overflow is hidden.
+- [ ] Shared method to clean up unused `particles`
 
-### Particle _extends_ Entity
+### Particle
 
-- [ ] Optionally display [Particles] as separate rectangles, with a 1px margin
+- [ ] Optionally display [Particles] as separate rectangles (with a 1px margin)
 
-### Path _extends_ Pane
+### Path
 
-- [ ] `setOpacity()`
 - [ ] `setColor()`
-- [ ] `close()`; attached first to last points
+- [ ] `close()`; attaches last to first points
 - [ ] `fill()`
-- [ ] `setThickness()`
 
-### Point _extends_ Entity
+### Point
 
-### Polygon _extends_ Pane
+### Polygon
 
 - a collection of [Points], grouped in [Triangles], to draw more complex shapes
 
-### Rectangle _extends_ Pane
+### Rectangle
 
 ### Shape
 
 - A collection of [Panes], each of which is either added or removed. The particles on each [Pane] are initially interpreted as simple black/white additions/subtractions.
 
-### Sprite _extends_ Pane
+### Sprite
 
 - contains [Particles] (from a data source) that resemble an image
 - [ ] `rotate()`: in increments of 90 degrees
 
-### SpriteSet _extends_ Controller
+### SpriteSet
 
 - a group of [Sprites] with methods to control which one is visible
 
-### Square _extends_ Rectangle
+### Square
 
 ### Storage
 
-### Text _extends_ Pane
+### Text
 
 - text is rendered as [Letters] and contained within a [Pane]
 
-### Timer _extends_ Entity
+### Timer
 
-### Triangle _extends_ Pane
+### Triangle
 
 - a collection of three [Points] whose surface is filled with [Particles] (or possibly an outline)
 
-### Tween _extends_ Timer
+### Tween
 
 ---
 
-## Getting started
+## Documentation
 
 - How the [Engine] works (`update()`, `draw()` and layers)
 - The difference between children and particles
 - The concept of references and hierarchial inheritence
 - Setting up a new project
-
-## Documentation
-
-### General helpers
-
-- [ ] `addDiversity()`
-- [ ] `average()`
-- [ ] `delay()`
-- [ ] `getRandomFromArray()`
-- [ ] `getRandomFromObject()`
-- [ ] `getRandomInt()`
-- [ ] `getWeighedInt()`
-- [ ] `shuffle()`
-- [ ] `snap()`
-
-### Engine specific helpers
-
-- [ ] `isPoint()`
-
-### API
-
-- Animation
-- (BoundingBox, not documented, for debugging only)
-- Button
-- [Circle]
-  - [ ] `new Circle()`
-  - [ ] `Circle.setCenter()`
-  - [ ] `Circle.setRadius()`
-- [Color]
-  - [ ] `Color.set()`
-  - [ ] `Color.setOpacity()`
-  - [ ] `Color.change()`
-- (Controller, might be deprecated)
-- [Engine]
-  - [ ] `window.PX`
-  - [ ] `window.CONTEXT`
-  - [ ] `window.WINDOW`
-  - [ ] `window.NOW`
-  - [ ] `window.DEBUG`
-  - [ ] `Engine.isTouchDevice`
-  - [ ] `Engine.init()`
-  - [ ] `Engine.addEntity()`
-  - [ ] `Engine.cleanUp()`
-  - [ ] `Engine.removeEntity()`
-  - [ ] `Engine.trigger()`
-- [Entity]
-  - [ ] `Entity.remove()`
-  - [ ] `Entity.setState()`
-- Letter
-- [Line]
-  - [ ] `Line.atAngle()`
-  - [ ] `Line.from()`
-  - [ ] `Line.setWeight()`
-  - [ ] `Line.to()`
-- [Pane]
-  - [ ] `Pane.position`
-  - [ ] `Pane.size`
-  - [ ] `Pane.addChild()`
-  - [ ] `Pane.addParticle()`
-  - [ ] `Pane.disableBoundingBox()`
-  - [ ] `Pane.enableBoundingBox()`
-  - [ ] `Pane.getCenter()`
-  - [ ] `Pane.getColor()`
-  - [ ] `Pane.getHeight()`
-  - [ ] `Pane.getParticle()`
-  - [ ] `Pane.getWidth()`
-  - [ ] `Pane.getX()`
-  - [ ] `Pane.getY()`
-  - [ ] `Pane.isWithinBounds()`
-  - [ ] `Pane.setColor()`
-  - [ ] `Pane.setCSS()`
-  - [ ] `Pane.setCSSProperty()`
-  - [ ] `Pane.setOpacity()`
-  - [ ] `Pane.setPosition()`
-  - [ ] `Pane.setSize()`
-  - [ ] `Pane.updateParticles()`
-- [Particle]
-  - [ ] `Particle.position`
-  - [ ] `Particle.size`
-  - [ ] `Particle.getX()`
-  - [ ] `Particle.getY()`
-  - [ ] `Particle.hide()`
-  - [ ] `Particle.isWithinBounds()`
-  - [ ] `Particle.isWithinHorizontalBounds()`
-  - [ ] `Particle.isWithinVerticalBounds()`
-  - [ ] `Particle.setPosition()`
-  - [ ] `Particle.show()`
-  - [ ] `Particle.setColor()`
-  - [ ] `Particle.setOpacity()`
-  - [ ] `Particle.setPosition()`
-  - [ ] `Particle.setSize()`
-- [Path]
-  - [ ] `Path.addPoint()`
-- [Point]
-  - [ ] `new Point()`
-  - [ ] `Point.moveTo()`
-- Polygon
-- [Rectangle]
-  - [ ] `new Rectangle()`
-- Sprite
-- SpriteSet
-- [Square]
-  - [ ] `new Square()`
-- [Storage]
-  - [ ] types of storage available
-  - [ ] `new Storage()`
-  - [ ] `Storage.get()`
-  - [ ] `Storage.isAvailable()`
-  - [ ] `Storage.set()`
-- Text
-- [Timer]
-  - [ ] `new Timer()`
-- Triangle
-- [Tween]
-  - [ ] `new Tween()`
-  - [ ] `Tween.getValue()`
 
 ---
 
