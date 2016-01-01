@@ -3,19 +3,18 @@
 ## Short term focus
 
 - [ ] Implement `fill()`, `outline()` and `stretch()` for [Circle] and [Rectangle]
-  - [ ] `Circle.stretch()`
   - [ ] `Circle.outline()`
     - [ ] Remove duplicate particles
     - [ ] Remove unnecessary particles that thicken the outline
     - [ ] Calculate the optimal amount of angles to use to draw the outline
     - [ ] Only draw a quarter of a circle, and duplicate the rest
+  - [ ] Deprecate `setColor()` on [Rectangles] and [Circles] in favor of setting the color via `fill()`, `stretch()`, or `outline()`
+- [ ] Check if `size` and `position` of [Panes] are as advertised
+  - [ ] I believe [Rectangles] are 1 PX too high and wide
 - [ ] Implement `hasChanged` consistently across [Panes]
 - [ ] Add [Sprites], [Letters] and [Text]
 - [ ] Add keyboard, mouse and touch events
 - [ ] Think of more practical examples to showcase the tools and allow for visual regression testing
-- [ ] Check if `size` and `position` of [Panes] are as advertised
-  - [ ] Hour marks and background on [Clock] don't exactly match up
-  - [ ] I believe [Rectangles] are 1 PX too high and wide
 
 ### References
 
@@ -29,8 +28,6 @@
 
 ### BoundingBox
 
-- [x] Add `extension` and `padding`
-
 ### Button
 
 - is a property of a [Pane] and as such registers itself to listen to click/touch events on WINDOW.
@@ -38,14 +35,12 @@
 ### Circle _extends_ Pane
 
 - [ ] Implement as child of [Oval]
-- [ ] `fill()`
-- [ ] `stretch()`: similar to `fill()` but the circle is composed of vertically stretched pixels. Best option to be used when not part of a [Shape] as it reduces the amount of [Particles] needed by well over 90%.
 - [ ] `outline()`
   - [ ] Remove duplicate particles; or calculate the amount of detail needed to draw an acceptable circle (ie, not necessarily all 360 degrees); or draw a quarter of the circle, and duplicate the other three quarters
   - [ ] Remove unneccessary particles (for a 1px outline)
   - [ ] Set thickness of outline (possibly using a [CompoundPane])
 - [ ] `update()`: `hasChanged` should also check if its reference has changed
-- [ ] Remove `setCenter()` and `setRadius()` in favor of `setPosition()` and `setSize()` which can calculate `center` and `radius` behind the scenes; part of becoming an [Oval]
+- [ ] `outline()`: draw partial outline
 
 ### Color
 
@@ -68,8 +63,6 @@
 - [ ] `pause()`
 - [ ] Keyboard and mouse input (via a separate [Controller])
 - [ ] Allow multiple canvases/contexts, and in extension, allow a canvas to be linked to an existing DOM-element.
-- [ ] `getAllInstancesOf(class, layer)`: returns all instances of `class`; `layer` is optional
-- [x] `analyze(layer)`: returns an inventory of the type and count of classes (per layer)
 - [ ] Draw each layer of entities on a separate <canvas> element
 
 ### Entity
@@ -111,17 +104,11 @@
 
 ### Point _extends_ Entity
 
-- [ ] Convert all coordinates to [Points]
-
 ### Polygon _extends_ Pane
 
 - a collection of [Points], grouped in [Triangles], to draw more complex shapes
 
 ### Rectangle _extends_ Pane
-
-- [ ] `fill()`
-- [ ] `stretch()`
-- [ ] `outline()`
 
 ### Shape
 
@@ -154,7 +141,14 @@
 
 ---
 
-## Helper functions
+## Getting started
+
+- How the [Engine] works (`update()`, `draw()` and layers)
+- The difference between children and particles
+- The concept of references and hierarchial inheritence
+- Setting up a new project
+
+## Documentation
 
 ### General helpers
 
@@ -172,16 +166,7 @@
 
 - [ ] `isPoint()`
 
----
-
-## Getting started
-
-- How the [Engine] works (`update()`, `draw()` and layers)
-- The difference between children and particles
-- The concept of references and hierarchial inheritence
-- Setting up a new project
-
-## Documentation
+### API
 
 - Animation
 - (BoundingBox, not documented, for debugging only)
