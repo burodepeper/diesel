@@ -40,34 +40,23 @@ App = {
 Clock = (function(superClass) {
   extend(Clock, superClass);
 
-  Clock.prototype.center = null;
-
-  Clock.prototype.hours = null;
-
-  Clock.prototype.minutes = null;
-
   function Clock() {
     Clock.__super__.constructor.call(this);
-    this.center = new Point();
     this.createDial();
     this.hours = new Line();
     this.addChild(this.hours);
-    this.hours.setWeight(2);
+    this.hours.from(this.dial.center);
     this.minutes = new Line();
     this.addChild(this.minutes);
+    this.minutes.from(this.dial.center);
     this.seconds = new Line();
     this.addChild(this.seconds);
     this.seconds.setColor(new Color('#e10'));
+    this.seconds.from(this.dial.center);
   }
 
   Clock.prototype.update = function() {
-    var center, hours, minutes, seconds, time;
-    center = this.getCenter();
-    this.center.x = center.x;
-    this.center.y = center.y;
-    this.hours.from(this.center);
-    this.minutes.from(this.center);
-    this.seconds.from(this.center);
+    var hours, minutes, seconds, time;
     time = new Date();
     seconds = time.getSeconds();
     minutes = time.getMinutes() + (seconds / 60);

@@ -1,38 +1,25 @@
 class Clock extends Pane
 
-  center: null
-  hours: null
-  minutes: null
-
   constructor: ->
     super()
-
-    @center = new Point()
 
     @createDial()
 
     @hours = new Line()
     @addChild(@hours)
-    @hours.setWeight(2)
-    # @hours.enableBoundingBox('#fff')
+    # @hours.setWeight(2)
+    @hours.from(@dial.center)
 
     @minutes = new Line()
     @addChild(@minutes)
-    # @minutes.enableBoundingBox('#fff')
+    @minutes.from(@dial.center)
 
     @seconds = new Line()
     @addChild(@seconds)
     @seconds.setColor(new Color('#e10'))
-    # @seconds.enableBoundingBox('#e10')
+    @seconds.from(@dial.center)
 
   update: ->
-    center = @getCenter()
-    @center.x = center.x
-    @center.y = center.y
-    @hours.from(@center)
-    @minutes.from(@center)
-    @seconds.from(@center)
-
     time = new Date()
     seconds = time.getSeconds()
     minutes = time.getMinutes() + (seconds / 60)
@@ -56,7 +43,6 @@ class Clock extends Pane
     @dial.stretch()
     @dial.setColor(new Color('rgba(255, 255, 255, 0.15)'))
     @dial.outline(new Color('rgba(255, 255, 255, 0.05)'))
-    # @dial.enableBoundingBox('#fd0')
 
     # Hour marks
     color = new Color('rgba(255, 255, 255, 0.3)')
