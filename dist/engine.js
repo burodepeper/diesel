@@ -1173,8 +1173,25 @@ Circle = (function(superClass) {
     }
   };
 
+  Circle.prototype.getMinY = function() {
+    var angle, k, l, minY, radians, ref, x, y;
+    minY = [];
+    for (x = k = 0, ref = this.diameter - 1; 0 <= ref ? k <= ref : k >= ref; x = 0 <= ref ? ++k : --k) {
+      minY.push(this.diameter);
+    }
+    for (angle = l = 0; l <= 179; angle = ++l) {
+      radians = angle * (Math.PI / 180);
+      x = Math.round(this.center.x + (Math.cos(radians) * this.radius));
+      y = Math.round(this.center.y - (Math.sin(radians) * this.radius));
+      if (y < minY[x]) {
+        minY[x] = y;
+      }
+    }
+    return minY;
+  };
+
   Circle.prototype.update = function() {
-    var angle, diffX, diffY, distanceFromCenter, height, i, k, l, len, m, minY, n, o, p, particle, radians, ref, ref1, ref2, x, y;
+    var angle, diffX, diffY, distanceFromCenter, height, i, k, l, len, m, minY, n, particle, radians, ref, ref1, x, y;
     if (this.hasChanged) {
       if (this.center && this.radius) {
         i = 0;
@@ -1193,19 +1210,8 @@ Circle = (function(superClass) {
             }
           }
         } else if (this.type === 'stretch') {
-          minY = [];
-          for (x = m = 0, ref2 = this.diameter - 1; 0 <= ref2 ? m <= ref2 : m >= ref2; x = 0 <= ref2 ? ++m : --m) {
-            minY.push(this.diameter);
-          }
-          for (angle = n = 0; n <= 179; angle = ++n) {
-            radians = angle * (Math.PI / 180);
-            x = Math.round(this.center.x + (Math.cos(radians) * this.radius));
-            y = Math.round(this.center.y - (Math.sin(radians) * this.radius));
-            if (y < minY[x]) {
-              minY[x] = y;
-            }
-          }
-          for (x = o = 0, len = minY.length; o < len; x = ++o) {
+          minY = this.getMinY();
+          for (x = m = 0, len = minY.length; m < len; x = ++m) {
             y = minY[x];
             height = this.diameter - (y * 2);
             particle = this.getParticle(i);
@@ -1216,7 +1222,7 @@ Circle = (function(superClass) {
           }
         }
         if (this.hasOutline) {
-          for (angle = p = 0; p <= 359; angle = ++p) {
+          for (angle = n = 0; n <= 359; angle = ++n) {
             radians = angle * (Math.PI / 180);
             x = Math.round(this.center.x + (Math.cos(radians) * this.radius));
             y = Math.round(this.center.y - (Math.sin(radians) * this.radius));

@@ -35,6 +35,19 @@ class Circle extends Pane
       @center.y = (@getHeight() - 1) / 2
       @hasChanged = true
 
+  getMinY: ->
+    minY = []
+    for x in [0 .. @diameter - 1]
+      minY.push(@diameter)
+
+    for angle in [0 .. 179]
+      radians = angle * (Math.PI / 180)
+      x = Math.round(@center.x + (Math.cos(radians) * @radius))
+      y = Math.round(@center.y - (Math.sin(radians) * @radius))
+      if (y < minY[x]) then minY[x] = y
+
+    return minY
+
   update: ->
 
     if @hasChanged
@@ -55,16 +68,7 @@ class Circle extends Pane
                 i++
 
         else if @type is 'stretch'
-          minY = []
-          for x in [0 .. @diameter - 1]
-            minY.push(@diameter)
-
-          for angle in [0 .. 179]
-            radians = angle * (Math.PI / 180)
-            x = Math.round(@center.x + (Math.cos(radians) * @radius))
-            y = Math.round(@center.y - (Math.sin(radians) * @radius))
-            if (y < minY[x]) then minY[x] = y
-
+          minY = @getMinY()
           for y, x in minY
             height = @diameter - (y * 2)
             particle = @getParticle(i)
