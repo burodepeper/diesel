@@ -1125,15 +1125,18 @@ BoundingBox = (function(superClass) {
 Circle = (function(superClass) {
   extend(Circle, superClass);
 
+  Circle.prototype.diameter = null;
+
   Circle.prototype.radius = null;
 
   Circle.prototype.center = new Point(0, 0);
 
-  Circle.prototype.type = 'outline';
+  Circle.prototype.type = 'stretch';
 
   function Circle(_layer) {
     this._layer = _layer != null ? _layer : 1;
     Circle.__super__.constructor.call(this, this._layer);
+    this.hasOutline = false;
   }
 
   Circle.prototype.fill = function(color) {
@@ -1155,49 +1158,29 @@ Circle = (function(superClass) {
     this.hasOutline = true;
   };
 
-  Circle.prototype.setCenter = function(x, y) {
-    this.center = isPoint(x, y);
-    if (!this.center) {
-      return console.warn("Circle.setCenter() is not valid");
-    } else {
-      return this.updateDimensions();
-    }
-  };
-
-  Circle.prototype.setRadius = function(radius) {
-    this.radius = radius;
+  Circle.prototype.setSize = function(diameter) {
+    this.diameter = diameter;
+    Circle.__super__.setSize.call(this, this.diameter, this.diameter);
     this.updateDimensions();
-    return this.hasChanged = true;
   };
 
   Circle.prototype.updateDimensions = function() {
-    var diameter;
-    if (this.center && this.radius) {
-      diameter = this.radius * 2;
-      this.setPosition(this.center.x - this.radius, this.center.y - this.radius);
-      return this.setSize(diameter, diameter);
+    if (this.diameter) {
+      this.radius = this.diameter / 2;
+      this.center.x = (this.getWidth() - 1) / 2;
+      this.center.y = (this.getHeight() - 1) / 2;
+      return this.hasChanged = true;
     }
   };
 
   Circle.prototype.update = function() {
-    var angle, diffX, diffY, distanceFromCenter, i, k, l, m, particle, radians, ref, ref1, x, y;
+    var angle, diffX, diffY, distanceFromCenter, height, i, k, l, len, m, minY, n, o, p, particle, radians, ref, ref1, ref2, x, y;
     if (this.hasChanged) {
       if (this.center && this.radius) {
-        if (this.type === 'outline') {
-          i = 0;
-          for (angle = k = 0; k <= 359; angle = ++k) {
-            radians = angle * (Math.PI / 180);
-            x = this.center.x + (Math.cos(radians) * this.radius);
-            y = this.center.y - (Math.sin(radians) * this.radius);
-            particle = this.getParticle(i);
-            particle.setPosition(x, y);
-            particle.show();
-            i++;
-          }
-        } else if (this.type === 'fill') {
-          i = 0;
-          for (x = l = 0, ref = this.radius * 2; 0 <= ref ? l <= ref : l >= ref; x = 0 <= ref ? ++l : --l) {
-            for (y = m = 0, ref1 = this.radius * 2; 0 <= ref1 ? m <= ref1 : m >= ref1; y = 0 <= ref1 ? ++m : --m) {
+        i = 0;
+        if (this.type === 'fill') {
+          for (x = k = 0, ref = this.diameter; 0 <= ref ? k <= ref : k >= ref; x = 0 <= ref ? ++k : --k) {
+            for (y = l = 0, ref1 = this.diameter; 0 <= ref1 ? l <= ref1 : l >= ref1; y = 0 <= ref1 ? ++l : --l) {
               diffX = this.center.x - x;
               diffY = this.center.y - y;
               distanceFromCenter = Math.sqrt((diffX * diffX) + (diffY * diffY));
@@ -1208,6 +1191,40 @@ Circle = (function(superClass) {
                 i++;
               }
             }
+          }
+        } else if (this.type === 'stretch') {
+          minY = [];
+          for (x = m = 0, ref2 = this.diameter - 1; 0 <= ref2 ? m <= ref2 : m >= ref2; x = 0 <= ref2 ? ++m : --m) {
+            minY.push(this.diameter);
+          }
+          for (angle = n = 0; n <= 179; angle = ++n) {
+            radians = angle * (Math.PI / 180);
+            x = Math.round(this.center.x + (Math.cos(radians) * this.radius));
+            y = Math.round(this.center.y - (Math.sin(radians) * this.radius));
+            if (y < minY[x]) {
+              minY[x] = y;
+            }
+          }
+          for (x = o = 0, len = minY.length; o < len; x = ++o) {
+            y = minY[x];
+            height = this.diameter - (y * 2);
+            particle = this.getParticle(i);
+            particle.setPosition(x, y);
+            particle.setSize(1, height);
+            particle.show();
+            i++;
+          }
+        }
+        if (this.hasOutline) {
+          for (angle = p = 0; p <= 359; angle = ++p) {
+            radians = angle * (Math.PI / 180);
+            x = Math.round(this.center.x + (Math.cos(radians) * this.radius));
+            y = Math.round(this.center.y - (Math.sin(radians) * this.radius));
+            particle = this.getParticle(i);
+            particle.setPosition(x, y);
+            particle.setColor(this.outlineColor);
+            particle.show();
+            i++;
           }
         }
         return this.hasChanged = false;

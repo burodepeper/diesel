@@ -81,22 +81,20 @@ Clock = (function(superClass) {
   };
 
   Clock.prototype.createDial = function() {
-    var center, color, degrees, i, j, line, radius, results;
-    center = new Point(29, 29);
-    radius = 29.5;
+    var color, degrees, i, j, line, results;
     this.dial = new Circle(1);
     this.addChild(this.dial);
-    this.dial.setCenter(center);
-    this.dial.setRadius(radius);
-    this.dial.fill();
+    this.dial.setSize(59);
+    this.dial.stretch();
     this.dial.setColor(new Color('rgba(255, 255, 255, 0.15)'));
+    this.dial.outline(new Color('rgba(255, 255, 255, 0.05)'));
     color = new Color('rgba(255, 255, 255, 0.3)');
     results = [];
     for (i = j = 0; j <= 11; i = ++j) {
       degrees = i * 30;
       line = new Line(2);
       this.addChild(line);
-      line.from(center).atAngle(degrees, radius, 0.8);
+      line.from(this.dial.center).atAngle(degrees, this.dial.radius, 0.8);
       results.push(line.setColor(color));
     }
     return results;

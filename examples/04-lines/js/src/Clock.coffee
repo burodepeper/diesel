@@ -49,16 +49,13 @@ class Clock extends Pane
 
   createDial: ->
 
-    center = new Point(29, 29)
-    radius = 29.5
-
     # Background circle thing
     @dial = new Circle(1)
     @addChild(@dial)
-    @dial.setCenter(center)
-    @dial.setRadius(radius)
-    @dial.fill()
+    @dial.setSize(59)
+    @dial.stretch()
     @dial.setColor(new Color('rgba(255, 255, 255, 0.15)'))
+    @dial.outline(new Color('rgba(255, 255, 255, 0.05)'))
     # @dial.enableBoundingBox('#fd0')
 
     # Hour marks
@@ -67,5 +64,5 @@ class Clock extends Pane
       degrees = i * 30
       line = new Line(2)
       @addChild(line)
-      line.from(center).atAngle(degrees, radius, 0.8)
+      line.from(@dial.center).atAngle(degrees, @dial.radius, 0.8)
       line.setColor(color)
