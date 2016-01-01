@@ -7,6 +7,19 @@ class Circle extends Pane
   constructor: (@_layer = 1) ->
     super(@_layer)
 
+  fill: (color = null) ->
+    @type = 'fill'
+    return
+
+  stretch: (color = null) ->
+    @type = 'stretch'
+    return
+
+  outline: (color) ->
+    @outlineColor = color
+    @hasOutline = true
+    return
+
   setCenter: (x, y) ->
     @center = isPoint(x, y)
     unless @center

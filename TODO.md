@@ -3,13 +3,12 @@
 ## Short term focus
 
 - [ ] Implement `fill()`, `outline()` and `stretch()` for [Circle] and [Rectangle]
-  - [x] `Rectangle.fill()`
-  - [x] `Rectangle.stretch()`
-  - [x] `Rectangle.outline()` + fill
-  - [x] `Rectangle.outline()` + stretch
-  - [x] `Circle.fill()`
   - [ ] `Circle.stretch()`
-  - [x] `Circle.outline()`
+  - [ ] `Circle.outline()`
+    - [ ] Remove duplicate particles
+    - [ ] Remove unnecessary particles that thicken the outline
+    - [ ] Calculate the optimal amount of angles to use to draw the outline
+    - [ ] Only draw a quarter of a circle, and duplicate the rest
 - [ ] Implement `hasChanged` consistently across [Panes]
 - [ ] Add [Sprites], [Letters] and [Text]
 - [ ] Add keyboard, mouse and touch events
@@ -46,6 +45,7 @@
   - [ ] Remove unneccessary particles (for a 1px outline)
   - [ ] Set thickness of outline (possibly using a [CompoundPane])
 - [ ] `update()`: `hasChanged` should also check if its reference has changed
+- [ ] Remove `setCenter()` and `setRadius()` in favor of `setPosition()` and `setSize()` which can calculate `center` and `radius` behind the scenes; part of becoming an [Oval]
 
 ### Color
 

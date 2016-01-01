@@ -22,7 +22,7 @@ App =
       @rectangle.setPosition(120, 80)
       @rectangle.setSize(120, 80)
       @rectangle.setColor(red, 0.5)
-      @rectangle.enableBoundingBox(white)
+      # @rectangle.enableBoundingBox(white)
       # @rectangle.fill()
       @rectangle.outline(green)
 
@@ -30,7 +30,7 @@ App =
       @square.setPosition(160, 100)
       @square.setSize(100)
       @square.setColor(green, 0.5)
-      @square.enableBoundingBox(white)
+      # @square.enableBoundingBox(white)
       # @square.fill()
       @square.outline(red)
 

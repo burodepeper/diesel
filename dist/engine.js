@@ -1136,6 +1136,25 @@ Circle = (function(superClass) {
     Circle.__super__.constructor.call(this, this._layer);
   }
 
+  Circle.prototype.fill = function(color) {
+    if (color == null) {
+      color = null;
+    }
+    this.type = 'fill';
+  };
+
+  Circle.prototype.stretch = function(color) {
+    if (color == null) {
+      color = null;
+    }
+    this.type = 'stretch';
+  };
+
+  Circle.prototype.outline = function(color) {
+    this.outlineColor = color;
+    this.hasOutline = true;
+  };
+
   Circle.prototype.setCenter = function(x, y) {
     this.center = isPoint(x, y);
     if (!this.center) {

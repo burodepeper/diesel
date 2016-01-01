@@ -26,13 +26,11 @@ App = {
       this.rectangle.setPosition(120, 80);
       this.rectangle.setSize(120, 80);
       this.rectangle.setColor(red, 0.5);
-      this.rectangle.enableBoundingBox(white);
       this.rectangle.outline(green);
       this.square = new Square(1);
       this.square.setPosition(160, 100);
       this.square.setSize(100);
       this.square.setColor(green, 0.5);
-      this.square.enableBoundingBox(white);
       this.square.outline(red);
       this.analyzer = new SpectrumAnalyzer();
     }
@@ -55,14 +53,11 @@ Clock = (function(superClass) {
     this.hours = new Line();
     this.addChild(this.hours);
     this.hours.setWeight(2);
-    this.hours.enableBoundingBox('#fff');
     this.minutes = new Line();
     this.addChild(this.minutes);
-    this.minutes.enableBoundingBox('#fff');
     this.seconds = new Line();
     this.addChild(this.seconds);
     this.seconds.setColor(new Color('#e10'));
-    this.seconds.enableBoundingBox('#e10');
   }
 
   Clock.prototype.update = function() {
@@ -88,21 +83,20 @@ Clock = (function(superClass) {
   Clock.prototype.createDial = function() {
     var center, color, degrees, i, j, line, radius, results;
     center = new Point(29, 29);
-    radius = 30;
+    radius = 29.5;
     this.dial = new Circle(1);
     this.addChild(this.dial);
     this.dial.setCenter(center);
     this.dial.setRadius(radius);
-    this.dial.type = 'fill';
+    this.dial.fill();
     this.dial.setColor(new Color('rgba(255, 255, 255, 0.15)'));
-    this.dial.enableBoundingBox('#fd0');
     color = new Color('rgba(255, 255, 255, 0.3)');
     results = [];
     for (i = j = 0; j <= 11; i = ++j) {
       degrees = i * 30;
       line = new Line(2);
       this.addChild(line);
-      line.from(center).atAngle(degrees, 30, 0.8);
+      line.from(center).atAngle(degrees, radius, 0.8);
       results.push(line.setColor(color));
     }
     return results;
