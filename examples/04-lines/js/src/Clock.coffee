@@ -42,7 +42,8 @@ class Clock extends Pane
     @dial.setSize(59)
     @dial.stretch()
     @dial.setColor(new Color('rgba(255, 255, 255, 0.15)'))
-    @dial.outline(new Color('rgba(255, 255, 255, 0.05)'))
+    @dial.outline(new Color('rgba(255, 255, 255, 0.15)'))
+    # @dial.outline(new Color('rgba(255, 255, 0, 0.5)'))
 
     # Hour marks
     color = new Color('rgba(255, 255, 255, 0.3)')

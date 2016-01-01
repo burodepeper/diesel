@@ -1191,7 +1191,7 @@ Circle = (function(superClass) {
   };
 
   Circle.prototype.update = function() {
-    var angle, diffX, diffY, distanceFromCenter, height, i, k, l, len, m, minY, n, particle, radians, ref, ref1, x, y;
+    var _x, _y, diffX, diffY, distanceFromCenter, fromY, height, i, k, l, len, len1, len2, m, minY, n, o, p, particle, position, positions, ref, ref1, ref2, ref3, toY, x, y;
     if (this.hasChanged) {
       if (this.center && this.radius) {
         i = 0;
@@ -1222,15 +1222,51 @@ Circle = (function(superClass) {
           }
         }
         if (this.hasOutline) {
-          for (angle = n = 0; n <= 359; angle = ++n) {
-            radians = angle * (Math.PI / 180);
-            x = Math.round(this.center.x + (Math.cos(radians) * this.radius));
-            y = Math.round(this.center.y - (Math.sin(radians) * this.radius));
-            particle = this.getParticle(i);
-            particle.setPosition(x, y);
-            particle.setColor(this.outlineColor);
-            particle.show();
-            i++;
+          minY = this.getMinY();
+          fromY = Math.round(this.radius - 1);
+          for (x = n = 0, len1 = minY.length; n < len1; x = ++n) {
+            toY = minY[x];
+            if (x < this.radius) {
+              if (fromY < toY) {
+                fromY = toY;
+              }
+              for (y = o = ref2 = fromY, ref3 = toY; ref2 <= ref3 ? o <= ref3 : o >= ref3; y = ref2 <= ref3 ? ++o : --o) {
+                _x = (this.diameter - 1) - x;
+                _y = (this.diameter - 1) - y;
+                positions = [];
+                positions.push({
+                  x: x,
+                  y: y
+                });
+                if (_x >= this.radius) {
+                  positions.push({
+                    x: _x,
+                    y: y
+                  });
+                }
+                if (_y >= this.radius) {
+                  positions.push({
+                    x: x,
+                    y: _y
+                  });
+                }
+                if (_x >= this.radius && _y >= this.radius) {
+                  positions.push({
+                    x: _x,
+                    y: _y
+                  });
+                }
+                for (p = 0, len2 = positions.length; p < len2; p++) {
+                  position = positions[p];
+                  particle = this.getParticle(i);
+                  particle.setPosition(position.x, position.y);
+                  particle.setColor(this.outlineColor);
+                  particle.show();
+                  i++;
+                }
+              }
+              fromY = toY - 1;
+            }
           }
         }
         return this.hasChanged = false;

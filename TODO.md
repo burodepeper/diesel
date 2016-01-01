@@ -3,11 +3,6 @@
 ## Short term focus
 
 - [ ] Implement `fill()`, `outline()` and `stretch()` for [Circle] and [Rectangle]
-  - [ ] `Circle.outline()`
-    - [ ] Remove duplicate particles
-    - [ ] Remove unnecessary particles that thicken the outline
-    - [ ] Calculate the optimal amount of angles to use to draw the outline
-    - [ ] Only draw a quarter of a circle, and duplicate the rest
   - [ ] Deprecate `setColor()` on [Rectangles] and [Circles] in favor of setting the color via `fill()`, `stretch()`, or `outline()`
 - [ ] Check if `size` and `position` of [Panes] are as advertised
   - [ ] I believe [Rectangles] are 1 PX too high and wide
@@ -35,10 +30,7 @@
 ### Circle _extends_ Pane
 
 - [ ] Implement as child of [Oval]
-- [ ] `outline()`
-  - [ ] Remove duplicate particles; or calculate the amount of detail needed to draw an acceptable circle (ie, not necessarily all 360 degrees); or draw a quarter of the circle, and duplicate the other three quarters
-  - [ ] Remove unneccessary particles (for a 1px outline)
-  - [ ] Set thickness of outline (possibly using a [CompoundPane])
+- [ ] Set weight of outline (possibly using a [CompoundPane])
 - [ ] `update()`: `hasChanged` should also check if its reference has changed
 - [ ] `outline()`: draw partial outline
 

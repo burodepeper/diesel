@@ -76,7 +76,7 @@ Clock = (function(superClass) {
     this.dial.setSize(59);
     this.dial.stretch();
     this.dial.setColor(new Color('rgba(255, 255, 255, 0.15)'));
-    this.dial.outline(new Color('rgba(255, 255, 255, 0.05)'));
+    this.dial.outline(new Color('rgba(255, 255, 255, 0.15)'));
     color = new Color('rgba(255, 255, 255, 0.3)');
     results = [];
     for (i = j = 0; j <= 11; i = ++j) {
