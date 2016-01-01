@@ -83,6 +83,7 @@
 - [ ] Calculate overlap between this [Pane] and another, optionally on the level of its children
 - [ ] Rename `addChild()` to `add()`; the concept of children is technical, and not necessary on the front-end
 - [ ] `setCSS()`: allow fractional values < 1 as percentages (also as ..% ?)
+- [ ] FUTURE PLAN: Create a separate canvas/context for every [Pane] that is created with when a `_layer` is specified. All children and particles added to that instance will be drawn on its private context. This will inherently mean that any overflow is hidden.
 
 ### Particle _extends_ Entity
 
