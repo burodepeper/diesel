@@ -52,6 +52,7 @@ This document is used in favor of Github issues until a first public release
 - [ ] Keyboard and mouse input (via a separate [Controller])
 - [ ] Allow multiple canvases/contexts, and in extension, allow a canvas to be linked to an existing DOM-element.
 - [ ] Draw each layer of entities on a separate <canvas> element; see [Pane] for a possibly better implementation
+- [ ] Add a `numberOfEntities` property, and throw a warning when this amount exceeds a certain limit. Throw consecutive warnings on certain increments.
 
 ### Entity
 
