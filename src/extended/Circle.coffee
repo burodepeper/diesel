@@ -43,11 +43,17 @@ class Circle extends Pane
     for x in [0 .. @diameter - 1]
       minY.push(@diameter)
 
-    for angle in [0 .. 179]
+    # NOTE
+    # The number of samples needed to accurately calculate a minY for every x is relative to @diameter
+    samples = Math.ceil(@diameter * Math.PI)
+    increment = 180 / samples
+    angle = 0
+    for i in [0 .. samples - 1]
       radians = angle * (Math.PI / 180)
       x = Math.round(@center.x + (Math.cos(radians) * @radius))
       y = Math.round(@center.y - (Math.sin(radians) * @radius))
       if (y < minY[x]) then minY[x] = y
+      angle += increment
 
     return minY
 

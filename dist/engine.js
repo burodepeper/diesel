@@ -1193,18 +1193,22 @@ Circle = (function(superClass) {
   };
 
   Circle.prototype.getMinY = function() {
-    var angle, k, l, minY, radians, ref, x, y;
+    var angle, i, increment, k, l, minY, radians, ref, ref1, samples, x, y;
     minY = [];
     for (x = k = 0, ref = this.diameter - 1; 0 <= ref ? k <= ref : k >= ref; x = 0 <= ref ? ++k : --k) {
       minY.push(this.diameter);
     }
-    for (angle = l = 0; l <= 179; angle = ++l) {
+    samples = Math.ceil(this.diameter * Math.PI);
+    increment = 180 / samples;
+    angle = 0;
+    for (i = l = 0, ref1 = samples - 1; 0 <= ref1 ? l <= ref1 : l >= ref1; i = 0 <= ref1 ? ++l : --l) {
       radians = angle * (Math.PI / 180);
       x = Math.round(this.center.x + (Math.cos(radians) * this.radius));
       y = Math.round(this.center.y - (Math.sin(radians) * this.radius));
       if (y < minY[x]) {
         minY[x] = y;
       }
+      angle += increment;
     }
     return minY;
   };
