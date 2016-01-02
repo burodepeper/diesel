@@ -1,17 +1,12 @@
 # Plan de campagne
 
+This document is used in favor of Github issues until a first public release
+
 ## Short term focus
 
-- [ ] Deprecate `setColor()` on [Rectangles] and [Circles] in favor of setting the color via `fill()`, `stretch()`, or `outline()`
-- [ ] Check if `size` and `position` of [Panes] are as advertised; I have an inkling that [Rectangles] are a PX too high and wide
-- [ ] Implement `hasChanged` consistently across [Panes]
-- [ ] Add [Sprites], [Letters] and [Text]
 - [ ] Add keyboard, mouse and touch events
 - [ ] Think of more practical examples to showcase the tools and allow for visual regression testing
-
-### References
-
-- https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas
+  - [ ] Spaceship dashboard thing: recreate the old Windows screensaver where you appear to be travelling across the stars. On top of that is a rotating radar, which 'beeps' when it touches a stars that is 'within range'. The range of a star is visualized by its opacity. Additionally, some bogus sensor stuff can be added to make it more awesome.
 
 ---
 
@@ -31,6 +26,7 @@
 - [ ] Set weight of outline (possibly using a [CompoundPane])
 - [ ] `update()`: `hasChanged` should also check if its reference has changed
 - [ ] `outline()`: draw partial outline
+- [ ] `stretch()` and `fill()` don't result in the same circle. At first glance (because `outline()` uses the same method), `fill()` is more accurate, though also highly more cpu intensive. `stretch()` looks as if it rounds up, while `fill()` regularly rounds coordinates.
 
 ### Color
 
@@ -59,13 +55,26 @@
 
 ### Entity
 
+### Font
+
+- [FONT_9PX]
+  - [ ] `r` feels too small
+  - [ ] `z` feels to big/heavy in context
+  - [ ] `+` is too small
+  - [ ] `N` could use semi-transparency
+  - [ ] `&` is too complex
+  - [ ] `€` and `£`, and perhaps other latin extended glyphs?
+- [ ] Create default font at `11px` (basically 9px with an added px at the top and bottom)
+- [ ] Create an uppercase only font at `5px`; glyphs are converted to uppercase behind the scenes
+- [ ] Possibly create a 5x7 fixed width default font
+- [ ] Allow a `fallback`
+  - [ ] Test with extending a default font (with a é for instance)
+  - [ ] Test with replacing a glyph in a default font
+- [ ] Allow opacities to be defined similar to colors in regular [Sprites]
+
 ### Hitbox
 
 - Is a property of a [Pane]
-
-### Letter
-
-- [ ] Create default typefaces at 9px, 11px and a uppercase only version at 5px.
 
 ### Line
 
@@ -108,8 +117,8 @@
 
 ### Sprite
 
-- contains [Particles] (from a data source) that resemble an image
 - [ ] `rotate()`: in increments of 90 degrees
+- [ ] Allow whitespace to be added to `particles` which is removed upon loading
 
 ### SpriteSet
 
@@ -121,7 +130,7 @@
 
 ### Text
 
-- text is rendered as [Letters] and contained within a [Pane]
+- [ ] Allow multi-line texts. Text will have to be separated into [Words]
 
 ### Timer
 
@@ -142,6 +151,15 @@
 
 ---
 
-## Automated testing
+## Various bugs, ideas and todos
 
 - [ ] Come up with a way to implement an automated testing suite _at all_. It is possible to base it on a standalone version of [Jasmine] that is able to visually check the test canvas.
+- [ ] Implement `hasChanged` consistently across [Panes]; in the future, when multiple canvasses are implemented, a canvas only has to be redrawn when something has changed in its scope
+- [ ] Blending modes on a drawing layer
+- [ ] `Pane.setColor()` and `Particle.setColor()` do the same thing (including the various places these methods are invoked)
+- [ ] Uglify the combined Javascript in [/dist]
+- [ ] Generate a standalone version with a blank template for a project
+
+### References
+
+- https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas
