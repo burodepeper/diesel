@@ -58,7 +58,7 @@ App = {
       numbers.setFont(font);
       numbers.setPosition(120, 38);
       numbers.setColor(new Color('#05d'));
-      numbers.setText('0123456789');
+      numbers.setText('0123456789 david@burodepeper.nl');
       punctuation = new Text();
       punctuation.setFont(font);
       punctuation.setPosition(120, 47);

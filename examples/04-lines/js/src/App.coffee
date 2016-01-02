@@ -65,7 +65,7 @@ App =
       numbers.setFont(font)
       numbers.setPosition(120, 38)
       numbers.setColor(new Color('#05d'))
-      numbers.setText('0123456789')
+      numbers.setText('0123456789 david@burodepeper.nl')
       # numbers.enableBoundingBox('#05d')
 
       punctuation = new Text()
