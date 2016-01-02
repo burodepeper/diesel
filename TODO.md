@@ -7,6 +7,7 @@ This document is used in favor of Github issues until a first public release
 - [ ] Add keyboard, mouse and touch events
 - [ ] Think of more practical examples to showcase the tools and allow for visual regression testing
   - [ ] Spaceship dashboard thing: recreate the old Windows screensaver where you appear to be travelling across the stars. On top of that is a rotating radar, which 'beeps' when it touches a stars that is 'within range'. The range of a star is visualized by its opacity. Additionally, some bogus sensor stuff can be added to make it more awesome. Each star that is within reach is tagged with a Sprite and a random code or something.
+- [ ] Can [Particle] be a child of [Point] to avoid all the extra entities created?
 
 ---
 
