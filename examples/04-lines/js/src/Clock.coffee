@@ -40,8 +40,7 @@ class Clock extends Pane
     @dial = new Circle(1)
     @addChild(@dial)
     @dial.setSize(59)
-    @dial.stretch()
-    @dial.setColor(new Color('rgba(255, 255, 255, 0.15)'))
+    @dial.stretch('rgba(255, 255, 255, 0.15)')
     @dial.outline(new Color('rgba(255, 255, 255, 0.15)'))
     # @dial.outline(new Color('rgba(255, 255, 0, 0.5)'))
 

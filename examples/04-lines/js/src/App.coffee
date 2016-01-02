@@ -21,18 +21,15 @@ App =
       @rectangle = new Rectangle(1)
       @rectangle.setPosition(120, 80)
       @rectangle.setSize(120, 80)
-      @rectangle.setColor(red, 0.5)
-      # @rectangle.enableBoundingBox(white)
-      # @rectangle.fill()
+      @rectangle.stretch(red, 0.5)
       @rectangle.outline(green)
 
       @square = new Square(1)
       @square.setPosition(160, 100)
       @square.setSize(100)
-      @square.setColor(green, 0.5)
-      # @square.enableBoundingBox(white)
-      # @square.fill()
+      @square.stretch(green, 0.5)
       @square.outline(red)
+      # @square.enableBoundingBox(white)
 
       # SpectrumAnalyzer at the bottom
       @analyzer = new SpectrumAnalyzer()

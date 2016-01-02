@@ -7,12 +7,14 @@ class Rectangle extends Pane
 
     @hasOutline = false
 
-  fill: (color = null) ->
+  fill: (color = null, opacity = null) ->
     @type = 'fill'
+    if color? then @setColor(color, opacity)
     return
 
-  stretch: (color = null) ->
+  stretch: (color = null, opacity = null) ->
     @type = 'stretch'
+    if color? then @setColor(color, opacity)
     return
 
   outline: (color) ->

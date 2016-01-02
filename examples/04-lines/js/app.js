@@ -25,12 +25,12 @@ App = {
       this.rectangle = new Rectangle(1);
       this.rectangle.setPosition(120, 80);
       this.rectangle.setSize(120, 80);
-      this.rectangle.setColor(red, 0.5);
+      this.rectangle.stretch(red, 0.5);
       this.rectangle.outline(green);
       this.square = new Square(1);
       this.square.setPosition(160, 100);
       this.square.setSize(100);
-      this.square.setColor(green, 0.5);
+      this.square.stretch(green, 0.5);
       this.square.outline(red);
       this.analyzer = new SpectrumAnalyzer();
     }
@@ -74,8 +74,7 @@ Clock = (function(superClass) {
     this.dial = new Circle(1);
     this.addChild(this.dial);
     this.dial.setSize(59);
-    this.dial.stretch();
-    this.dial.setColor(new Color('rgba(255, 255, 255, 0.15)'));
+    this.dial.stretch('rgba(255, 255, 255, 0.15)');
     this.dial.outline(new Color('rgba(255, 255, 255, 0.15)'));
     color = new Color('rgba(255, 255, 255, 0.3)');
     results = [];

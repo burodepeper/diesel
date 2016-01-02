@@ -1139,18 +1139,30 @@ Circle = (function(superClass) {
     this.hasOutline = false;
   }
 
-  Circle.prototype.fill = function(color) {
+  Circle.prototype.fill = function(color, opacity) {
     if (color == null) {
       color = null;
+    }
+    if (opacity == null) {
+      opacity = null;
     }
     this.type = 'fill';
+    if (color != null) {
+      this.setColor(color, opacity);
+    }
   };
 
-  Circle.prototype.stretch = function(color) {
+  Circle.prototype.stretch = function(color, opacity) {
     if (color == null) {
       color = null;
     }
+    if (opacity == null) {
+      opacity = null;
+    }
     this.type = 'stretch';
+    if (color != null) {
+      this.setColor(color, opacity);
+    }
   };
 
   Circle.prototype.outline = function(color) {
@@ -1450,18 +1462,30 @@ Rectangle = (function(superClass) {
     return this.hasOutline = false;
   };
 
-  Rectangle.prototype.fill = function(color) {
+  Rectangle.prototype.fill = function(color, opacity) {
     if (color == null) {
       color = null;
+    }
+    if (opacity == null) {
+      opacity = null;
     }
     this.type = 'fill';
+    if (color != null) {
+      this.setColor(color, opacity);
+    }
   };
 
-  Rectangle.prototype.stretch = function(color) {
+  Rectangle.prototype.stretch = function(color, opacity) {
     if (color == null) {
       color = null;
     }
+    if (opacity == null) {
+      opacity = null;
+    }
     this.type = 'stretch';
+    if (color != null) {
+      this.setColor(color, opacity);
+    }
   };
 
   Rectangle.prototype.outline = function(color) {
