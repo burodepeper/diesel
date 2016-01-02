@@ -4,7 +4,7 @@ var App, Clock, SpectrumAnalyzer,
 
 App = {
   init: function() {
-    var green, red, settings, spriteData, white;
+    var font, green, lowercase, numbers, punctuation, red, settings, spriteData, uppercase, white;
     settings = {
       viewport: {
         width: 480,
@@ -43,7 +43,27 @@ App = {
       this.star = new Sprite();
       this.star.load(spriteData);
       this.star.setPosition(100, 20);
-      this.star.enableBoundingBox('#fff');
+      font = new Font('9PX');
+      lowercase = new Text();
+      lowercase.setFont(font);
+      lowercase.setPosition(120, 20);
+      lowercase.setColor(new Color('#fd0'));
+      lowercase.setText('abcdefghijklmnopqrstuvwxyz');
+      uppercase = new Text();
+      uppercase.setFont(font);
+      uppercase.setPosition(120, 29);
+      uppercase.setColor(new Color('#5d0'));
+      uppercase.setText('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+      numbers = new Text();
+      numbers.setFont(font);
+      numbers.setPosition(120, 38);
+      numbers.setColor(new Color('#05d'));
+      numbers.setText('0123456789');
+      punctuation = new Text();
+      punctuation.setFont(font);
+      punctuation.setPosition(120, 47);
+      punctuation.setColor(new Color('#c0c'));
+      punctuation.setText(' !"#$%&' + "'" + '()*+,-./:;<=>?@[\\]^_`{|}~');
       this.analyzer = new SpectrumAnalyzer();
     }
   }

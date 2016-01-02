@@ -38,12 +38,16 @@ module.exports = function(grunt) {
 
             'src/extended/BoundingBox.coffee',
             'src/extended/Circle.coffee',
+            'src/extended/Font.coffee',
             'src/extended/Line.coffee',
             'src/extended/Path.coffee',
             'src/extended/Rectangle.coffee',
             'src/extended/Sprite.coffee',
             'src/extended/Square.coffee',
-            'src/extended/Tween.coffee'
+            'src/extended/Text.coffee',
+            'src/extended/Tween.coffee',
+
+            'src/fonts/9px.coffee'
           ]
         }
       },

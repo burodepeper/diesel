@@ -1,4 +1,4 @@
-var BoundingBox, CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Path, Point, Rectangle, Sprite, Square, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
+var BoundingBox, CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, FONT_9PX, Font, Line, NOW, PX, Pane, Particle, Path, Point, Rectangle, Sprite, Square, Storage, Text, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -1297,6 +1297,53 @@ Circle = (function(superClass) {
 
 })(Pane);
 
+Font = (function() {
+  function Font(name) {
+    this.name = "FONT_" + name;
+    if (window[this.name]) {
+      this.loadFont();
+    } else {
+      console.error("Font(): '" + this.name + "' doesn't exist");
+    }
+  }
+
+  Font.prototype.loadFont = function() {
+    return this.data = window[this.name];
+  };
+
+  Font.prototype.getGlyph = function(glyph) {
+    var data;
+    if (this.data.glyphs[glyph] != null) {
+      data = this.isValid(this.data.glyphs[glyph]);
+      if (!data) {
+        console.log("Font.getGlyph(): data for '" + glyph + "' in '" + this.name + "' is not valid");
+      }
+      return data;
+    } else {
+      console.warn("Font.getGlyph(): '" + glyph + "' not found in '" + this.name + "'");
+      return false;
+    }
+  };
+
+  Font.prototype.getHeight = function() {
+    return this.data.height;
+  };
+
+  Font.prototype.isValid = function(data) {
+    if (data.length % this.data.height === 0) {
+      return {
+        particles: data,
+        width: data.length / this.data.height
+      };
+    } else {
+      return false;
+    }
+  };
+
+  return Font;
+
+})();
+
 Line = (function(superClass) {
   extend(Line, superClass);
 
@@ -1658,6 +1705,51 @@ Square = (function(superClass) {
 
 })(Rectangle);
 
+Text = (function(superClass) {
+  extend(Text, superClass);
+
+  function Text() {
+    return Text.__super__.constructor.apply(this, arguments);
+  }
+
+  Text.prototype.setFont = function(font) {
+    this.font = font;
+  };
+
+  Text.prototype.setText = function(text) {
+    this.text = text;
+    return this.drawGlyphs();
+  };
+
+  Text.prototype.setColor = function(color1) {
+    this.color = color1;
+  };
+
+  Text.prototype.drawGlyphs = function() {
+    var data, glyph, i, k, ref, value, x, y;
+    x = 0;
+    y = 0;
+    for (i = k = 0, ref = this.text.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
+      value = this.text.charAt(i);
+      data = this.font.getGlyph(value);
+      if (data) {
+        data.colors = {
+          1: this.color
+        };
+        glyph = new Sprite();
+        this.addChild(glyph);
+        glyph.load(data);
+        glyph.setPosition(x, y);
+        x += glyph.getWidth() + 1;
+      }
+    }
+    return this.setSize(x - 1, this.font.getHeight());
+  };
+
+  return Text;
+
+})(Pane);
+
 Tween = (function(superClass) {
   extend(Tween, superClass);
 
@@ -1705,3 +1797,104 @@ Tween = (function(superClass) {
   return Tween;
 
 })(Timer);
+
+FONT_9PX = {
+  height: 9,
+  glyphs: {
+    ' ': '000000000000000000',
+    '!': '111110100',
+    '"': '101101000000000000000000000',
+    '#': '010100101011111010101111101010010100000000000',
+    '$': '001000111010101101000111000101101010111000100',
+    '%': '010001010101010001000101010101000100000000000',
+    '&': '011001001010000010001010110010011010000000000',
+    "'": '110000000',
+    '(': '001010100100100100100010001',
+    ')': '100010001001001001001010100',
+    '*': '000000000000100101010111010101001000000000000',
+    '+': '000000000010111010000000000',
+    ',': '000000000000011000',
+    '-': '000000000000111000000000000',
+    '.': '000000100',
+    '/': '001001001010010010100100100',
+    '0': '011010011001100110011001011000000000',
+    '1': '010110010010010010111000000',
+    '2': '111000010001001001001000111100000000',
+    '3': '111000010001011000010001111000000000',
+    '4': '001101010101100111110001000100000000',
+    '5': '111110001000111000010001111000000000',
+    '6': '011010001000111010011001011000000000',
+    '7': '111100010010001001000100010000000000',
+    '8': '011010011001011010011001011000000000',
+    '9': '011010011001011100010001011000000000',
+    ':': '000100100',
+    ';': '000000010000011000',
+    '<': '000000001010100010001000000',
+    '=': '000000000111000111000000000',
+    '>': '000000100010001010100000000',
+    '?': '011101000100001000100010000000001000000000000',
+    '@': '001110010001100111101001101001101001100110010000001110',
+    'A': '001000101010001100011111110001100010000000000',
+    'B': '111101000110001111101000110001111100000000000',
+    'C': '011110001000100010001000011100000000',
+    'D': '111101000110001100011000110001111100000000000',
+    'E': '111110001000111010001000111100000000',
+    'F': '111110001000111010001000100000000000',
+    'G': '011101000110000100111000110001011100000000000',
+    'H': '100011000110001111111000110001100010000000000',
+    'I': '111010010010010010111000000',
+    'J': '001110000100001000010000110001011100000000000',
+    'K': '100011001010100110001010010010100010000000000',
+    'L': '100010001000100010001000111100000000',
+    'M': '100011101110101100011000110001100010000000000',
+    'N': '100011100111001101011001110011100010000000000',
+    'O': '011101000110001100011000110001011100000000000',
+    'P': '111101000110001111101000010000100000000000000',
+    'Q': '011101000110001100011000110001011100001000001',
+    'R': '111101000110001111101010010010100010000000000',
+    'S': '011101000110000011100000110001011100000000000',
+    'T': '111110010000100001000010000100001000000000000',
+    'U': '100011000110001100011000110001011100000000000',
+    'V': '100011000110001010100101001010001000000000000',
+    'W': '100011000110001101011010101010010100000000000',
+    'X': '100011000101010001000101010001100010000000000',
+    'Y': '100011000101010001000010000100001000000000000',
+    'Z': '111110000100010001000100010000111110000000000',
+    '[': '111010101010101011',
+    '\\': '100100100010010010001001001',
+    ']': '110101010101010111',
+    '^': '010101000000000000000000000',
+    '_': '000000000000000000000111000',
+    '`': '100100000000000000',
+    'a': '000000000110000101111001011100000000',
+    'b': '100010001110100110011001111000000000',
+    'c': '000000011100100100011000000',
+    'd': '000100010111100110011001011100000000',
+    'e': '000000000110100111101000011000000000',
+    'f': '011011101010100000',
+    'g': '000000000111100110011001011100010110',
+    'h': '100010001110100110011001100100000000',
+    'i': '101111100',
+    'j': '010001010101010110',
+    'k': '100010001001101011001010100100000000',
+    'l': '101010101010010000',
+    'm': '000000000011110101011010110101101010000000000',
+    'n': '000000001110100110011001100100000000',
+    'o': '000000000110100110011001011000000000',
+    'p': '000000001110100110011001111010001000',
+    'q': '000000000111100110011001011100010001',
+    'r': '000001101010100000',
+    's': '000000000111100001100001111000000000',
+    't': '010010111010010010001000000',
+    'u': '000000001001100110011001011000000000',
+    'v': '000000000010001100010101001010001000000000000',
+    'w': '000000000010001101011010110101010100000000000',
+    'x': '000000000010001010100010001010100010000000000',
+    'y': '000000000010001100010101001010001000010001000',
+    'z': '000000000011111000100010001000111110000000000',
+    '{': '001010010010100010010010001',
+    '|': '111101111',
+    '}': '100010010010001010010010100',
+    '~': '000000000000000010001010100010000000000000000'
+  }
+};
