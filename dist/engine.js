@@ -1138,7 +1138,7 @@ Circle = (function(superClass) {
 
   Circle.prototype.center = new Point(0, 0);
 
-  Circle.prototype.type = 'stretch';
+  Circle.prototype.type = null;
 
   function Circle(_layer) {
     this._layer = _layer != null ? _layer : 1;

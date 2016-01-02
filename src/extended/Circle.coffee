@@ -3,7 +3,9 @@ class Circle extends Pane
   diameter: null
   radius: null
   center: new Point(0, 0)
-  type: 'stretch'
+
+  # Not filled by default
+  type: null
 
   constructor: (@_layer = 1) ->
     super(@_layer)
