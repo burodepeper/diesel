@@ -28,12 +28,13 @@ This document is used in favor of Github issues until a first public release
 - [ ] `update()`: `hasChanged` should also check if its reference has changed
 - [ ] `outline()`: draw partial outline
 - [ ] `stretch()` and `fill()` don't result in the same circle. At first glance (because `outline()` uses the same method), `fill()` is more accurate, though also highly more cpu intensive. `stretch()` looks as if it rounds up, while `fill()` regularly rounds coordinates.
+  - [ ] See [example-05]; the inner, smallest circle is definitely not a circle, and the spokes don't line up consistenly with the other circles
 
 ### Color
 
 - [ ] Implement possibility for gradients
 - [ ] `change()`, initiates a color transition tween
-- [ ] Extend `constructor()` and `set()` with an opacity option
+- [x] Extend `constructor()` and `set()` with an opacity option
 
 ### Controller
 
@@ -84,6 +85,7 @@ This document is used in favor of Github issues until a first public release
 - [ ] Add relative positioning (relative to `@_from`)
 - [ ] `setColor()`
 - [ ] BUG: occassionally, particles stay in their old positions
+- [ ] Allow a start and a stop offset
 
 ### Pane
 
