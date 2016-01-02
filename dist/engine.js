@@ -1074,9 +1074,9 @@ Storage = (function() {
 BoundingBox = (function(superClass) {
   extend(BoundingBox, superClass);
 
-  BoundingBox.prototype.extension = 7;
+  BoundingBox.prototype.extension = 2;
 
-  BoundingBox.prototype.padding = 3;
+  BoundingBox.prototype.padding = 1;
 
   function BoundingBox() {
     BoundingBox.__super__.constructor.call(this, 1);
@@ -1098,24 +1098,27 @@ BoundingBox = (function(superClass) {
       this.left = this.reference.getX() * PX;
       this.top = this.reference.getY() * PX;
     }
-    this.right = this.left + (this.reference.getWidth() * PX);
-    return this.bottom = this.top + (this.reference.getHeight() * PX);
+    this.width = this.reference.getWidth() * PX;
+    return this.height = this.reference.getHeight() * PX;
   };
 
   BoundingBox.prototype.draw = function() {
-    CONTEXT.strokeStyle = this.color;
-    CONTEXT.lineWidth = 0.5;
-    CONTEXT.beginPath();
-    CONTEXT.moveTo(this.left - this.extension, this.top - this.padding);
-    CONTEXT.lineTo(this.right + this.extension, this.top - this.padding);
-    CONTEXT.moveTo(this.right + this.padding, this.top - this.extension);
-    CONTEXT.lineTo(this.right + this.padding, this.bottom + this.extension);
-    CONTEXT.moveTo(this.right + this.extension, this.bottom + this.padding);
-    CONTEXT.lineTo(this.left - this.extension, this.bottom + this.padding);
-    CONTEXT.moveTo(this.left - this.padding, this.bottom + this.extension);
-    CONTEXT.lineTo(this.left - this.padding, this.top - this.extension);
-    CONTEXT.closePath();
-    CONTEXT.stroke();
+    var extension, height, left, padding, top, width;
+    padding = this.padding * PX;
+    extension = this.extension * PX;
+    CONTEXT.fillStyle = this.color;
+    top = this.top - 1 - padding;
+    left = this.left - 1 - padding - extension;
+    width = this.width + 2 + (padding * 2) + (extension * 2);
+    CONTEXT.fillRect(left, top, width, 1);
+    top = top + 1 + this.height + (padding * 2);
+    CONTEXT.fillRect(left, top, width, 1);
+    top = this.top - 1 - padding - extension;
+    left = this.left - 1 - padding;
+    height = this.height + 2 + (padding * 2) + (extension * 2);
+    CONTEXT.fillRect(left, top, 1, height);
+    left = left + 1 + this.width + (padding * 2);
+    CONTEXT.fillRect(left, top, 1, height);
   };
 
   return BoundingBox;

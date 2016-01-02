@@ -29,7 +29,7 @@ App =
       @square.setSize(100)
       @square.stretch(green, 0.5)
       @square.outline(red)
-      # @square.enableBoundingBox(white)
+      # @square.enableBoundingBox(white, 0.5)
 
       # SpectrumAnalyzer at the bottom
       @analyzer = new SpectrumAnalyzer()

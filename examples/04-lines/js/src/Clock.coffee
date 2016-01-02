@@ -18,6 +18,7 @@ class Clock extends Pane
     @addChild(@seconds)
     @seconds.setColor(new Color('#e10'))
     @seconds.from(@dial.center)
+    # @seconds.enableBoundingBox('#e10')
 
   update: ->
     time = new Date()
@@ -42,7 +43,6 @@ class Clock extends Pane
     @dial.setSize(59)
     @dial.stretch('rgba(255, 255, 255, 0.15)')
     @dial.outline(new Color('rgba(255, 255, 255, 0.15)'))
-    # @dial.outline(new Color('rgba(255, 255, 0, 0.5)'))
 
     # Hour marks
     color = new Color('rgba(255, 255, 255, 0.3)')

@@ -1,7 +1,9 @@
 class BoundingBox extends Pane
 
-  extension: 7
-  padding: 3
+  # NOTE
+  # {extension} and {padding} are in PX
+  extension: 2
+  padding: 1
 
   constructor: ->
     super(1)
@@ -23,27 +25,28 @@ class BoundingBox extends Pane
       @left = @reference.getX() * PX
       @top = @reference.getY() * PX
 
-    @right = @left + (@reference.getWidth() * PX)
-    @bottom = @top + (@reference.getHeight() * PX)
+    @width = @reference.getWidth() * PX
+    @height = @reference.getHeight() * PX
 
   draw: ->
-    CONTEXT.strokeStyle = @color
-    CONTEXT.lineWidth = 0.5
 
-    CONTEXT.beginPath()
-    CONTEXT.moveTo(@left - @extension, @top - @padding)
-    CONTEXT.lineTo(@right + @extension, @top - @padding)
+    padding = @padding * PX
+    extension = @extension * PX
 
-    CONTEXT.moveTo(@right + @padding, @top - @extension)
-    CONTEXT.lineTo(@right + @padding, @bottom + @extension)
+    CONTEXT.fillStyle = @color
 
-    CONTEXT.moveTo(@right + @extension, @bottom + @padding)
-    CONTEXT.lineTo(@left - @extension, @bottom + @padding)
+    top = @top - 1 - padding
+    left = @left - 1 - padding - extension
+    width = @width + 2 + (padding * 2) + (extension * 2)
+    CONTEXT.fillRect(left, top, width, 1)
+    top = top + 1 + @height + (padding * 2)
+    CONTEXT.fillRect(left, top, width, 1)
 
-    CONTEXT.moveTo(@left - @padding, @bottom + @extension)
-    CONTEXT.lineTo(@left - @padding, @top - @extension)
-
-    CONTEXT.closePath()
-    CONTEXT.stroke()
+    top = @top - 1 - padding - extension
+    left = @left - 1 - padding
+    height = @height + 2 + (padding * 2) + (extension * 2)
+    CONTEXT.fillRect(left, top, 1, height)
+    left = left + 1 + @width + (padding * 2)
+    CONTEXT.fillRect(left, top, 1, height)
 
     return
