@@ -1,14 +1,12 @@
 class Circle extends Pane
 
-  diameter: null
-  radius: null
-  center: new Point(0, 0)
-
-  # Not filled by default
-  type: null
-
   constructor: (@_layer = 1) ->
     super(@_layer)
+
+    @diameter = null
+    @radius = null
+    @center = new Point(0, 0)
+    @type = null
     @hasOutline = false
 
   fill: (color = null, opacity = null) ->

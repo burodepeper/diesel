@@ -1132,17 +1132,13 @@ BoundingBox = (function(superClass) {
 Circle = (function(superClass) {
   extend(Circle, superClass);
 
-  Circle.prototype.diameter = null;
-
-  Circle.prototype.radius = null;
-
-  Circle.prototype.center = new Point(0, 0);
-
-  Circle.prototype.type = null;
-
   function Circle(_layer) {
     this._layer = _layer != null ? _layer : 1;
     Circle.__super__.constructor.call(this, this._layer);
+    this.diameter = null;
+    this.radius = null;
+    this.center = new Point(0, 0);
+    this.type = null;
     this.hasOutline = false;
   }
 
