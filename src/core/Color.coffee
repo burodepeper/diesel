@@ -5,11 +5,11 @@ class Color extends Entity
   b: 255
   a: 1
 
-  constructor: (color = '#fff') ->
+  constructor: (color = '#fff', opacity = null) ->
     super()
-    @set(color)
+    @set(color, opacity)
 
-  set: (color) ->
+  set: (color, opacity = null) ->
 
     # remove spaces and convert to lowercase
     color = color.replace(/[ ]+/g, '').toLowerCase()
@@ -19,6 +19,7 @@ class Color extends Entity
       @g = parseInt(color.substring(3, 5), 16)
       @b = parseInt(color.substring(5, 7), 16)
       @a = 1
+      if opacity? then @setOpacity(opacity)
 
     else if (color.length is 4) and color.match(/#[0-9a-f]{3}/)
       r = parseInt(color.substring(1, 2), 16)
@@ -28,12 +29,14 @@ class Color extends Entity
       @g = (g * 16) + g
       @b = (b * 16) + b
       @a = 1
+      if opacity? then @setOpacity(opacity)
 
     else if match = color.match(/rgba\(([0-9]+),([0-9]+),([0-9]+),([\.0-9]+)\)/)
       @r = parseInt(match[1])
       @g = parseInt(match[2])
       @b = parseInt(match[3])
       @a = parseFloat(match[4])
+      if opacity? then @setOpacity(opacity)
 
     else
       console.log "Color.set()", "#{color}' is not valid"

@@ -423,22 +423,31 @@ Color = (function(superClass) {
 
   Color.prototype.a = 1;
 
-  function Color(color) {
+  function Color(color, opacity) {
     if (color == null) {
       color = '#fff';
     }
+    if (opacity == null) {
+      opacity = null;
+    }
     Color.__super__.constructor.call(this);
-    this.set(color);
+    this.set(color, opacity);
   }
 
-  Color.prototype.set = function(color) {
+  Color.prototype.set = function(color, opacity) {
     var b, g, match, r;
+    if (opacity == null) {
+      opacity = null;
+    }
     color = color.replace(/[ ]+/g, '').toLowerCase();
     if ((color.length === 7) && color.match(/#[0-9a-f]{6}/)) {
       this.r = parseInt(color.substring(1, 3), 16);
       this.g = parseInt(color.substring(3, 5), 16);
       this.b = parseInt(color.substring(5, 7), 16);
-      return this.a = 1;
+      this.a = 1;
+      if (opacity != null) {
+        return this.setOpacity(opacity);
+      }
     } else if ((color.length === 4) && color.match(/#[0-9a-f]{3}/)) {
       r = parseInt(color.substring(1, 2), 16);
       g = parseInt(color.substring(2, 3), 16);
@@ -446,12 +455,18 @@ Color = (function(superClass) {
       this.r = (r * 16) + r;
       this.g = (g * 16) + g;
       this.b = (b * 16) + b;
-      return this.a = 1;
+      this.a = 1;
+      if (opacity != null) {
+        return this.setOpacity(opacity);
+      }
     } else if (match = color.match(/rgba\(([0-9]+),([0-9]+),([0-9]+),([\.0-9]+)\)/)) {
       this.r = parseInt(match[1]);
       this.g = parseInt(match[2]);
       this.b = parseInt(match[3]);
-      return this.a = parseFloat(match[4]);
+      this.a = parseFloat(match[4]);
+      if (opacity != null) {
+        return this.setOpacity(opacity);
+      }
     } else {
       console.log("Color.set()", color + "' is not valid");
       return false;
