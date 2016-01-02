@@ -41,6 +41,7 @@ module.exports = function(grunt) {
             'src/extended/Line.coffee',
             'src/extended/Path.coffee',
             'src/extended/Rectangle.coffee',
+            'src/extended/Sprite.coffee',
             'src/extended/Square.coffee',
             'src/extended/Tween.coffee'
           ]

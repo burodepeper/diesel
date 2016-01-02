@@ -10,7 +10,7 @@ class Particle extends Entity
   hasChanged: false
 
   constructor: (@_layer = 1) ->
-    super()
+    super(@_layer)
     @position =
       relative: new Point(0, 0)
       # NOTE

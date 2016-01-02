@@ -8,7 +8,8 @@ class Entity
   state: "idle"
   nextState: "idle"
 
-  constructor: ->
+  constructor: (layer = 0) ->
+    @_layer = layer
     Engine.addEntity(this, @_layer)
 
   update: -> return

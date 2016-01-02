@@ -4,7 +4,6 @@ class Rectangle extends Pane
 
   constuctor: (@_layer = 1) ->
     super(@_layer)
-
     @hasOutline = false
 
   fill: (color = null, opacity = null) ->

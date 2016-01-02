@@ -4,9 +4,8 @@
 
 class Pane extends Entity
 
-
-  constructor: (@_layer = 0) ->
-    super()
+  constructor: (@_layer = 1) ->
+    super(@_layer)
 
     @position =
       absolute: new Point(0, 0) # TODO not necessary (see Particle)

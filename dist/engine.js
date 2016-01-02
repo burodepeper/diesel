@@ -1,4 +1,4 @@
-var BoundingBox, CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Path, Point, Rectangle, Square, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
+var BoundingBox, CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, Line, NOW, PX, Pane, Particle, Path, Point, Rectangle, Sprite, Square, Storage, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -372,7 +372,11 @@ Entity = (function() {
 
   Entity.prototype.nextState = "idle";
 
-  function Entity() {
+  function Entity(layer) {
+    if (layer == null) {
+      layer = 0;
+    }
+    this._layer = layer;
     Engine.addEntity(this, this._layer);
   }
 
@@ -484,8 +488,8 @@ Pane = (function(superClass) {
   extend(Pane, superClass);
 
   function Pane(_layer) {
-    this._layer = _layer != null ? _layer : 0;
-    Pane.__super__.constructor.call(this);
+    this._layer = _layer != null ? _layer : 1;
+    Pane.__super__.constructor.call(this, this._layer);
     this.position = {
       absolute: new Point(0, 0),
       relative: new Point(0, 0)
@@ -789,7 +793,7 @@ Particle = (function(superClass) {
 
   function Particle(_layer) {
     this._layer = _layer != null ? _layer : 1;
-    Particle.__super__.constructor.call(this);
+    Particle.__super__.constructor.call(this, this._layer);
     this.position = {
       relative: new Point(0, 0),
       absolute: {
@@ -1577,6 +1581,65 @@ Rectangle = (function(superClass) {
   };
 
   return Rectangle;
+
+})(Pane);
+
+Sprite = (function(superClass) {
+  extend(Sprite, superClass);
+
+  function Sprite(_layer) {
+    this._layer = _layer != null ? _layer : 1;
+    Sprite.__super__.constructor.call(this, this._layer);
+  }
+
+  Sprite.prototype.load = function(data1) {
+    var i, k, particle, ref, results, value, x, y;
+    this.data = data1;
+    if (this.parseData()) {
+      results = [];
+      for (i = k = 0, ref = this.data.particles.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
+        value = this.data.particles.charAt(i);
+        x = i % this.data.width;
+        y = Math.floor(i / this.data.width);
+        if (value !== '0') {
+          particle = new Particle();
+          this.addParticle(particle);
+          particle.setColor(this.data.colors[value]);
+          results.push(particle.setPosition(x, y));
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
+    } else {
+      return console.error("Sprite.load(): Can't load Sprite, data is not valid", this.data);
+    }
+  };
+
+  Sprite.prototype.parseData = function() {
+    var height, i, k, ref, value;
+    if ((this.data.particles != null) && (this.data.colors != null) && (this.data.width != null)) {
+      if (this.data.particles.length % this.data.width === 0) {
+        height = this.data.particles.length / this.data.width;
+        this.setSize(this.data.width, height);
+        for (i = k = 0, ref = this.data.particles.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
+          value = this.data.particles.charAt(i);
+          if (value !== '0') {
+            if (this.data.colors[value] == null) {
+              console.warn("Sprite.parseData():", value, "is not a valid color index");
+              return false;
+            }
+          }
+        }
+      } else {
+        console.warn("Sprite.parseData(): number of particles (" + this.data.particles.length + ") isn't a multiple of width (" + this.data.width + ")");
+        return false;
+      }
+    }
+    return true;
+  };
+
+  return Sprite;
 
 })(Pane);
 

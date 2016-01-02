@@ -4,7 +4,7 @@ var App, Clock, SpectrumAnalyzer,
 
 App = {
   init: function() {
-    var green, red, settings, white;
+    var green, red, settings, spriteData, white;
     settings = {
       viewport: {
         width: 480,
@@ -22,16 +22,28 @@ App = {
       red = new Color('#e10');
       green = new Color('#5d0');
       white = new Color('#fff');
-      this.rectangle = new Rectangle(1);
+      this.rectangle = new Rectangle();
       this.rectangle.setPosition(120, 80);
       this.rectangle.setSize(120, 80);
       this.rectangle.stretch(red, 0.5);
       this.rectangle.outline(green);
-      this.square = new Square(1);
+      this.square = new Square();
       this.square.setPosition(160, 100);
       this.square.setSize(100);
       this.square.stretch(green, 0.5);
       this.square.outline(red);
+      spriteData = {
+        particles: '0010002120111110212000100',
+        colors: {
+          1: new Color('#fff'),
+          2: new Color('#e10')
+        },
+        width: 5
+      };
+      this.star = new Sprite();
+      this.star.load(spriteData);
+      this.star.setPosition(100, 20);
+      this.star.enableBoundingBox('#fff');
       this.analyzer = new SpectrumAnalyzer();
     }
   }
