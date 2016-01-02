@@ -1214,8 +1214,8 @@ Circle = (function(superClass) {
     angle = 0;
     for (i = l = 0, ref1 = samples - 1; 0 <= ref1 ? l <= ref1 : l >= ref1; i = 0 <= ref1 ? ++l : --l) {
       radians = angle * (Math.PI / 180);
-      x = Math.round(this.center.x + (Math.cos(radians) * this.radius));
-      y = Math.round(this.center.y - (Math.sin(radians) * this.radius));
+      x = Math.ceil(this.center.x + (Math.cos(radians) * this.radius));
+      y = Math.ceil(this.center.y - (Math.sin(radians) * this.radius));
       if (y < minY[x]) {
         minY[x] = y;
       }
@@ -1460,7 +1460,7 @@ Line = (function(superClass) {
       }
     }
     if (this.offset) {
-      for (j = m = 0, ref4 = Math.round(i * this.offset); 0 <= ref4 ? m <= ref4 : m >= ref4; j = 0 <= ref4 ? ++m : --m) {
+      for (j = m = 0, ref4 = Math.floor(i * this.offset); 0 <= ref4 ? m <= ref4 : m >= ref4; j = 0 <= ref4 ? ++m : --m) {
         this.getParticle(j).hide();
       }
     }

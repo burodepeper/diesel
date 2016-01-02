@@ -48,8 +48,8 @@ class Circle extends Pane
     angle = 0
     for i in [0 .. samples - 1]
       radians = angle * (Math.PI / 180)
-      x = Math.round(@center.x + (Math.cos(radians) * @radius))
-      y = Math.round(@center.y - (Math.sin(radians) * @radius))
+      x = Math.ceil(@center.x + (Math.cos(radians) * @radius))
+      y = Math.ceil(@center.y - (Math.sin(radians) * @radius))
       if (y < minY[x]) then minY[x] = y
       angle += increment
 

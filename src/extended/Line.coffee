@@ -86,7 +86,7 @@ class Line extends Pane
         i++
 
     if @offset
-      for j in [0 .. Math.round(i * @offset)]
+      for j in [0 .. Math.floor(i * @offset)]
         @getParticle(j).hide()
 
     if (@particles.length - 1) > i
