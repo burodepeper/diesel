@@ -36,39 +36,49 @@ Radar = (function(superClass) {
   };
 
   function Radar() {
-    var angle, center, circle, i, increment, j, length, line, numberOfSpokes, offset, ref;
+    var angle, center, circle, diameter, i, increment, j, large, length, line, medium, numberOfSpokes, offset, position, ref, size, small;
     Radar.__super__.constructor.call(this);
+    diameter = 200;
+    large = 0.9;
+    medium = 0.5;
+    small = 0.25;
     this.frame = new Circle(LAYER_RADAR_DECORATION);
     this.addChild(this.frame);
-    this.frame.setSize(200);
+    this.frame.setSize(diameter);
     this.frame.outline(this.colors.red);
     circle = new Circle(LAYER_RADAR_DECORATION);
     this.addChild(circle);
-    circle.setSize(200 * 0.9);
+    size = diameter * large;
+    position = (diameter - size) / 2;
+    circle.setSize(size);
     circle.outline(this.colors.grey);
-    circle.setPosition(10, 10);
+    circle.setPosition(position, position);
     circle = new Circle(LAYER_RADAR_DECORATION);
     this.addChild(circle);
-    circle.setSize(200 * 0.5);
+    size = diameter * medium;
+    position = (diameter - size) / 2;
+    circle.setSize(size);
     circle.outline(this.colors.grey);
-    circle.setPosition(50, 50);
+    circle.setPosition(position, position);
     circle = new Circle(LAYER_RADAR_DECORATION);
     this.addChild(circle);
-    circle.setSize(200 * 0.1);
+    size = diameter * small;
+    position = (diameter - size) / 2;
+    circle.setSize(size);
     circle.outline(this.colors.grey);
-    circle.setPosition(90, 90);
+    circle.setPosition(position, position);
     center = this.frame.getCenter();
     numberOfSpokes = 24;
     increment = 360 / numberOfSpokes;
-    length = 90;
+    length = (diameter / 2) * large;
     angle = 0;
     for (i = j = 0, ref = numberOfSpokes - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
-      angle += increment;
-      offset = i % 2 ? 0.556 : 0.1;
+      offset = i % 3 !== 0 ? medium / large : small;
       line = new Line(LAYER_RADAR_DECORATION);
       this.addChild(line);
       line.from(center).atAngle(angle, length, offset);
       line.setColor(this.colors.grey);
+      angle += increment;
     }
   }
 
