@@ -5,6 +5,7 @@ class Radar extends Pane
     red: new Color('#e10')
     grey: new Color('rgba(255, 255, 255, 0.15)')
   diameter: 160
+  range: 1000
 
   constructor: ->
     super()

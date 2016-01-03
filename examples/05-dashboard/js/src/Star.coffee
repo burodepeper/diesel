@@ -1,28 +1,36 @@
 class Star extends Particle
 
-  randomize: ->
+  constructor: (@_layer) ->
+    super(@_layer)
+    @x = null
+    @y = null
+    @z = null
+
+  # Calculates {@x} and {@y} given a distance {@z} and a {range} for a line upon which {@x} and {@y} can be found. This line is based on a random angle, and a random length with a maximum of the range of our radar.
+  init: (@z, @range) ->
     @angle = getRandomInt(0, 359)
-    @distance = getRandomInt(0, 9999)
-    # @distance = 10000
     @radians = @angle * (Math.PI / 180)
+    length = getRandomInt(1, @range)
+    @x = Math.sin(@radians) * length
+    @y = Math.cos(@radians) * length
 
-  setOrigin: (@origin) ->
-
+  # Transforms the 3d-coordinates we have onto a 2d plane. And decreases the distance, the {@z} coordinate when done with the fixed 'speed' of our spaceship.
   update: ->
-    # TODO calculate x and y based on @angle and @distance
+    # Calculate the distance in 3d between (0, 0, 0) and (@x, @y, @z)
+    s = Math.sqrt((@x * @x) + (@z * @z))
+    distance = Math.sqrt((s * s) + (@y * @y))
+    length = ((@range - distance) / @range) * 80
 
-    x = Math.sin(@radians) * (10000 - @distance)
-    y = Math.cos(@radians) * (10000 - @distance)
-    distance = Math.sqrt((x * x) + (y * y))
-    opacity = 1 - ((10000 - distance) / 10000)
-    offset = (10000 - distance) / 10000
-
-    x = @origin.x + (Math.sin(@radians) * offset * 160)
-    y = @origin.y + (Math.cos(@radians) * offset * 160)
-    # console.log @distance, x, y
+    x = 80 + Math.sin(@radians) * length
+    y = 80 + Math.cos(@radians) * length
     @setPosition(x, y)
-    @setOpacity(opacity)
+    @setOpacity((@range - distance) / @range)
 
-    @distance -= 10
+    @z -= 10
+
+    # TODO remove {Star} when it is outside of negative range of the {Radar}
+    if @z <= 0
+      @remove()
+      App.stars.createStar()
 
     super()

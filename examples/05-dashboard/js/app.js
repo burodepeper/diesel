@@ -29,6 +29,9 @@ App = {
         top: 'center'
       };
       this.radar.setCSS(css);
+      this.stars = new Stars();
+      this.stars.setCSS(css);
+      this.stars.init(this.radar);
     }
   }
 };
@@ -43,6 +46,8 @@ Radar = (function(superClass) {
   };
 
   Radar.prototype.diameter = 160;
+
+  Radar.prototype.range = 1000;
 
   function Radar() {
     Radar.__super__.constructor.call(this);
@@ -132,32 +137,39 @@ RadarSweeper = (function(superClass) {
 Star = (function(superClass) {
   extend(Star, superClass);
 
-  function Star() {
-    return Star.__super__.constructor.apply(this, arguments);
+  function Star(_layer) {
+    this._layer = _layer;
+    Star.__super__.constructor.call(this, this._layer);
+    this.x = null;
+    this.y = null;
+    this.z = null;
   }
 
-  Star.prototype.randomize = function() {
+  Star.prototype.init = function(z, range) {
+    var length;
+    this.z = z;
+    this.range = range;
     this.angle = getRandomInt(0, 359);
-    this.distance = getRandomInt(0, 9999);
-    return this.radians = this.angle * (Math.PI / 180);
-  };
-
-  Star.prototype.setOrigin = function(origin) {
-    this.origin = origin;
+    this.radians = this.angle * (Math.PI / 180);
+    length = getRandomInt(1, this.range);
+    this.x = Math.sin(this.radians) * length;
+    return this.y = Math.cos(this.radians) * length;
   };
 
   Star.prototype.update = function() {
-    var distance, offset, opacity, x, y;
-    x = Math.sin(this.radians) * (10000 - this.distance);
-    y = Math.cos(this.radians) * (10000 - this.distance);
-    distance = Math.sqrt((x * x) + (y * y));
-    opacity = 1 - ((10000 - distance) / 10000);
-    offset = (10000 - distance) / 10000;
-    x = this.origin.x + (Math.sin(this.radians) * offset * 160);
-    y = this.origin.y + (Math.cos(this.radians) * offset * 160);
+    var distance, length, s, x, y;
+    s = Math.sqrt((this.x * this.x) + (this.z * this.z));
+    distance = Math.sqrt((s * s) + (this.y * this.y));
+    length = ((this.range - distance) / this.range) * 80;
+    x = 80 + Math.sin(this.radians) * length;
+    y = 80 + Math.cos(this.radians) * length;
     this.setPosition(x, y);
-    this.setOpacity(opacity);
-    this.distance -= 10;
+    this.setOpacity((this.range - distance) / this.range);
+    this.z -= 10;
+    if (this.z <= 0) {
+      this.remove();
+      App.stars.createStar();
+    }
     return Star.__super__.update.call(this);
   };
 
@@ -169,16 +181,30 @@ Stars = (function(superClass) {
   extend(Stars, superClass);
 
   function Stars() {
-    var i, j, star;
     Stars.__super__.constructor.call(this);
-    this.origin = new Point(80, 80);
-    for (i = j = 0; j <= 10; i = ++j) {
-      star = new Star(LAYER_STARS);
-      this.addChild(star);
-      star.setOrigin(this.origin);
-      star.randomize();
-    }
   }
+
+  Stars.prototype.init = function(radar) {
+    var i, j, results;
+    this.radar = radar;
+    this.range = this.radar.range;
+    results = [];
+    for (i = j = 0; j <= 100; i = ++j) {
+      results.push(this.createStar(getRandomInt(1, this.range)));
+    }
+    return results;
+  };
+
+  Stars.prototype.createStar = function(distance) {
+    var star;
+    if (distance == null) {
+      distance = this.range;
+    }
+    star = new Star(LAYER_STARS);
+    this.addChild(star);
+    star.setColor(new Color('#fff'));
+    return star.init(distance, this.range);
+  };
 
   return Stars;
 

@@ -25,8 +25,9 @@ App =
       @radar.setCSS(css)
 
       # TODO Create stars moving towards cockpit
-      # @stars = new Stars()
-      # @stars.setCSS(css)
+      @stars = new Stars()
+      @stars.setCSS(css)
+      @stars.init(@radar)
 
       # TODO Add auxiliary stuff
 
