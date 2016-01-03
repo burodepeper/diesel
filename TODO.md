@@ -55,6 +55,7 @@ This document is used in favor of Github issues until a first public release
 - [ ] Allow multiple canvases/contexts, and in extension, allow a canvas to be linked to an existing DOM-element.
 - [ ] Draw each layer of entities on a separate <canvas> element; see [Pane] for a possibly better implementation
 - [ ] Add a `numberOfEntities` property, and throw a warning when this amount exceeds a certain limit. Throw consecutive warnings on certain increments.
+- [ ] Add a `window.DT` for timing related stuff that doesn't use a [Timer]
 
 ### Entity
 
@@ -96,6 +97,7 @@ This document is used in favor of Github issues until a first public release
 - [ ] Rename `addChild()` to `add()`; the concept of children is technical, and not necessary on the front-end
 - [ ] FUTURE PLAN: Create a separate canvas/context for every [Pane] that is created with when a `_layer` is specified. All children and particles added to that instance will be drawn on its private context. This will inherently mean that any overflow is hidden.
 - [ ] Shared method to clean up unused `particles`
+- [ ] Remove the default [Color] that's created, and possibly replace with a reference to a default color set on [Engine] (foreground vs background)
 
 ### Particle
 
