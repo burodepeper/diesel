@@ -37,6 +37,7 @@ Radar = (function(superClass) {
   extend(Radar, superClass);
 
   Radar.prototype.colors = {
+    white: new Color('#fff'),
     red: new Color('#e10'),
     grey: new Color('rgba(255, 255, 255, 0.15)')
   };
@@ -61,7 +62,7 @@ Radar = (function(superClass) {
     this.frame = new Circle(LAYER_RADAR_DECORATION);
     this.addChild(this.frame);
     this.frame.setSize(this.diameter);
-    this.frame.outline(this.colors.red);
+    this.frame.outline(this.colors.white);
     large = 0.9;
     medium = 0.5;
     small = 0.25;

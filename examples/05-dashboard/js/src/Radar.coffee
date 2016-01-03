@@ -1,6 +1,7 @@
 class Radar extends Pane
 
   colors:
+    white: new Color('#fff')
     red: new Color('#e10')
     grey: new Color('rgba(255, 255, 255, 0.15)')
   diameter: 160
@@ -22,7 +23,7 @@ class Radar extends Pane
     @frame = new Circle(LAYER_RADAR_DECORATION)
     @addChild(@frame)
     @frame.setSize(@diameter)
-    @frame.outline(@colors.red)
+    @frame.outline(@colors.white)
 
     large = 0.9
     medium = 0.5
