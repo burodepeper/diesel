@@ -120,7 +120,7 @@ isPoint = function(x, y) {
   }
 };
 
-PX = 6;
+PX = false;
 
 CONTEXT = false;
 

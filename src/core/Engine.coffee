@@ -1,5 +1,5 @@
 # Constants and globals
-PX = 6              # Particle size, 6 is nice
+PX = false
 CONTEXT = false     # shorthand for Engine.context
 WINDOW = false      # fallback reference Pane for particles and panes
 NOW = false
