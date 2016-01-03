@@ -9,17 +9,24 @@ App =
 
     settings =
       viewport:
-        width: 240
-        height: 240
+        width: 320
+        height: 180
 
     if Engine.init(settings)
 
-      # TODO Create stars moving towards cockpit
-
       # TODO Create radar sweep and detection
       @radar = new Radar()
-      @radar.setSize(200, 200)
-      @radar.setPosition(20, 20)
+      diameter = @radar.diameter
+      css =
+        width: diameter
+        height: diameter
+        left: 'center'
+        top: 'center'
+      @radar.setCSS(css)
+
+      # TODO Create stars moving towards cockpit
+      # @stars = new Stars()
+      # @stars.setCSS(css)
 
       # TODO Add auxiliary stuff
 
