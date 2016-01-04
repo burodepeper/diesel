@@ -894,7 +894,7 @@ Timer = (function(superClass) {
     this.value = 0;
   }
 
-  Timer.prototype.update = function() {
+  Timer.prototype._update = function() {
     if (!this.isComplete) {
       this.percentage = (NOW - this.start) / this.duration;
       this.value = this.applyEasing();

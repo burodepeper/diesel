@@ -141,6 +141,9 @@ This document is used in favor of Github issues until a first public release
 
 ### Timer
 
+- [ ] `applyEasing()`: add `sine`
+- [ ] `applyEasing()`: add `up-down`
+
 ### Triangle
 
 - a collection of three [Points] whose surface is filled with [Particles] (or possibly an outline)
