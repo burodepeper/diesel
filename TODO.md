@@ -34,7 +34,7 @@ This document is used in favor of Github issues until a first public release
 
 - [ ] Implement possibility for gradients
 - [ ] `change()`, initiates a color transition tween
-- [x] Extend `constructor()` and `set()` with an opacity option
+- [ ] The `opacity` of an [Entity] should be separate from the opacity of the [Color]. The base color for a particle (and as such, a base opacity) are shared, but the private `opacity` of an instance remains private. Ergo, `Entity.setOpacity()` does something else than `Color.setOpacity()`.
 
 ### Controller
 
@@ -56,6 +56,7 @@ This document is used in favor of Github issues until a first public release
 - [ ] Draw each layer of entities on a separate <canvas> element; see [Pane] for a possibly better implementation
 - [ ] Add a `numberOfEntities` property, and throw a warning when this amount exceeds a certain limit. Throw consecutive warnings on certain increments.
 - [ ] Add a `window.DT` for timing related stuff that doesn't use a [Timer]
+- [ ] BUG: When removing an [Entity], other entities such as [Points] and [Colors] stay behind, because they are not automatically cleaned up. Cleaning up these leftovers can be implemented manually in an instance's `remove()` before calling `super()`, but entities that are shared pose an issue. A possible solution would be for entities to know their parents, and to self-destruct when they become orphans. However, this poses the issue that some Entities are deliberately parentless.
 
 ### Entity
 

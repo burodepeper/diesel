@@ -2,10 +2,16 @@ class Text extends Pane
 
   setFont: (@font) ->
 
-  setText: (@text) ->
+  setText: (text) ->
+    @text = text + "" # Force {@text} to be a string
+    # @clear()
     @drawGlyphs()
 
   setColor: (@color) ->
+
+  clear: ->
+    for child in @children
+      child.remove()
 
   drawGlyphs: ->
     x = 0

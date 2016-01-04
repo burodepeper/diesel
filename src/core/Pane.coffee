@@ -251,3 +251,12 @@ class Pane extends Entity
     if @boundingBox
       @boundingBox.remove()
       @boundingBox = false
+
+  # ...
+
+  remove: ->
+    for particle in @particles
+      particle.remove()
+    for child in @children
+      child.remove()
+    super()

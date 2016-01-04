@@ -1,4 +1,4 @@
-var App, LAYER_RADAR_DECORATION, LAYER_RADAR_UI, LAYER_STARS, Radar, RadarSweeper, Star, Stars, layer,
+var App, LAYER_RADAR_DECORATION, LAYER_RADAR_UI, LAYER_STARS, Radar, RadarSweeper, Star, StarLabel, Stars, layer,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -152,7 +152,17 @@ Star = (function(superClass) {
     this.radians = this.angle * (Math.PI / 180);
     this.passingDistance = getRandomInt(1, this.range);
     this.x = Math.sin(this.radians) * this.passingDistance;
-    return this.y = Math.cos(this.radians) * this.passingDistance;
+    this.y = Math.cos(this.radians) * this.passingDistance;
+    this.particle = new Particle(LAYER_STARS);
+    this.addParticle(this.particle);
+    this.particle.setColor(new Color('#fff'));
+    if (this.passingDistance < (this.range * 0.1)) {
+      return this.addLabel();
+    }
+  };
+
+  Star.prototype.addLabel = function() {
+    return this.label = new StarLabel(this);
   };
 
   Star.prototype.update = function() {
@@ -164,7 +174,7 @@ Star = (function(superClass) {
     x = 80 + Math.sin(this.radians) * length;
     y = 80 + Math.cos(this.radians) * length;
     this.setPosition(x, y);
-    this.setOpacity(opacity);
+    this.particle.setOpacity(opacity);
     this.z -= 1;
     if (this.z <= 0) {
       this.remove();
@@ -173,9 +183,54 @@ Star = (function(superClass) {
     return Star.__super__.update.call(this);
   };
 
+  Star.prototype.remove = function() {
+    if (this.label) {
+      this.label.remove();
+    }
+    this.particle.remove();
+    return Star.__super__.remove.call(this);
+  };
+
   return Star;
 
-})(Particle);
+})(Pane);
+
+StarLabel = (function(superClass) {
+  extend(StarLabel, superClass);
+
+  function StarLabel(star1) {
+    var font;
+    this.star = star1;
+    StarLabel.__super__.constructor.call(this);
+    this.circle = new Circle(LAYER_RADAR_UI);
+    this.addChild(this.circle);
+    this.circle.setSize(5);
+    this.circle.setPosition(-2, -2);
+    this.circle.outline('rgba(255, 0, 0, 0.5)');
+    font = new Font('9PX');
+    this.label = new Text(LAYER_RADAR_UI);
+    this.addChild(this.label);
+    this.label.setFont(font);
+    this.label.setPosition(4, -4);
+    this.label.setText(this.star.z);
+  }
+
+  StarLabel.prototype.update = function() {
+    this.setPosition(this.star.getX(), this.star.getY());
+    this.circle.hasChanged = true;
+    this.label.hasChanged = true;
+    return StarLabel.__super__.update.call(this);
+  };
+
+  StarLabel.prototype.remove = function() {
+    this.circle.remove();
+    this.label.remove();
+    return StarLabel.__super__.remove.call(this);
+  };
+
+  return StarLabel;
+
+})(Pane);
 
 Stars = (function(superClass) {
   extend(Stars, superClass);
@@ -189,7 +244,7 @@ Stars = (function(superClass) {
     this.radar = radar;
     this.range = this.radar.range;
     results = [];
-    for (i = j = 0; j <= 100; i = ++j) {
+    for (i = j = 0; j <= 10; i = ++j) {
       results.push(this.createStar(getRandomInt(1, this.range)));
     }
     return results;
@@ -200,9 +255,8 @@ Stars = (function(superClass) {
     if (distance == null) {
       distance = this.range;
     }
-    star = new Star(LAYER_STARS);
+    star = new Star();
     this.addChild(star);
-    star.setColor(new Color('#fff'));
     return star.init(distance, this.range);
   };
 

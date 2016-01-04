@@ -37,3 +37,7 @@ class Sprite extends Pane
         console.warn "Sprite.parseData(): number of particles (#{@data.particles.length}) isn't a multiple of width (#{@data.width})"
         return false
     return true
+
+  update: ->
+    if @reference.hasChanged
+      super()

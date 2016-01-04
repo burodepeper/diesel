@@ -1,4 +1,4 @@
-class Star extends Particle
+class Star extends Pane
 
   constructor: (@_layer) ->
     super(@_layer)
@@ -14,6 +14,18 @@ class Star extends Particle
     @x = Math.sin(@radians) * @passingDistance
     @y = Math.cos(@radians) * @passingDistance
 
+    @particle = new Particle(LAYER_STARS)
+    @addParticle(@particle)
+    @particle.setColor(new Color('#fff'))
+
+    # TODO
+    # Add a label to a star if {@passingDistance} is smaller than a tenth of our range.
+    if @passingDistance < (@range * 0.1)
+      @addLabel()
+
+  addLabel: ->
+    @label = new StarLabel(this)
+
   # Transforms the 3d-coordinates we have onto a 2d plane. And decreases the distance, the {@z} coordinate when done with the fixed 'speed' of our spaceship.
   update: ->
     # Calculate the distance in 3d between (0, 0, 0) and (@x, @y, @z)
@@ -27,7 +39,9 @@ class Star extends Particle
     x = 80 + Math.sin(@radians) * length
     y = 80 + Math.cos(@radians) * length
     @setPosition(x, y)
-    @setOpacity(opacity)
+    @particle.setOpacity(opacity)
+    # @particle.setPosition(x, y)
+    # @particle.setPosition(0, 0)
 
     @z -= 1
 
@@ -36,4 +50,9 @@ class Star extends Particle
       @remove()
       App.stars.createStar()
 
+    super()
+
+  remove: ->
+    if @label then @label.remove()
+    @particle.remove()
     super()

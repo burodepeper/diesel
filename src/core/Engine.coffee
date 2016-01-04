@@ -169,9 +169,10 @@ Engine =
     for layer, i in @entities
       if (focusOn is i) or focusOn is -1
         for entity in layer
-          instanceName = entity.constructor.name
-          if instanceName is name
-            instances.push(entity)
+          if entity
+            instanceName = entity.constructor.name
+            if instanceName is name
+              instances.push(entity)
     return instances
 
   cleanUp: ->

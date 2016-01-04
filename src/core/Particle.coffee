@@ -44,6 +44,7 @@ class Particle extends Entity
 
   setOpacity: (opacity) ->
     if @color? then @color.setOpacity(opacity)
+    @hasChanged = true
     return
 
   setColor: (color, opacity = null) ->

@@ -304,9 +304,11 @@ Engine = {
       if ((focusOn === i) || focusOn === -1) {
         for (l = 0, len1 = layer.length; l < len1; l++) {
           entity = layer[l];
-          instanceName = entity.constructor.name;
-          if (instanceName === name) {
-            instances.push(entity);
+          if (entity) {
+            instanceName = entity.constructor.name;
+            if (instanceName === name) {
+              instances.push(entity);
+            }
           }
         }
       }
@@ -790,6 +792,21 @@ Pane = (function(superClass) {
     }
   };
 
+  Pane.prototype.remove = function() {
+    var child, k, l, len, len1, particle, ref, ref1;
+    ref = this.particles;
+    for (k = 0, len = ref.length; k < len; k++) {
+      particle = ref[k];
+      particle.remove();
+    }
+    ref1 = this.children;
+    for (l = 0, len1 = ref1.length; l < len1; l++) {
+      child = ref1[l];
+      child.remove();
+    }
+    return Pane.__super__.remove.call(this);
+  };
+
   return Pane;
 
 })(Entity);
@@ -856,6 +873,7 @@ Particle = (function(superClass) {
     if (this.color != null) {
       this.color.setOpacity(opacity);
     }
+    this.hasChanged = true;
   };
 
   Particle.prototype.setColor = function(color, opacity) {
@@ -1705,6 +1723,12 @@ Sprite = (function(superClass) {
     return true;
   };
 
+  Sprite.prototype.update = function() {
+    if (this.reference.hasChanged) {
+      return Sprite.__super__.update.call(this);
+    }
+  };
+
   return Sprite;
 
 })(Pane);
@@ -1736,12 +1760,23 @@ Text = (function(superClass) {
   };
 
   Text.prototype.setText = function(text) {
-    this.text = text;
+    this.text = text + "";
     return this.drawGlyphs();
   };
 
   Text.prototype.setColor = function(color1) {
     this.color = color1;
+  };
+
+  Text.prototype.clear = function() {
+    var child, k, len, ref, results;
+    ref = this.children;
+    results = [];
+    for (k = 0, len = ref.length; k < len; k++) {
+      child = ref[k];
+      results.push(child.remove());
+    }
+    return results;
   };
 
   Text.prototype.drawGlyphs = function() {
