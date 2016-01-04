@@ -15,7 +15,19 @@ class Point extends Entity
     @hasChanged = false
     @setPosition(x, y)
 
-  _setReference: (@_reference, @_id) ->
+  # ----- Public methods ----
+
+  getX: ->
+    if @_reference
+      return @_reference.getX() + @_x
+    else
+      return @_x
+
+  getY: ->
+    if @_reference
+      return @_reference.getY() + @_y
+    else
+      return @_y
 
   isValid: (x = @_x, y = @_y) ->
     _isValid = (x isnt NaN) and (y isnt NaN)
@@ -45,41 +57,6 @@ class Point extends Entity
     @_tweenY = new Tween(parameters, duration, easing)
     return
 
-  _update: ->
-    @hasChanged = false
-    _previousX = @_x
-    _previousY = @_y
-
-    if @_tweenX
-      @_x = Math.round(@_tweenX.getValue('x'))
-      if @_tweenX.isComplete then @_tweenX = null
-    if @_tweenY
-      @_y = Math.round(@_tweenY.getValue('y'))
-      if @_tweenY.isComplete then @_tweenY = null
-
-    if (_previousX isnt @_x) or (_previousY isnt @_y)
-      @_updatePosition()
-    return
-
-  getX: ->
-    if @_reference
-      return @_reference.getX() + @_x
-    else
-      return @_x
-
-  getY: ->
-    if @_reference
-      return @_reference.getY() + @_y
-    else
-      return @_y
-
-  _updatePosition: ->
-    # console.log "#{@constructor.name}._updatePosition()"
-    @_position.x = @getX()
-    @_position.y = @getY()
-    @hasChanged = true
-    return true
-
   setPosition: (x, y) ->
     # console.log("#{@constructor.name}.setPosition(): #{x}, #{y}")
     if @isValid(x, y)
@@ -102,3 +79,30 @@ class Point extends Entity
       @_updatePosition()
     else
       return false
+
+  # ----- Private methods -----
+
+  _update: ->
+    @hasChanged = false
+    _previousX = @_x
+    _previousY = @_y
+
+    if @_tweenX
+      @_x = Math.round(@_tweenX.getValue('x'))
+      if @_tweenX.isComplete then @_tweenX = null
+    if @_tweenY
+      @_y = Math.round(@_tweenY.getValue('y'))
+      if @_tweenY.isComplete then @_tweenY = null
+
+    if (_previousX isnt @_x) or (_previousY isnt @_y)
+      @_updatePosition()
+    return
+
+  _setReference: (@_reference, @_id) ->
+
+  _updatePosition: ->
+    # console.log "#{@constructor.name}._updatePosition()"
+    @_position.x = @getX()
+    @_position.y = @getY()
+    @hasChanged = true
+    return true
