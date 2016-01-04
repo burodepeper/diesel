@@ -7,7 +7,6 @@ class Stars extends Pane
     @range = @radar.range
     for i in [0 .. 100]
       @createStar(getRandomInt(1, @range))
-      # @createStar(@range)
 
   createStar: (distance = @range) ->
     star = new Star(LAYER_STARS)

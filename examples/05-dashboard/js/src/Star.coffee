@@ -10,23 +10,26 @@ class Star extends Particle
   init: (@z, @range) ->
     @angle = getRandomInt(0, 359)
     @radians = @angle * (Math.PI / 180)
-    length = getRandomInt(1, @range)
-    @x = Math.sin(@radians) * length
-    @y = Math.cos(@radians) * length
+    @passingDistance = getRandomInt(1, @range)
+    @x = Math.sin(@radians) * @passingDistance
+    @y = Math.cos(@radians) * @passingDistance
 
   # Transforms the 3d-coordinates we have onto a 2d plane. And decreases the distance, the {@z} coordinate when done with the fixed 'speed' of our spaceship.
   update: ->
     # Calculate the distance in 3d between (0, 0, 0) and (@x, @y, @z)
     s = Math.sqrt((@x * @x) + (@z * @z))
     distance = Math.sqrt((s * s) + (@y * @y))
-    length = ((@range - distance) / @range) * 80
+    opacity = (@range - distance) / @range
+
+    # Adding {@passingDistance} has the {Star} move to the edge of the radar. The opacity is still based on the actual distance, so nearer stars are brighter.
+    length = ((@range - distance + @passingDistance) / @range) * 80
 
     x = 80 + Math.sin(@radians) * length
     y = 80 + Math.cos(@radians) * length
     @setPosition(x, y)
-    @setOpacity((@range - distance) / @range)
+    @setOpacity(opacity)
 
-    @z -= 10
+    @z -= 1
 
     # TODO remove {Star} when it is outside of negative range of the {Radar}
     if @z <= 0

@@ -146,26 +146,26 @@ Star = (function(superClass) {
   }
 
   Star.prototype.init = function(z, range) {
-    var length;
     this.z = z;
     this.range = range;
     this.angle = getRandomInt(0, 359);
     this.radians = this.angle * (Math.PI / 180);
-    length = getRandomInt(1, this.range);
-    this.x = Math.sin(this.radians) * length;
-    return this.y = Math.cos(this.radians) * length;
+    this.passingDistance = getRandomInt(1, this.range);
+    this.x = Math.sin(this.radians) * this.passingDistance;
+    return this.y = Math.cos(this.radians) * this.passingDistance;
   };
 
   Star.prototype.update = function() {
-    var distance, length, s, x, y;
+    var distance, length, opacity, s, x, y;
     s = Math.sqrt((this.x * this.x) + (this.z * this.z));
     distance = Math.sqrt((s * s) + (this.y * this.y));
-    length = ((this.range - distance) / this.range) * 80;
+    opacity = (this.range - distance) / this.range;
+    length = ((this.range - distance + this.passingDistance) / this.range) * 80;
     x = 80 + Math.sin(this.radians) * length;
     y = 80 + Math.cos(this.radians) * length;
     this.setPosition(x, y);
-    this.setOpacity((this.range - distance) / this.range);
-    this.z -= 10;
+    this.setOpacity(opacity);
+    this.z -= 1;
     if (this.z <= 0) {
       this.remove();
       App.stars.createStar();
