@@ -155,7 +155,10 @@ Engine =
     for layer, i in @entities
       if (focusOn is i) or focusOn is -1
         for entity in layer
-          name = entity.constructor.name
+          if entity
+            name = entity.constructor.name
+          else
+            name = '(undefined)'
           unless inventory[name]?
             inventory[name] = 0
           inventory[name]++

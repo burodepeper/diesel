@@ -278,7 +278,11 @@ Engine = {
       if ((focusOn === i) || focusOn === -1) {
         for (l = 0, len1 = layer.length; l < len1; l++) {
           entity = layer[l];
-          name = entity.constructor.name;
+          if (entity) {
+            name = entity.constructor.name;
+          } else {
+            name = '(undefined)';
+          }
           if (inventory[name] == null) {
             inventory[name] = 0;
           }
