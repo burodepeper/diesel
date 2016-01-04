@@ -1,12 +1,8 @@
-# Entity
-# ------
-# An entity is the grandparent of anything that exists in the Engine's cycle. It is merely an abstract form of a 'thing' and its methods only have to do with its existence.
-
 class Entity
 
   _layer: 0
-  state: "idle"
-  nextState: "idle"
+  # state: "idle"
+  # nextState: "idle"
 
   constructor: (layer = 0) ->
     @_layer = layer
@@ -18,9 +14,9 @@ class Entity
 
   # onResize: -> return
 
-  setEntityID: (@_entityID) ->
+  setId: (@_id) ->
 
-  setState: (@state, @nextState = "idle") ->
+  # setState: (@state, @nextState = "idle") ->
 
   # listenForResize: ->
   #   window.addEventListener "resize", => @onResize(); return

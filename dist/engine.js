@@ -1,4 +1,4 @@
-var BoundingBox, CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, FONT_9PX, Font, Line, NOW, PX, Pane, Particle, Path, Point, Rectangle, Sprite, Square, Storage, Text, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
+var CONTEXT, Color, DEBUG, Engine, Entity, FONT_9PX, Line, NOW, PX, Pane, Particle, Point, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -207,13 +207,13 @@ Engine = {
     if (!this.entities[layer]) {
       this.entities[layer] = [];
     }
-    entity.setEntityID(this.entities[layer].length);
+    entity.setId(this.entities[layer].length);
     this.entities[layer].push(entity);
   },
   removeEntity: function(entity) {
     if (this.entities[entity._layer]) {
-      if (this.entities[entity._layer][entity._entityID]) {
-        delete this.entities[entity._layer][entity._entityID];
+      if (this.entities[entity._layer][entity._id]) {
+        delete this.entities[entity._layer][entity._id];
       }
     }
   },
@@ -325,7 +325,7 @@ Engine = {
         for (j = l = 0, len1 = layer.length; l < len1; j = ++l) {
           entity = layer[j];
           if (entity) {
-            entity.setEntityID(cleanedEntities.length);
+            entity.setId(cleanedEntities.length);
             cleanedEntities.push(entity);
           }
         }
@@ -374,10 +374,6 @@ Engine = {
 Entity = (function() {
   Entity.prototype._layer = 0;
 
-  Entity.prototype.state = "idle";
-
-  Entity.prototype.nextState = "idle";
-
   function Entity(layer) {
     if (layer == null) {
       layer = 0;
@@ -390,13 +386,8 @@ Entity = (function() {
 
   Entity.prototype.draw = function() {};
 
-  Entity.prototype.setEntityID = function(_entityID) {
-    this._entityID = _entityID;
-  };
-
-  Entity.prototype.setState = function(state, nextState) {
-    this.state = state;
-    this.nextState = nextState != null ? nextState : "idle";
+  Entity.prototype.setId = function(_id) {
+    this._id = _id;
   };
 
   Entity.prototype.remove = function() {
@@ -406,17 +397,6 @@ Entity = (function() {
   return Entity;
 
 })();
-
-Controller = (function(superClass) {
-  extend(Controller, superClass);
-
-  function Controller() {
-    Controller.__super__.constructor.call(this);
-  }
-
-  return Controller;
-
-})(Entity);
 
 Color = (function(superClass) {
   extend(Color, superClass);
@@ -493,8 +473,8 @@ Color = (function(superClass) {
     return this.a = opacity;
   };
 
-  Color.prototype.setReference = function(reference) {
-    this.reference = reference;
+  Color.prototype.setReference = function(reference1) {
+    this.reference = reference1;
   };
 
   Color.prototype.toString = function() {
@@ -505,27 +485,184 @@ Color = (function(superClass) {
 
 })(Entity);
 
+Point = (function(superClass) {
+  extend(Point, superClass);
+
+  function Point(x, y, _layer) {
+    if (x == null) {
+      x = 0;
+    }
+    if (y == null) {
+      y = 0;
+    }
+    this._layer = _layer != null ? _layer : 0;
+    Point.__super__.constructor.call(this, this._layer);
+    this._x = null;
+    this._y = null;
+    this._tweenX = null;
+    this._tweenY = null;
+    this._reference = null;
+    this._position = {
+      x: null,
+      y: null
+    };
+    this.setPosition(x, y);
+  }
+
+  Point.prototype._setReference = function(_reference, _id) {
+    this._reference = _reference;
+    this._id = _id;
+  };
+
+  Point.prototype.isValid = function(x, y) {
+    var _isValid;
+    if (x == null) {
+      x = this._x;
+    }
+    if (y == null) {
+      y = this._y;
+    }
+    _isValid = (x !== NaN) && (y !== NaN);
+    if (!_isValid) {
+      console.warn("Point()", x + "," + y, "is not a valid Point");
+    }
+    return _isValid;
+  };
+
+  Point.prototype.moveTo = function(x, y, duration, easing) {
+    if (duration == null) {
+      duration = 1000;
+    }
+    if (easing == null) {
+      easing = 'linear';
+    }
+    if (this.isValid(x, y)) {
+      this.moveToX(x, duration, easing);
+      this.moveToY(x, duration, easing);
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  Point.prototype.moveToX = function(x, duration, easing) {
+    var parameters;
+    if (duration == null) {
+      duration = 1000;
+    }
+    if (easing == null) {
+      easing = 'linear';
+    }
+    parameters = [];
+    parameters.push({
+      name: 'x',
+      from: this._x,
+      to: x
+    });
+    this._tweenX = new Tween(parameters, duration, easing);
+  };
+
+  Point.prototype.moveToY = function(y, duration, easing) {
+    var parameters;
+    if (duration == null) {
+      duration = 1000;
+    }
+    if (easing == null) {
+      easing = 'linear';
+    }
+    parameters = [];
+    parameters.push({
+      name: 'y',
+      from: this._y,
+      to: y
+    });
+    this._tweenY = new Tween(parameters, duration, easing);
+  };
+
+  Point.prototype.update = function() {
+    var _previousX, _previousY;
+    this.hasChanged = false;
+    _previousX = this._x;
+    _previousY = this._y;
+    if (this._tweenX) {
+      this._x = Math.round(this._tweenX.getValue('x'));
+      if (this._tweenX.isComplete) {
+        this._tweenX = null;
+      }
+    }
+    if (this._tweenY) {
+      this._y = Math.round(this._tweenY.getValue('y'));
+      if (this._tweenY.isComplete) {
+        this._tweenY = null;
+      }
+    }
+    if ((_previousX !== this._x) || (_previousY !== this._y)) {
+      this._updatePosition();
+    }
+  };
+
+  Point.prototype.getX = function() {
+    if (this._reference) {
+      return this._reference.getX() + this._x;
+    } else {
+      return this._x;
+    }
+  };
+
+  Point.prototype.getY = function() {
+    if (this._reference) {
+      return this._reference.getY() + this._y;
+    } else {
+      return this._y;
+    }
+  };
+
+  Point.prototype._updatePosition = function() {
+    this._position.x = this.getX();
+    this._position.y = this.getY();
+  };
+
+  Point.prototype.setPosition = function(x, y) {
+    if (this.isValid(x, y)) {
+      this._x = x;
+      this._y = y;
+      return this._updatePosition();
+    } else {
+      return false;
+    }
+  };
+
+  Point.prototype.setX = function(x) {};
+
+  Point.prototype.setY = function(y) {};
+
+  return Point;
+
+})(Entity);
+
 Pane = (function(superClass) {
   extend(Pane, superClass);
 
-  function Pane(_layer) {
+  function Pane(_layer, x, y) {
     this._layer = _layer != null ? _layer : 1;
-    Pane.__super__.constructor.call(this, this._layer);
-    this.position = {
-      absolute: new Point(0, 0),
-      relative: new Point(0, 0)
-    };
-    this.size = {
+    if (x == null) {
+      x = 0;
+    }
+    if (y == null) {
+      y = 0;
+    }
+    Pane.__super__.constructor.call(this, x, y, this._layer);
+    this._position = null;
+    this._size = {
       width: 0,
       height: 0,
       surface: 0,
       circumference: 0
     };
-    this.color = new Color();
-    this.reference = WINDOW;
-    this.children = [];
-    this.particles = [];
-    this.css = {
+    this._reference = WINDOW;
+    this._children = [];
+    this._particles = [];
+    this._css = {
       top: null,
       right: null,
       bottom: null,
@@ -533,50 +670,24 @@ Pane = (function(superClass) {
       width: null,
       height: null
     };
-    this.isVisible = true;
-    this.hasCSS = false;
-    this.hasBoundingBox = false;
-    this.boundingBox = null;
-    this.hasChanged = false;
+    this._isVisible = true;
   }
 
-  Pane.prototype.setPosition = function(x, y) {
-    x = parseFloat(x);
-    if (x === NaN) {
-      console.warn("Pane.setPosition()", x, "is not a valid value for x");
-    } else {
-      this.position.relative.x = x;
-    }
-    y = parseFloat(y);
-    if (y === NaN) {
-      console.warn("Pane.setPosition()", y, "is not a valid value for y");
-    } else {
-      this.position.relative.y = y;
-    }
-  };
-
-  Pane.prototype.setAbsolutePosition = function(x, y) {
-    return this.position.absolute = {
-      x: x,
-      y: y
-    };
-  };
-
   Pane.prototype.setSize = function(width, height) {
-    this.size.width = width;
-    this.size.height = height;
+    this._size.width = width;
+    this._size.height = height;
     if (width && height) {
-      this.size.surface = width * height;
-      this.size.circumference = (2 * width) + (2 * height);
+      this._size.surface = width * height;
+      this._size.circumference = (2 * width) + (2 * height);
     } else {
       if (width) {
-        this.size.surface = width;
-        this.size.circumference = width * 2;
-        this.size.height = 0;
+        this._size.surface = width;
+        this._size.circumference = width * 2;
+        this._size.height = 0;
       } else {
-        this.size.surface = height;
-        this.size.circumference = height * 2;
-        this.size.width = 0;
+        this._size.surface = height;
+        this._size.circumference = height * 2;
+        this._size.width = 0;
       }
     }
   };
@@ -602,104 +713,12 @@ Pane = (function(superClass) {
     }
   };
 
-  Pane.prototype.setOpacity = function(opacity) {
-    if (opacity == null) {
-      opacity = 1;
-    }
-    if (this.color) {
-      opacity = parseFloat(opacity);
-      if (opacity === NaN) {
-        opacity = 1;
-      }
-      if (opacity < 0) {
-        opacity = 0;
-      }
-      if (opacity > 1) {
-        opacity = 1;
-      }
-      this.color.setOpacity(opacity);
-      this.updateParticles('setColor', this.color);
-    }
-  };
-
-  Pane.prototype.setReference = function(reference, _childID) {
-    this.reference = reference;
-    this._childID = _childID;
-  };
-
-  Pane.prototype.setColor = function(color, opacity) {
-    if (opacity == null) {
-      opacity = null;
-    }
-    if (typeof color === 'object') {
-      this.color = color;
-    } else {
-      this.color.set(color);
-    }
-    if (opacity != null) {
-      this.color.setOpacity(opacity);
-    }
-    this.color.setReference(this);
-    return this.updateParticles('setColor', this.color);
-  };
-
   Pane.prototype.getWidth = function() {
-    return this.size.width;
+    return this._size.width;
   };
 
   Pane.prototype.getHeight = function() {
-    return this.size.height;
-  };
-
-  Pane.prototype.getX = function() {
-    if (this.reference) {
-      return this.reference.getX() + this.position.relative.x;
-    } else {
-      return this.position.relative.x;
-    }
-  };
-
-  Pane.prototype.getY = function() {
-    if (this.reference) {
-      return this.reference.getY() + this.position.relative.y;
-    } else {
-      return this.position.relative.y;
-    }
-  };
-
-  Pane.prototype.getCenter = function() {
-    this.center = {
-      x: (this.size.width - 1) / 2,
-      y: (this.size.height - 1) / 2
-    };
-    return this.center;
-  };
-
-  Pane.prototype.getColor = function() {
-    return this.color;
-  };
-
-  Pane.prototype.isWithinBounds = function(x, y, width, height) {
-    if (x == null) {
-      x = this.position.relative.x;
-    }
-    if (y == null) {
-      y = this.position.relative.y;
-    }
-    if (width == null) {
-      width = this.getWidth();
-    }
-    if (height == null) {
-      height = this.getHeight();
-    }
-    if (this.reference) {
-      if ((x >= 0) && (y >= 0)) {
-        if ((x + width <= this.reference.getWidth()) && (y + height <= this.reference.getHeight())) {
-          return true;
-        }
-      }
-      return false;
-    }
+    return this._size.height;
   };
 
   Pane.prototype.onResize = function() {
@@ -744,13 +763,12 @@ Pane = (function(superClass) {
 
   Pane.prototype.addChild = function(child) {
     this.children.push(child);
-    child.setReference(this, this.children.length + this.particles.length - 1);
+    child._setReference(this, this.children.length + this.particles.length - 1);
   };
 
   Pane.prototype.addParticle = function(particle) {
-    this.particles.push(particle);
-    particle.setReference(this, this.particles.length + this.children.length - 1);
-    particle.isVisible = this.isVisible;
+    this._particles.push(particle);
+    particle._setReference(this, this._particles.length + this._children.length - 1);
     particle.color = this.color;
   };
 
@@ -765,8 +783,8 @@ Pane = (function(superClass) {
 
   Pane.prototype.getParticle = function(i) {
     var particle;
-    if (this.particles[i]) {
-      return this.particles[i];
+    if (this._particles[i]) {
+      return this._particles[i];
     } else {
       particle = new Particle(this._layer);
       this.addParticle(particle);
@@ -774,256 +792,65 @@ Pane = (function(superClass) {
     }
   };
 
-  Pane.prototype.enableBoundingBox = function(color) {
-    if (color == null) {
-      color = '#fff';
-    }
-    this.hasBoundingBox = true;
-    this.boundingBox = new BoundingBox();
-    this.boundingBox.setColor(color);
-    return this.addChild(this.boundingBox);
-  };
-
-  Pane.prototype.disableBoundingBox = function() {
-    this.hasBoundingBox = false;
-    if (this.boundingBox) {
-      this.boundingBox.remove();
-      return this.boundingBox = false;
-    }
-  };
-
-  Pane.prototype.remove = function() {
-    var child, k, l, len, len1, particle, ref, ref1;
-    ref = this.particles;
-    for (k = 0, len = ref.length; k < len; k++) {
-      particle = ref[k];
-      particle.remove();
-    }
-    ref1 = this.children;
-    for (l = 0, len1 = ref1.length; l < len1; l++) {
-      child = ref1[l];
-      child.remove();
-    }
-    return Pane.__super__.remove.call(this);
-  };
-
   return Pane;
 
-})(Entity);
+})(Point);
 
 Particle = (function(superClass) {
   extend(Particle, superClass);
 
-  Particle.prototype.color = null;
-
-  Particle.prototype.size = {
-    width: 1,
-    height: 1
-  };
-
-  Particle.prototype.reference = WINDOW;
-
-  Particle.prototype.isVisible = true;
-
-  Particle.prototype.hasChanged = false;
-
-  function Particle(_layer) {
+  function Particle(_layer, x, y) {
     this._layer = _layer != null ? _layer : 1;
-    Particle.__super__.constructor.call(this, this._layer);
-    this.position = {
-      relative: new Point(0, 0),
-      absolute: {
-        x: 0,
-        y: 0
-      }
-    };
-  }
-
-  Particle.prototype.setReference = function(reference, _particleID) {
-    this.reference = reference;
-    this._particleID = _particleID;
-    return this.color = this.reference.getColor();
-  };
-
-  Particle.prototype.setPosition = function(x, y) {
-    x = parseFloat(x);
-    if (x === NaN) {
-      console.warn("Particle.setPosition()", x, "is not a valid value for x");
-    } else {
-      this.position.relative.x = x;
-    }
-    y = parseFloat(y);
-    if (y === NaN) {
-      console.warn("Particle.setPosition()", y, "is not a valid value for y");
-    } else {
-      this.position.relative.y = y;
-    }
-    return this.hasChanged = true;
-  };
-
-  Particle.prototype.setSize = function(width, height) {
-    this.size = {
-      width: width,
-      height: height
-    };
-    return this.hasChanged = true;
-  };
-
-  Particle.prototype.setOpacity = function(opacity) {
-    if (this.color != null) {
-      this.color.setOpacity(opacity);
-    }
-    this.hasChanged = true;
-  };
-
-  Particle.prototype.setColor = function(color, opacity) {
-    if (opacity == null) {
-      opacity = null;
-    }
-    if (typeof color === 'object') {
-      this.color = color;
-    } else {
-      this.color.set(color);
-    }
-    if (opacity != null) {
-      this.setOpacity(opacity);
-    }
-  };
-
-  Particle.prototype.update = function() {
-    var x, y;
-    if (this.hasChanged) {
-      x = this.reference.getX() + this.position.relative.x;
-      y = this.reference.getY() + this.position.relative.y;
-      if ((x !== NaN) && (y !== NaN)) {
-        this.position.absolute.x = x;
-        this.position.absolute.y = y;
-      } else {
-        console.warn("Particle.update()", x + "," + y, "is not a valid position");
-      }
-      this.hasChanged = false;
-    }
-  };
-
-  Particle.prototype.draw = function() {
-    var height, left, top, width;
-    if (this.isVisible && (this.color.a > 0)) {
-      left = snap(this.position.absolute.x * PX);
-      top = snap(this.position.absolute.y * PX);
-      width = snap(this.size.width * PX);
-      height = snap(this.size.height * PX);
-      CONTEXT.fillStyle = this.color;
-      CONTEXT.fillRect(left, top, width, height);
-    }
-  };
-
-  Particle.prototype.show = function() {
-    this.isVisible = true;
-    return this;
-  };
-
-  Particle.prototype.hide = function() {
-    this.isVisible = false;
-    return this;
-  };
-
-  Particle.prototype.isWithinBounds = function() {
-    return this.isWithinHorizontalBounds() && this.isWithinVerticalBounds();
-  };
-
-  Particle.prototype.isWithinHorizontalBounds = function(x) {
-    var aboveLower, belowUpper;
-    if (x == null) {
-      x = this.position.relative.x;
-    }
-    aboveLower = x >= 0;
-    belowUpper = x <= (this.reference.getWidth() - 1);
-    return aboveLower && belowUpper;
-  };
-
-  Particle.prototype.isWithinVerticalBounds = function(y) {
-    var aboveLower, belowUpper;
-    if (y == null) {
-      y = this.position.relative.y;
-    }
-    aboveLower = y >= 0;
-    belowUpper = y <= (this.reference.getHeight() - 1);
-    return aboveLower && belowUpper;
-  };
-
-  Particle.prototype.getX = function() {
-    return this.position.relative.x;
-  };
-
-  Particle.prototype.getY = function() {
-    return this.position.relative.y;
-  };
-
-  return Particle;
-
-})(Entity);
-
-Point = (function(superClass) {
-  extend(Point, superClass);
-
-  Point.prototype.x = null;
-
-  Point.prototype.y = null;
-
-  function Point(x, y) {
     if (x == null) {
       x = 0;
     }
     if (y == null) {
       y = 0;
     }
-    if (x === NaN || y === NaN) {
-      console.log("Point()", x + "," + y, "is not a valid Point");
-      return false;
-    } else {
-      this.x = x;
-      this.y = y;
-    }
-    Point.__super__.constructor.call(this, 0);
+    Particle.__super__.constructor.call(this, x, y, this._layer);
+    this._color = new Color('#fff');
+    this._opacity = 1;
+    this._size = {
+      width: 1,
+      height: 1
+    };
+    this._isVisible = true;
+    this._reference = WINDOW;
   }
 
-  Point.prototype.moveTo = function(x, y, duration, easing) {
-    var parameters;
-    if (duration == null) {
-      duration = 1000;
-    }
-    if (easing == null) {
-      easing = 'ease-in-out';
-    }
-    parameters = [];
-    parameters.push({
-      name: 'x',
-      from: this.x,
-      to: x
-    });
-    parameters.push({
-      name: 'y',
-      from: this.y,
-      to: y
-    });
-    this.tween = new Tween(parameters, duration, easing);
-    return this.setState('tween', 'idle');
+  Particle.prototype._setReference = function(reference, particleID) {
+    return Particle.__super__._setReference.call(this, reference, particleID);
   };
 
-  Point.prototype.update = function() {
-    switch (this.state) {
-      case 'tween':
-        this.x = Math.round(this.tween.getValue('x'));
-        this.y = Math.round(this.tween.getValue('y'));
-        if (this.tween.isComplete) {
-          this.setState(this.nextState);
-        }
+  Particle.prototype.isVisible = function() {
+    return this._isVisible;
+  };
+
+  Particle.prototype.draw = function() {
+    var height, left, top, width;
+    if (this.isVisible()) {
+      left = snap(this._position.x * PX);
+      top = snap(this._position.y * PX);
+      width = snap(this._size.width * PX);
+      height = snap(this._size.height * PX);
+      CONTEXT.fillStyle = this._color;
+      CONTEXT.fillRect(left, top, width, height);
     }
   };
 
-  return Point;
+  Particle.prototype.show = function() {
+    this._isVisible = true;
+    return this;
+  };
 
-})(Entity);
+  Particle.prototype.hide = function() {
+    this._isVisible = false;
+    return this;
+  };
+
+  return Particle;
+
+})(Point);
 
 Timer = (function(superClass) {
   extend(Timer, superClass);
@@ -1075,330 +902,18 @@ Timer = (function(superClass) {
 
 })(Entity);
 
-Storage = (function() {
-  function Storage(type) {
-    this.type = type != null ? type : 'localStorage';
-    this.storage = window[this.type];
-    if (!this.isAvailable()) {
-      console.warn(this.type, "is NOT available");
-    }
-  }
-
-  Storage.prototype.isAvailable = function() {
-    var error, x;
-    try {
-      x = '__storage_test__';
-      this.storage.setItem(x, x);
-      this.storage.removeItem(x);
-      return true;
-    } catch (_error) {
-      error = _error;
-      return false;
-    }
-  };
-
-  Storage.prototype.get = function(key) {
-    var value;
-    value = this.storage.getItem(key);
-    return value = JSON.parse(value);
-  };
-
-  Storage.prototype.set = function(key, value) {
-    value = JSON.stringify(value);
-    return this.storage.setItem(key, value);
-  };
-
-  return Storage;
-
-})();
-
-BoundingBox = (function(superClass) {
-  extend(BoundingBox, superClass);
-
-  BoundingBox.prototype.extension = 2;
-
-  BoundingBox.prototype.padding = 1;
-
-  function BoundingBox() {
-    BoundingBox.__super__.constructor.call(this, 1);
-  }
-
-  BoundingBox.prototype.setColor = function(color) {
-    if (typeof color === 'object') {
-      return this.color = color;
-    } else {
-      return this.color = new Color(color);
-    }
-  };
-
-  BoundingBox.prototype.update = function() {
-    if (this.reference.constructor.name === 'Line') {
-      this.left = this.reference.position.absolute.x * PX;
-      this.top = this.reference.position.absolute.y * PX;
-    } else {
-      this.left = this.reference.getX() * PX;
-      this.top = this.reference.getY() * PX;
-    }
-    this.width = this.reference.getWidth() * PX;
-    return this.height = this.reference.getHeight() * PX;
-  };
-
-  BoundingBox.prototype.draw = function() {
-    var extension, height, left, padding, top, width;
-    padding = this.padding * PX;
-    extension = this.extension * PX;
-    CONTEXT.fillStyle = this.color;
-    top = this.top - 1 - padding;
-    left = this.left - 1 - padding - extension;
-    width = this.width + 2 + (padding * 2) + (extension * 2);
-    CONTEXT.fillRect(left, top, width, 1);
-    top = top + 1 + this.height + (padding * 2);
-    CONTEXT.fillRect(left, top, width, 1);
-    top = this.top - 1 - padding - extension;
-    left = this.left - 1 - padding;
-    height = this.height + 2 + (padding * 2) + (extension * 2);
-    CONTEXT.fillRect(left, top, 1, height);
-    left = left + 1 + this.width + (padding * 2);
-    CONTEXT.fillRect(left, top, 1, height);
-  };
-
-  return BoundingBox;
-
-})(Pane);
-
-Circle = (function(superClass) {
-  extend(Circle, superClass);
-
-  function Circle(_layer) {
-    this._layer = _layer != null ? _layer : 1;
-    Circle.__super__.constructor.call(this, this._layer);
-    this.diameter = null;
-    this.radius = null;
-    this.center = new Point(0, 0);
-    this.type = null;
-    this.hasOutline = false;
-  }
-
-  Circle.prototype.fill = function(color, opacity) {
-    if (color == null) {
-      color = null;
-    }
-    if (opacity == null) {
-      opacity = null;
-    }
-    this.type = 'fill';
-    if (color != null) {
-      this.setColor(color, opacity);
-    }
-  };
-
-  Circle.prototype.stretch = function(color, opacity) {
-    if (color == null) {
-      color = null;
-    }
-    if (opacity == null) {
-      opacity = null;
-    }
-    this.type = 'stretch';
-    if (color != null) {
-      this.setColor(color, opacity);
-    }
-  };
-
-  Circle.prototype.outline = function(color) {
-    this.outlineColor = color;
-    this.hasOutline = true;
-  };
-
-  Circle.prototype.setSize = function(diameter) {
-    this.diameter = diameter;
-    Circle.__super__.setSize.call(this, this.diameter, this.diameter);
-    this.updateDimensions();
-  };
-
-  Circle.prototype.updateDimensions = function() {
-    if (this.diameter) {
-      this.radius = this.diameter / 2;
-      this.center.x = (this.getWidth() - 1) / 2;
-      this.center.y = (this.getHeight() - 1) / 2;
-      return this.hasChanged = true;
-    }
-  };
-
-  Circle.prototype.getMinY = function() {
-    var angle, i, increment, k, l, minY, radians, ref, ref1, samples, x, y;
-    minY = [];
-    for (x = k = 0, ref = this.diameter - 1; 0 <= ref ? k <= ref : k >= ref; x = 0 <= ref ? ++k : --k) {
-      minY.push(this.diameter);
-    }
-    samples = Math.ceil(this.diameter * Math.PI);
-    increment = 180 / samples;
-    angle = 0;
-    for (i = l = 0, ref1 = samples - 1; 0 <= ref1 ? l <= ref1 : l >= ref1; i = 0 <= ref1 ? ++l : --l) {
-      radians = angle * (Math.PI / 180);
-      x = Math.ceil(this.center.x + (Math.cos(radians) * this.radius));
-      y = Math.ceil(this.center.y - (Math.sin(radians) * this.radius));
-      if (y < minY[x]) {
-        minY[x] = y;
-      }
-      angle += increment;
-    }
-    return minY;
-  };
-
-  Circle.prototype.update = function() {
-    var _x, _y, diffX, diffY, distanceFromCenter, fromY, height, i, k, l, len, len1, len2, m, minY, n, o, p, particle, position, positions, ref, ref1, ref2, ref3, toY, x, y;
-    if (this.hasChanged) {
-      if (this.center && this.radius) {
-        i = 0;
-        if (this.type === 'fill') {
-          for (x = k = 0, ref = this.diameter; 0 <= ref ? k <= ref : k >= ref; x = 0 <= ref ? ++k : --k) {
-            for (y = l = 0, ref1 = this.diameter; 0 <= ref1 ? l <= ref1 : l >= ref1; y = 0 <= ref1 ? ++l : --l) {
-              diffX = this.center.x - x;
-              diffY = this.center.y - y;
-              distanceFromCenter = Math.sqrt((diffX * diffX) + (diffY * diffY));
-              if (distanceFromCenter < this.radius) {
-                particle = this.getParticle(i);
-                particle.setPosition(x, y);
-                particle.show();
-                i++;
-              }
-            }
-          }
-        } else if (this.type === 'stretch') {
-          minY = this.getMinY();
-          for (x = m = 0, len = minY.length; m < len; x = ++m) {
-            y = minY[x];
-            height = this.diameter - (y * 2);
-            particle = this.getParticle(i);
-            particle.setPosition(x, y);
-            particle.setSize(1, height);
-            particle.show();
-            i++;
-          }
-        }
-        if (this.hasOutline) {
-          minY = this.getMinY();
-          fromY = Math.round(this.radius - 1);
-          for (x = n = 0, len1 = minY.length; n < len1; x = ++n) {
-            toY = minY[x];
-            if (x < this.radius) {
-              if (fromY < toY) {
-                fromY = toY;
-              }
-              for (y = o = ref2 = fromY, ref3 = toY; ref2 <= ref3 ? o <= ref3 : o >= ref3; y = ref2 <= ref3 ? ++o : --o) {
-                _x = (this.diameter - 1) - x;
-                _y = (this.diameter - 1) - y;
-                positions = [];
-                positions.push({
-                  x: x,
-                  y: y
-                });
-                if (_x >= this.radius) {
-                  positions.push({
-                    x: _x,
-                    y: y
-                  });
-                }
-                if (_y >= this.radius) {
-                  positions.push({
-                    x: x,
-                    y: _y
-                  });
-                }
-                if (_x >= this.radius && _y >= this.radius) {
-                  positions.push({
-                    x: _x,
-                    y: _y
-                  });
-                }
-                for (p = 0, len2 = positions.length; p < len2; p++) {
-                  position = positions[p];
-                  particle = this.getParticle(i);
-                  particle.setPosition(position.x, position.y);
-                  particle.setColor(this.outlineColor);
-                  particle.show();
-                  i++;
-                }
-              }
-              fromY = toY - 1;
-            }
-          }
-        }
-        return this.hasChanged = false;
-      }
-    }
-  };
-
-  return Circle;
-
-})(Pane);
-
-Font = (function() {
-  function Font(name) {
-    this.name = "FONT_" + name;
-    if (window[this.name]) {
-      this.loadFont();
-    } else {
-      console.error("Font(): '" + this.name + "' doesn't exist");
-    }
-  }
-
-  Font.prototype.loadFont = function() {
-    return this.data = window[this.name];
-  };
-
-  Font.prototype.getGlyph = function(glyph) {
-    var data;
-    if (this.data.glyphs[glyph] != null) {
-      data = this.isValid(this.data.glyphs[glyph]);
-      if (!data) {
-        console.log("Font.getGlyph(): data for '" + glyph + "' in '" + this.name + "' is not valid");
-      }
-      return data;
-    } else {
-      console.warn("Font.getGlyph(): '" + glyph + "' not found in '" + this.name + "'");
-      return false;
-    }
-  };
-
-  Font.prototype.getHeight = function() {
-    return this.data.height;
-  };
-
-  Font.prototype.isValid = function(data) {
-    if (data.length % this.data.height === 0) {
-      return {
-        particles: data,
-        width: data.length / this.data.height
-      };
-    } else {
-      return false;
-    }
-  };
-
-  return Font;
-
-})();
-
 Line = (function(superClass) {
   extend(Line, superClass);
-
-  Line.prototype._from = null;
-
-  Line.prototype._to = null;
-
-  Line.prototype._angle = null;
-
-  Line.prototype.length = 0;
-
-  Line.prototype.offset = 0;
-
-  Line.prototype.weight = 1;
 
   function Line(_layer) {
     this._layer = _layer != null ? _layer : 1;
     Line.__super__.constructor.call(this, this._layer);
+    this._from = null;
+    this._to = null;
+    this._angle = null;
+    this.length = 0;
+    this.offset = 0;
+    this.weight = 1;
   }
 
   Line.prototype.from = function(x, y) {
@@ -1415,10 +930,6 @@ Line = (function(superClass) {
       console.warn("Line.to() is not valid");
     }
     return this;
-  };
-
-  Line.prototype.setWeight = function(weight) {
-    this.weight = weight;
   };
 
   Line.prototype.atAngle = function(_angle, length, offset) {
@@ -1444,14 +955,13 @@ Line = (function(superClass) {
   Line.prototype.calculateDimensions = function() {
     var x, y;
     if ((this._from != null) && (this._to != null)) {
-      this.diffX = this._to.x - this._from.x;
-      this.diffY = this._to.y - this._from.y;
+      this.diffX = this._to.getX() - this._from.getX();
+      this.diffY = this._to.getY() - this._from.getY();
       this.width = Math.abs(this.diffX);
       this.height = Math.abs(this.diffY);
       this.length = Math.sqrt((this.width * this.width) + (this.height * this.height));
-      x = Math.min(this._to.x, this._from.x);
-      y = Math.min(this._to.y, this._from.y);
-      this.setAbsolutePosition(this.getX() + x, this.getY() + y);
+      x = Math.min(this._to.getX(), this._from.getY());
+      y = Math.min(this._to.getX(), this._from.getY());
       this.setSize(this.width, this.height);
     }
   };
@@ -1461,9 +971,9 @@ Line = (function(superClass) {
     i = 0;
     this.calculateDimensions();
     if (Math.abs(this.diffX) >= Math.abs(this.diffY)) {
-      y = this._from.y;
+      y = this._from.getY();
       increment = this.diffY / Math.abs(this.diffX);
-      for (x = k = ref = this._from.x, ref1 = this._to.x; ref <= ref1 ? k <= ref1 : k >= ref1; x = ref <= ref1 ? ++k : --k) {
+      for (x = k = ref = this._from.getX(), ref1 = this._to.getX(); ref <= ref1 ? k <= ref1 : k >= ref1; x = ref <= ref1 ? ++k : --k) {
         particle = this.getParticle(i);
         particle.setPosition(x, y);
         particle.show();
@@ -1471,9 +981,9 @@ Line = (function(superClass) {
         i++;
       }
     } else {
-      x = this._from.x;
+      x = this._from.getX();
       increment = this.diffX / Math.abs(this.diffY);
-      for (y = l = ref2 = this._from.y, ref3 = this._to.y; ref2 <= ref3 ? l <= ref3 : l >= ref3; y = ref2 <= ref3 ? ++l : --l) {
+      for (y = l = ref2 = this._from.getY(), ref3 = this._to.getY(); ref2 <= ref3 ? l <= ref3 : l >= ref3; y = ref2 <= ref3 ? ++l : --l) {
         particle = this.getParticle(i);
         particle.setPosition(x, y);
         particle.show();
@@ -1486,9 +996,9 @@ Line = (function(superClass) {
         this.getParticle(j).hide();
       }
     }
-    if ((this.particles.length - 1) > i) {
+    if ((this._particles.length - 1) > i) {
       results = [];
-      for (j = n = ref5 = i, ref6 = this.particles.length - 1; ref5 <= ref6 ? n <= ref6 : n >= ref6; j = ref5 <= ref6 ? ++n : --n) {
+      for (j = n = ref5 = i, ref6 = this._particles.length - 1; ref5 <= ref6 ? n <= ref6 : n >= ref6; j = ref5 <= ref6 ? ++n : --n) {
         results.push(this.getParticle(j).hide());
       }
       return results;
@@ -1496,311 +1006,6 @@ Line = (function(superClass) {
   };
 
   return Line;
-
-})(Pane);
-
-Path = (function(superClass) {
-  extend(Path, superClass);
-
-  function Path() {
-    return Path.__super__.constructor.apply(this, arguments);
-  }
-
-  Path.prototype.points = [];
-
-  Path.prototype.lines = [];
-
-  Path.prototype.addPoint = function(point) {
-    point = isPoint(point);
-    if (point) {
-      this.points.push(point);
-      if (this.points.length > 1) {
-        this.addLine();
-      }
-      return true;
-    } else {
-      console.warn("Path.addPoint()", point, "is not valid");
-      return false;
-    }
-  };
-
-  Path.prototype.addLine = function() {
-    var line;
-    this.a = this.points[this.points.length - 2];
-    this.b = this.points[this.points.length - 1];
-    line = new Line();
-    line.from(this.a).to(this.b);
-    this.lines.push(line);
-    this.addChild(line);
-  };
-
-  return Path;
-
-})(Pane);
-
-Rectangle = (function(superClass) {
-  extend(Rectangle, superClass);
-
-  function Rectangle() {
-    return Rectangle.__super__.constructor.apply(this, arguments);
-  }
-
-  Rectangle.prototype.type = 'stretch';
-
-  Rectangle.prototype.constuctor = function(_layer) {
-    this._layer = _layer != null ? _layer : 1;
-    Rectangle.__super__.constuctor.call(this, this._layer);
-    return this.hasOutline = false;
-  };
-
-  Rectangle.prototype.fill = function(color, opacity) {
-    if (color == null) {
-      color = null;
-    }
-    if (opacity == null) {
-      opacity = null;
-    }
-    this.type = 'fill';
-    if (color != null) {
-      this.setColor(color, opacity);
-    }
-  };
-
-  Rectangle.prototype.stretch = function(color, opacity) {
-    if (color == null) {
-      color = null;
-    }
-    if (opacity == null) {
-      opacity = null;
-    }
-    this.type = 'stretch';
-    if (color != null) {
-      this.setColor(color, opacity);
-    }
-  };
-
-  Rectangle.prototype.outline = function(color) {
-    this.outlineColor = color;
-    this.hasOutline = true;
-  };
-
-  Rectangle.prototype.update = function() {
-    var i, j, k, l, len, len1, m, n, o, p, particle, q, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, results, results1, s, x, y;
-    if (this.type === 'stretch') {
-      particle = this.getParticle(0).show();
-      particle.setPosition(this.position.absolute.x, this.position.absolute.y);
-      particle.setSize(this.size.width, this.size.height);
-      i = 1;
-      if (this.hasOutline) {
-        particle = this.getParticle(i);
-        particle.setPosition(0, 0);
-        particle.setSize(this.size.width, 1);
-        particle.setColor(this.outlineColor);
-        i++;
-        particle = this.getParticle(i);
-        particle.setPosition(0, this.size.height - 1);
-        particle.setSize(this.size.width, 1);
-        particle.setColor(this.outlineColor);
-        i++;
-        particle = this.getParticle(i);
-        particle.setPosition(0, 1);
-        particle.setSize(1, this.size.height - 2);
-        particle.setColor(this.outlineColor);
-        i++;
-        particle = this.getParticle(i);
-        particle.setPosition(this.size.width - 1, 1);
-        particle.setSize(1, this.size.height - 2);
-        particle.setColor(this.outlineColor);
-        i++;
-      }
-      if ((this.particles.length - 1) > i) {
-        results = [];
-        for (j = k = ref = i, ref1 = this.particles.length - 1; ref <= ref1 ? k <= ref1 : k >= ref1; j = ref <= ref1 ? ++k : --k) {
-          results.push(this.getParticle(j).hide());
-        }
-        return results;
-      }
-    } else if (this.type === 'fill') {
-      i = 0;
-      for (x = l = 0, ref2 = this.size.width - 1; 0 <= ref2 ? l <= ref2 : l >= ref2; x = 0 <= ref2 ? ++l : --l) {
-        for (y = m = 0, ref3 = this.size.height - 1; 0 <= ref3 ? m <= ref3 : m >= ref3; y = 0 <= ref3 ? ++m : --m) {
-          particle = this.getParticle(i);
-          particle.setPosition(x, y);
-          particle.show();
-          i++;
-        }
-      }
-      if (this.hasOutline) {
-        for (x = n = 0, ref4 = this.size.width - 1; 0 <= ref4 ? n <= ref4 : n >= ref4; x = 0 <= ref4 ? ++n : --n) {
-          ref5 = [0, this.size.height - 1];
-          for (o = 0, len = ref5.length; o < len; o++) {
-            y = ref5[o];
-            particle = this.getParticle(i);
-            particle.setPosition(x, y);
-            particle.setColor(this.outlineColor);
-            particle.show();
-            i++;
-          }
-        }
-        for (y = p = 1, ref6 = this.size.height - 2; 1 <= ref6 ? p <= ref6 : p >= ref6; y = 1 <= ref6 ? ++p : --p) {
-          ref7 = [0, this.size.width - 1];
-          for (q = 0, len1 = ref7.length; q < len1; q++) {
-            x = ref7[q];
-            particle = this.getParticle(i);
-            particle.setPosition(x, y);
-            particle.setColor(this.outlineColor);
-            particle.show();
-            i++;
-          }
-        }
-      }
-      if ((this.particles.length - 1) > i) {
-        results1 = [];
-        for (j = s = ref8 = i, ref9 = this.particles.length - 1; ref8 <= ref9 ? s <= ref9 : s >= ref9; j = ref8 <= ref9 ? ++s : --s) {
-          results1.push(this.getParticle(j).hide());
-        }
-        return results1;
-      }
-    }
-  };
-
-  return Rectangle;
-
-})(Pane);
-
-Sprite = (function(superClass) {
-  extend(Sprite, superClass);
-
-  function Sprite(_layer) {
-    this._layer = _layer != null ? _layer : 1;
-    Sprite.__super__.constructor.call(this, this._layer);
-  }
-
-  Sprite.prototype.load = function(data1) {
-    var i, k, particle, ref, results, value, x, y;
-    this.data = data1;
-    if (this.parseData()) {
-      results = [];
-      for (i = k = 0, ref = this.data.particles.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
-        value = this.data.particles.charAt(i);
-        x = i % this.data.width;
-        y = Math.floor(i / this.data.width);
-        if (value !== '0') {
-          particle = new Particle();
-          this.addParticle(particle);
-          particle.setColor(this.data.colors[value]);
-          results.push(particle.setPosition(x, y));
-        } else {
-          results.push(void 0);
-        }
-      }
-      return results;
-    } else {
-      return console.error("Sprite.load(): Can't load Sprite, data is not valid", this.data);
-    }
-  };
-
-  Sprite.prototype.parseData = function() {
-    var height, i, k, ref, value;
-    if ((this.data.particles != null) && (this.data.colors != null) && (this.data.width != null)) {
-      if (this.data.particles.length % this.data.width === 0) {
-        height = this.data.particles.length / this.data.width;
-        this.setSize(this.data.width, height);
-        for (i = k = 0, ref = this.data.particles.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
-          value = this.data.particles.charAt(i);
-          if (value !== '0') {
-            if (this.data.colors[value] == null) {
-              console.warn("Sprite.parseData():", value, "is not a valid color index");
-              return false;
-            }
-          }
-        }
-      } else {
-        console.warn("Sprite.parseData(): number of particles (" + this.data.particles.length + ") isn't a multiple of width (" + this.data.width + ")");
-        return false;
-      }
-    }
-    return true;
-  };
-
-  Sprite.prototype.update = function() {
-    if (this.reference.hasChanged) {
-      return Sprite.__super__.update.call(this);
-    }
-  };
-
-  return Sprite;
-
-})(Pane);
-
-Square = (function(superClass) {
-  extend(Square, superClass);
-
-  function Square() {
-    return Square.__super__.constructor.apply(this, arguments);
-  }
-
-  Square.prototype.setSize = function(size) {
-    Square.__super__.setSize.call(this, size, size);
-  };
-
-  return Square;
-
-})(Rectangle);
-
-Text = (function(superClass) {
-  extend(Text, superClass);
-
-  function Text() {
-    return Text.__super__.constructor.apply(this, arguments);
-  }
-
-  Text.prototype.setFont = function(font) {
-    this.font = font;
-  };
-
-  Text.prototype.setText = function(text) {
-    this.text = text + "";
-    return this.drawGlyphs();
-  };
-
-  Text.prototype.setColor = function(color1) {
-    this.color = color1;
-  };
-
-  Text.prototype.clear = function() {
-    var child, k, len, ref, results;
-    ref = this.children;
-    results = [];
-    for (k = 0, len = ref.length; k < len; k++) {
-      child = ref[k];
-      results.push(child.remove());
-    }
-    return results;
-  };
-
-  Text.prototype.drawGlyphs = function() {
-    var data, glyph, i, k, ref, value, x, y;
-    x = 0;
-    y = 0;
-    for (i = k = 0, ref = this.text.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
-      value = this.text.charAt(i);
-      data = this.font.getGlyph(value);
-      if (data) {
-        data.colors = {
-          1: this.color
-        };
-        glyph = new Sprite();
-        this.addChild(glyph);
-        glyph.load(data);
-        glyph.setPosition(x, y);
-        x += glyph.getWidth() + 1;
-      }
-    }
-    return this.setSize(x - 1, this.font.getHeight());
-  };
-
-  return Text;
 
 })(Pane);
 

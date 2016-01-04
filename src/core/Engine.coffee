@@ -73,14 +73,14 @@ Engine =
 
   addEntity: (entity, layer = 0) ->
     unless @entities[layer] then @entities[layer] = []
-    entity.setEntityID(@entities[layer].length)
+    entity.setId(@entities[layer].length)
     @entities[layer].push(entity)
     return
 
   removeEntity: (entity) ->
     if @entities[entity._layer]
-      if @entities[entity._layer][entity._entityID]
-        delete @entities[entity._layer][entity._entityID]
+      if @entities[entity._layer][entity._id]
+        delete @entities[entity._layer][entity._id]
     return
 
   # Canvas --------------------------------------------------------------------
@@ -181,7 +181,7 @@ Engine =
         cleanedEntities = []
         for entity, j in layer
           if entity
-            entity.setEntityID(cleanedEntities.length)
+            entity.setId(cleanedEntities.length)
             cleanedEntities.push(entity)
         @entities[i] = cleanedEntities
     return

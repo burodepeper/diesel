@@ -1,105 +1,70 @@
-class Particle extends Entity
+class Particle extends Point
 
-  color: null
-  size:
-    width: 1
-    height: 1
-  reference: WINDOW
+  constructor: (@_layer = 1, x = 0, y = 0) ->
+    super(x, y, @_layer)
 
-  isVisible: true
-  hasChanged: false
+    # @_color = null
+    @_color = new Color('#fff')
+    @_opacity = 1
+    @_size =
+      width: 1
+      height: 1
+    @_isVisible = true
+    @_reference = WINDOW
 
-  constructor: (@_layer = 1) ->
-    super(@_layer)
-    @position =
-      relative: new Point(0, 0)
-      # NOTE
-      # position.absolute is not a {Point}, because the absolute position is merely a placeholder for the relative position of this {Particle} and all its parents in the hierarchy
-      absolute:
-        x: 0
-        y: 0
+    # @setPosition(x, y)
 
-  setReference: (@reference, @_particleID) ->
-    @color = @reference.getColor()
+  # setSize: (width, height) ->
+  #   @size = {width, height}
+  #   @hasChanged = true
 
-  setPosition: (x, y) ->
+  # setOpacity: (opacity) ->
+  #   if @color? then @color.setOpacity(opacity)
+  #   @hasChanged = true
+  #   return
 
-    x = parseFloat(x)
-    if x is NaN
-      console.warn "Particle.setPosition()", x, "is not a valid value for x"
-    else
-      @position.relative.x = x
+  # setColor: (color, opacity = null) ->
+  #   if typeof color is 'object'
+  #     @color = color
+  #   else
+  #     @color.set(color)
+  #   if opacity? then @setOpacity(opacity)
+  #   return
 
-    y = parseFloat(y)
-    if y is NaN
-      console.warn "Particle.setPosition()", y, "is not a valid value for y"
-    else
-      @position.relative.y = y
+  _setReference: (reference, particleID) ->
+    super(reference, particleID)
+    # @color = @reference.getColor()
 
-    @hasChanged = true
-
-  setSize: (width, height) ->
-    @size = {width, height}
-    @hasChanged = true
-
-  setOpacity: (opacity) ->
-    if @color? then @color.setOpacity(opacity)
-    @hasChanged = true
-    return
-
-  setColor: (color, opacity = null) ->
-    if typeof color is 'object'
-      @color = color
-    else
-      @color.set(color)
-    if opacity? then @setOpacity(opacity)
-    return
-
-  update: ->
-    if @hasChanged
-      x = @reference.getX() + @position.relative.x
-      y = @reference.getY() + @position.relative.y
-      if (x isnt NaN) and (y isnt NaN)
-        @position.absolute.x = x
-        @position.absolute.y = y
-      else
-        console.warn "Particle.update()", x+","+y, "is not a valid position"
-      @hasChanged = false
-    return
+  isVisible: ->
+    return @_isVisible
 
   draw: ->
-    if @isVisible and (@color.a > 0)
-      left = snap(@position.absolute.x * PX)
-      top = snap(@position.absolute.y * PX)
-      width = snap(@size.width * PX)
-      height = snap(@size.height * PX)
-      CONTEXT.fillStyle = @color
+    if @isVisible()
+      left = snap(@_position.x * PX)
+      top = snap(@_position.y * PX)
+      width = snap(@_size.width * PX)
+      height = snap(@_size.height * PX)
+      CONTEXT.fillStyle = @_color
       CONTEXT.fillRect(left, top, width, height)
     return
 
   show: ->
-    @isVisible = true
+    @_isVisible = true
     return this
 
   hide: ->
-    @isVisible = false
+    @_isVisible = false
     return this
 
-  isWithinBounds: ->
-    return (@isWithinHorizontalBounds() and @isWithinVerticalBounds())
-
-  isWithinHorizontalBounds: (x = @position.relative.x) ->
-    aboveLower = x >= 0
-    belowUpper = x <= (@reference.getWidth() - 1)
-    return (aboveLower and belowUpper)
-
-  isWithinVerticalBounds: (y = @position.relative.y) ->
-    aboveLower = y >= 0
-    belowUpper = y <= (@reference.getHeight() - 1)
-    return (aboveLower and belowUpper)
-
-  getX: ->
-    return @position.relative.x
-
-  getY: ->
-    return @position.relative.y
+  # isWithinBounds: ->
+  #   return (@isWithinHorizontalBounds() and @isWithinVerticalBounds())
+  #
+  # isWithinHorizontalBounds: (x = @position.relative.x) ->
+  #   aboveLower = x >= 0
+  #   belowUpper = x <= (@reference.getWidth() - 1)
+  #   return (aboveLower and belowUpper)
+  #
+  # isWithinVerticalBounds: (y = @position.relative.y) ->
+  #   aboveLower = y >= 0
+  #   belowUpper = y <= (@reference.getHeight() - 1)
+  #   return (aboveLower and belowUpper)

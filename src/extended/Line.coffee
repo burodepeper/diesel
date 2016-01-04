@@ -1,14 +1,15 @@
 class Line extends Pane
 
-  _from: null
-  _to: null
-  _angle: null
-  length: 0
-  offset: 0
-  weight: 1
-
   constructor: (@_layer = 1) ->
     super(@_layer)
+
+    @_from = null
+    @_to = null
+    @_angle = null
+
+    @length = 0
+    @offset = 0
+    @weight = 1
 
   from: (x, y) ->
     @_from = isPoint(x, y)
@@ -23,7 +24,7 @@ class Line extends Pane
     return this
 
   # TODO
-  setWeight: (@weight) ->
+  # setWeight: (@weight) ->
 
   # @_angle is between 0 and 360 degrees,
   # 0 is up, 90 is right, 180 is down, 270 is left
@@ -48,14 +49,14 @@ class Line extends Pane
 
   calculateDimensions: ->
     if @_from? and @_to?
-      @diffX = @_to.x - @_from.x
-      @diffY = @_to.y - @_from.y
+      @diffX = @_to.getX() - @_from.getX()
+      @diffY = @_to.getY() - @_from.getY()
       @width = Math.abs(@diffX)
       @height = Math.abs(@diffY)
       @length = Math.sqrt((@width * @width) + (@height * @height))
-      x = Math.min(@_to.x, @_from.x)
-      y = Math.min(@_to.y, @_from.y)
-      @setAbsolutePosition(@getX() + x, @getY() + y)
+      x = Math.min(@_to.getX(), @_from.getY())
+      y = Math.min(@_to.getX(), @_from.getY())
+      # @setAbsolutePosition(@getX() + x, @getY() + y)
       @setSize(@width, @height)
       # TODO calculate @_angle
     return
@@ -66,9 +67,9 @@ class Line extends Pane
     @calculateDimensions()
 
     if Math.abs(@diffX) >= Math.abs(@diffY)
-      y = @_from.y
+      y = @_from.getY()
       increment = @diffY / Math.abs(@diffX)
-      for x in [@_from.x .. @_to.x]
+      for x in [@_from.getX() .. @_to.getX()]
         particle = @getParticle(i)
         particle.setPosition(x, y)
         particle.show()
@@ -76,9 +77,9 @@ class Line extends Pane
         i++
 
     else
-      x = @_from.x
+      x = @_from.getX()
       increment = @diffX / Math.abs(@diffY)
-      for y in [@_from.y .. @_to.y]
+      for y in [@_from.getY() .. @_to.getY()]
         particle = @getParticle(i)
         particle.setPosition(x, y)
         particle.show()
@@ -89,6 +90,6 @@ class Line extends Pane
       for j in [0 .. Math.floor(i * @offset)]
         @getParticle(j).hide()
 
-    if (@particles.length - 1) > i
-      for j in [i .. @particles.length - 1]
+    if (@_particles.length - 1) > i
+      for j in [i .. @_particles.length - 1]
         @getParticle(j).hide()

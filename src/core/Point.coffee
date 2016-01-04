@@ -1,33 +1,93 @@
 class Point extends Entity
 
-  x: null
-  y: null
+  constructor: (x = 0, y = 0, @_layer = 0) ->
+    super(@_layer)
 
-  constructor: (x = 0, y = 0) ->
-    if x is NaN or y is NaN
-      console.log "Point()", x+","+y, "is not a valid Point"
-      return false
+    @_x = null
+    @_y = null
+    @_tweenX = null
+    @_tweenY = null
+    @_reference = null
+    @_position =
+      x: null
+      y: null
+
+    # @hasChanged = null
+
+    @setPosition(x, y)
+
+  _setReference: (@_reference, @_id) ->
+
+  isValid: (x = @_x, y = @_y) ->
+    _isValid = (x isnt NaN) and (y isnt NaN)
+    unless _isValid
+      console.warn "Point()", x+","+y, "is not a valid Point"
+    return _isValid
+
+  moveTo: (x, y, duration = 1000, easing = 'linear') ->
+    if @isValid(x, y)
+      @moveToX(x, duration, easing)
+      @moveToY(x, duration, easing)
+      return true
     else
-      @x = x
-      @y = y
-    super(0)
+      return false
 
-  moveTo: (x, y, duration = 1000, easing = 'ease-in-out') ->
-
+  # TODO validate parameters
+  moveToX: (x, duration = 1000, easing = 'linear') ->
     parameters = []
-    parameters.push({ name:'x', from:@x, to:x })
-    parameters.push({ name:'y', from:@y, to:y })
-    @tween = new Tween(parameters, duration, easing)
+    parameters.push({ name:'x', from:@_x, to:x })
+    @_tweenX = new Tween(parameters, duration, easing)
+    return
 
-    @setState('tween', 'idle')
+  # TODO validate parameters
+  moveToY: (y, duration = 1000, easing = 'linear') ->
+    parameters = []
+    parameters.push({ name:'y', from:@_y, to:y })
+    @_tweenY = new Tween(parameters, duration, easing)
+    return
 
   update: ->
-
-    switch @state
-      when 'tween'
-        @x = Math.round(@tween.getValue('x'))
-        @y = Math.round(@tween.getValue('y'))
-        if @tween.isComplete
-          @setState(@nextState)
-
+    @hasChanged = false
+    _previousX = @_x
+    _previousY = @_y
+    if @_tweenX
+      @_x = Math.round(@_tweenX.getValue('x'))
+      if @_tweenX.isComplete then @_tweenX = null
+    if @_tweenY
+      @_y = Math.round(@_tweenY.getValue('y'))
+      if @_tweenY.isComplete then @_tweenY = null
+    if (_previousX isnt @_x) or (_previousY isnt @_y)
+      # @hasChanged = true
+      @_updatePosition()
     return
+
+  getX: ->
+    if @_reference
+      return @_reference.getX() + @_x
+    else
+      return @_x
+
+  getY: ->
+    if @_reference
+      return @_reference.getY() + @_y
+    else
+      return @_y
+
+  _updatePosition: ->
+    # console.log "#{@constructor.name}._updatePosition()"
+    @_position.x = @getX()
+    @_position.y = @getY()
+    return
+
+  setPosition: (x, y) ->
+    # console.log("#{@constructor.name}.setPosition(): #{x}, #{y}")
+    if @isValid(x, y)
+      @_x = x
+      @_y = y
+      @_updatePosition()
+    else
+      return false
+
+  setX: (x) ->
+
+  setY: (y) ->
