@@ -45,7 +45,7 @@ class Point extends Entity
     @_tweenY = new Tween(parameters, duration, easing)
     return
 
-  update: ->
+  _update: ->
     @hasChanged = false
     _previousX = @_x
     _previousY = @_y

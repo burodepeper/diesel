@@ -1,31 +1,29 @@
 # Constants and globals
-PX = false
+PX = 1
 CONTEXT = false     # shorthand for Engine.context
 WINDOW = false      # fallback reference Pane for particles and panes
 NOW = false
 DEBUG = false
 
-# Engine
-# ------
-# The global Engine variable is both the container for all entities and the controller that updates them on every tick. By default, this tick is defined by the browser's requestAnimationFrame() method and is limited at 60 fps. All entities added to the Engine will have their update() and draw() methods invoked on every tick.
-
 Engine =
+
+  _entities: []
+  _context: null
+  _canvas: null
+  _size:
+    width: null
+    height: null
 
   config:
     viewport:
       width: null
       height: null
-  entities: []
-  context: false
-  canvas: false
-  now: 0
-  px: 1
 
   # TODO: No idea how to replicate this in CoffeeScript
   isTouchDevice: `'ontouchstart' in document.documentElement`
 
   init: (settings) ->
-    if @createCanvas()
+    if @_createCanvas()
 
       # TODO
       # Properly process settings
@@ -35,75 +33,77 @@ Engine =
         @config.viewport.height = settings.viewport.height
 
       # WINDOW is on level 1, otherwise draw() won't be executed
-      window.WINDOW = new Pane()
+      window.WINDOW = new Pane(1)
 
       @trigger('resize')
-      @run()
+      @_run()
       return true
     else
       return false
 
   # Cycle ---------------------------------------------------------------------
 
-  run: (timeElapsed = 0) ->
-    @now = new Date().getTime()
-    window.NOW = @now
-    Engine.update()
-    Engine.draw()
-    window.requestAnimationFrame(Engine.run)
+  _run: (timeElapsed = 0) ->
+    window.NOW = new Date().getTime()
+    Engine._update()
+    Engine._draw()
+    window.requestAnimationFrame(Engine._run)
     return
 
-  update: ->
-    for entities in @entities
+  _update: ->
+    for entities in @_entities
       if entities
         for entity in entities
-          if entity then entity.update(@now)
+          if entity then entity._update(NOW)
     return
 
-  draw: ->
-    @context.clearRect(0, 0, @width * PX, @height * PX)
-    for entities, i in @entities
+  _draw: ->
+    @_context.clearRect(0, 0, @_size.width * PX, @_size.height * PX)
+    for entities, i in @_entities
       # entities in level 0 are not drawn
       if i and entities
         for entity in entities
-          if entity then entity.draw(@now)
+          if entity then entity._draw(NOW)
     return
 
-  # Entities ------------------------------------------------------------------
+  # ----- Entities -----
 
-  addEntity: (entity, layer = 0) ->
-    unless @entities[layer] then @entities[layer] = []
-    entity.setId(@entities[layer].length)
-    @entities[layer].push(entity)
+  add: (entity, layer = 0) ->
+    unless @_entities[layer] then @_entities[layer] = []
+    entity.setId(@_entities[layer].length)
+    @_entities[layer].push(entity)
     return
 
-  removeEntity: (entity) ->
-    if @entities[entity._layer]
-      if @entities[entity._layer][entity._id]
-        delete @entities[entity._layer][entity._id]
+  remove: (entity) ->
+    if @_entities[entity._layer]
+      if @_entities[entity._layer][entity._id]
+        delete @_entities[entity._layer][entity._id]
+      else
+        console.info "Engine.remove(): entity[#{entity._layer}][#{entity._id}] doesn't exist"
+    else
+      console.warn "Engine.remove(): layer[#{entity._layer}] doesn't exist"
     return
 
-  # Canvas --------------------------------------------------------------------
+  # ----- Canvas -----
 
-  createCanvas: ->
+  _createCanvas: ->
 
-    @canvas = document.createElement("canvas")
-    @canvas.setAttribute("id", "diesel-canvas")
-    document.body.appendChild(@canvas)
+    @_canvas = document.createElement("canvas")
+    @_canvas.setAttribute("id", "diesel-canvas")
+    document.body.appendChild(@_canvas)
 
     # Set default CSS on canvas element
-    @canvas.style.position = 'fixed'
-    @canvas.style.top = '50%'
-    @canvas.style.left = '50%'
+    @_canvas.style.position = 'fixed'
+    @_canvas.style.top = '50%'
+    @_canvas.style.left = '50%'
 
-    @context = @canvas.getContext("2d")
-    window.CONTEXT = @context
-    # window.WINDOW = new Pane(1)
-    window.addEventListener "resize", => @onResize(); return
+    @_context = @_canvas.getContext("2d")
+    window.CONTEXT = @_context
+    window.addEventListener "resize", => @_onResize(); return
 
-    return (@canvas and @context)
+    return (@_canvas and @_context)
 
-  onResize: ->
+  _onResize: ->
 
     @windowWidth = window.innerWidth
     @windowHeight = window.innerHeight
@@ -113,46 +113,50 @@ Engine =
 
       viewportRatio = @config.viewport.width / @config.viewport.height
       if viewportRatio >= @windowRatio
-        @px = Math.floor(@windowWidth / @config.viewport.width)
+        px = Math.floor(@windowWidth / @config.viewport.width)
       else
-        @px = Math.floor(@windowHeight / @config.viewport.height)
-      @width = @config.viewport.width
-      @height = @config.viewport.height
+        px = Math.floor(@windowHeight / @config.viewport.height)
+      @_size.width = @config.viewport.width
+      @_size.height = @config.viewport.height
 
     else if @config.viewport.width
 
-      @px = Math.floor(@windowWidth / @config.viewport.width)
-      @width = @config.viewport.width
-      @height = Math.floor(@windowHeight / @px)
+      px = Math.floor(@windowWidth / @config.viewport.width)
+      @_size.width = @config.viewport.width
+      @_size.height = Math.floor(@windowHeight / px)
 
     else if @config.viewport.height
 
-      @px = Math.floor(@windowHeight / @config.viewport.height)
-      @width = Math.floor(@windowWidth / @px)
-      @height = @config.viewport.height
+      px = Math.floor(@windowHeight / @config.viewport.height)
+      @_size.width = Math.floor(@windowWidth / px)
+      @_size.height = @config.viewport.height
 
-    window.PX = @px
+    window.PX = px
 
-    @canvas.setAttribute('width', (@width * @px))
-    @canvas.setAttribute('height', (@height * @px))
-    @canvas.style.marginLeft = -((@width * @px) / 2) + 'px'
-    @canvas.style.marginTop = -((@height * @px) / 2) + 'px'
+    @_canvas.setAttribute('width', (@_size.width * px))
+    @_canvas.setAttribute('height', (@_size.height * px))
+    @_canvas.style.marginLeft = -((@_size.width * px) / 2) + 'px'
+    @_canvas.style.marginTop = -((@_size.height * px) / 2) + 'px'
 
-    WINDOW.setSize(@width, @height)
+    WINDOW.setSize(@_size.width, @_size.height)
 
     return
 
-  # Support -------------------------------------------------------------------
+  # ----- Support -----
 
   trigger: (eventType) ->
     window.dispatchEvent(new Event(eventType))
     return
 
+  getWidth: -> return @_size.width
+
+  getHeight: -> return @_size.height
+
   # ----- Maintenance -----
 
   analyze: (focusOn = -1) ->
     inventory = {}
-    for layer, i in @entities
+    for layer, i in @_entities
       if (focusOn is i) or focusOn is -1
         for entity in layer
           if entity
@@ -162,11 +166,11 @@ Engine =
           unless inventory[name]?
             inventory[name] = 0
           inventory[name]++
-    console.log inventory
+    return inventory
 
   getAllInstancesOf: (name, focusOn = -1) ->
     instances = []
-    for layer, i in @entities
+    for layer, i in @_entities
       if (focusOn is i) or focusOn is -1
         for entity in layer
           if entity
@@ -176,14 +180,14 @@ Engine =
     return instances
 
   cleanUp: ->
-    for layer, i in @entities
+    for layer, i in @_entities
       if layer and layer.length
         cleanedEntities = []
         for entity, j in layer
           if entity
             entity.setId(cleanedEntities.length)
             cleanedEntities.push(entity)
-        @entities[i] = cleanedEntities
+        @_entities[i] = cleanedEntities
     return
 
   diagnostics: (verbose = false) ->
@@ -191,7 +195,7 @@ Engine =
       console.log "Engine.diagnostics()"
     totalNumberOfPositions = 0
     totalNumberOfEntities = 0
-    for layer, i in @entities
+    for layer, i in @_entities
       numberOfEntitiesOnLayer = 0
       if layer and layer.length
         totalNumberOfPositions += layer.length

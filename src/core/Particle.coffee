@@ -38,7 +38,7 @@ class Particle extends Point
   isVisible: ->
     return @_isVisible
 
-  draw: ->
+  _draw: ->
     if @isVisible()
       left = snap(@_position.x * PX)
       top = snap(@_position.y * PX)

@@ -61,7 +61,7 @@ class Line extends Pane
       # TODO calculate @_angle
     return
 
-  update: ->
+  _update: ->
 
     i = 0
     @calculateDimensions()

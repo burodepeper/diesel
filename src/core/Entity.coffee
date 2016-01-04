@@ -6,11 +6,11 @@ class Entity
 
   constructor: (layer = 0) ->
     @_layer = layer
-    Engine.addEntity(this, @_layer)
+    Engine.add(this, @_layer)
 
-  update: -> return
+  _update: -> return
 
-  draw: -> return
+  _draw: -> return
 
   # onResize: -> return
 
@@ -23,5 +23,5 @@ class Entity
   #   return
 
   remove: ->
-    Engine.removeEntity(this)
+    Engine.remove(this)
     return

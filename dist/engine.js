@@ -120,7 +120,7 @@ isPoint = function(x, y) {
   }
 };
 
-PX = false;
+PX = 1;
 
 CONTEXT = false;
 
@@ -131,140 +131,151 @@ NOW = false;
 DEBUG = false;
 
 Engine = {
+  _entities: [],
+  _context: null,
+  _canvas: null,
+  _size: {
+    width: null,
+    height: null
+  },
   config: {
     viewport: {
       width: null,
       height: null
     }
   },
-  entities: [],
-  context: false,
-  canvas: false,
-  now: 0,
-  px: 1,
   isTouchDevice: 'ontouchstart' in document.documentElement,
   init: function(settings) {
-    if (this.createCanvas()) {
+    if (this._createCanvas()) {
       if (settings.viewport.width) {
         this.config.viewport.width = settings.viewport.width;
       }
       if (settings.viewport.height) {
         this.config.viewport.height = settings.viewport.height;
       }
-      window.WINDOW = new Pane();
+      window.WINDOW = new Pane(1);
       this.trigger('resize');
-      this.run();
+      this._run();
       return true;
     } else {
       return false;
     }
   },
-  run: function(timeElapsed) {
+  _run: function(timeElapsed) {
     if (timeElapsed == null) {
       timeElapsed = 0;
     }
-    this.now = new Date().getTime();
-    window.NOW = this.now;
-    Engine.update();
-    Engine.draw();
-    window.requestAnimationFrame(Engine.run);
+    window.NOW = new Date().getTime();
+    Engine._update();
+    Engine._draw();
+    window.requestAnimationFrame(Engine._run);
   },
-  update: function() {
+  _update: function() {
     var entities, entity, k, l, len, len1, ref;
-    ref = this.entities;
+    ref = this._entities;
     for (k = 0, len = ref.length; k < len; k++) {
       entities = ref[k];
       if (entities) {
         for (l = 0, len1 = entities.length; l < len1; l++) {
           entity = entities[l];
           if (entity) {
-            entity.update(this.now);
+            entity._update(NOW);
           }
         }
       }
     }
   },
-  draw: function() {
+  _draw: function() {
     var entities, entity, i, k, l, len, len1, ref;
-    this.context.clearRect(0, 0, this.width * PX, this.height * PX);
-    ref = this.entities;
+    this._context.clearRect(0, 0, this._size.width * PX, this._size.height * PX);
+    ref = this._entities;
     for (i = k = 0, len = ref.length; k < len; i = ++k) {
       entities = ref[i];
       if (i && entities) {
         for (l = 0, len1 = entities.length; l < len1; l++) {
           entity = entities[l];
           if (entity) {
-            entity.draw(this.now);
+            entity._draw(NOW);
           }
         }
       }
     }
   },
-  addEntity: function(entity, layer) {
+  add: function(entity, layer) {
     if (layer == null) {
       layer = 0;
     }
-    if (!this.entities[layer]) {
-      this.entities[layer] = [];
+    if (!this._entities[layer]) {
+      this._entities[layer] = [];
     }
-    entity.setId(this.entities[layer].length);
-    this.entities[layer].push(entity);
+    entity.setId(this._entities[layer].length);
+    this._entities[layer].push(entity);
   },
-  removeEntity: function(entity) {
-    if (this.entities[entity._layer]) {
-      if (this.entities[entity._layer][entity._id]) {
-        delete this.entities[entity._layer][entity._id];
+  remove: function(entity) {
+    if (this._entities[entity._layer]) {
+      if (this._entities[entity._layer][entity._id]) {
+        delete this._entities[entity._layer][entity._id];
+      } else {
+        console.info("Engine.remove(): entity[" + entity._layer + "][" + entity._id + "] doesn't exist");
       }
+    } else {
+      console.warn("Engine.remove(): layer[" + entity._layer + "] doesn't exist");
     }
   },
-  createCanvas: function() {
-    this.canvas = document.createElement("canvas");
-    this.canvas.setAttribute("id", "diesel-canvas");
-    document.body.appendChild(this.canvas);
-    this.canvas.style.position = 'fixed';
-    this.canvas.style.top = '50%';
-    this.canvas.style.left = '50%';
-    this.context = this.canvas.getContext("2d");
-    window.CONTEXT = this.context;
+  _createCanvas: function() {
+    this._canvas = document.createElement("canvas");
+    this._canvas.setAttribute("id", "diesel-canvas");
+    document.body.appendChild(this._canvas);
+    this._canvas.style.position = 'fixed';
+    this._canvas.style.top = '50%';
+    this._canvas.style.left = '50%';
+    this._context = this._canvas.getContext("2d");
+    window.CONTEXT = this._context;
     window.addEventListener("resize", (function(_this) {
       return function() {
-        _this.onResize();
+        _this._onResize();
       };
     })(this));
-    return this.canvas && this.context;
+    return this._canvas && this._context;
   },
-  onResize: function() {
-    var viewportRatio;
+  _onResize: function() {
+    var px, viewportRatio;
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
     this.windowRatio = this.windowWidth / this.windowHeight;
     if (this.config.viewport.width && this.config.viewport.height) {
       viewportRatio = this.config.viewport.width / this.config.viewport.height;
       if (viewportRatio >= this.windowRatio) {
-        this.px = Math.floor(this.windowWidth / this.config.viewport.width);
+        px = Math.floor(this.windowWidth / this.config.viewport.width);
       } else {
-        this.px = Math.floor(this.windowHeight / this.config.viewport.height);
+        px = Math.floor(this.windowHeight / this.config.viewport.height);
       }
-      this.width = this.config.viewport.width;
-      this.height = this.config.viewport.height;
+      this._size.width = this.config.viewport.width;
+      this._size.height = this.config.viewport.height;
     } else if (this.config.viewport.width) {
-      this.px = Math.floor(this.windowWidth / this.config.viewport.width);
-      this.width = this.config.viewport.width;
-      this.height = Math.floor(this.windowHeight / this.px);
+      px = Math.floor(this.windowWidth / this.config.viewport.width);
+      this._size.width = this.config.viewport.width;
+      this._size.height = Math.floor(this.windowHeight / px);
     } else if (this.config.viewport.height) {
-      this.px = Math.floor(this.windowHeight / this.config.viewport.height);
-      this.width = Math.floor(this.windowWidth / this.px);
-      this.height = this.config.viewport.height;
+      px = Math.floor(this.windowHeight / this.config.viewport.height);
+      this._size.width = Math.floor(this.windowWidth / px);
+      this._size.height = this.config.viewport.height;
     }
-    window.PX = this.px;
-    this.canvas.setAttribute('width', this.width * this.px);
-    this.canvas.setAttribute('height', this.height * this.px);
-    this.canvas.style.marginLeft = -((this.width * this.px) / 2) + 'px';
-    this.canvas.style.marginTop = -((this.height * this.px) / 2) + 'px';
-    WINDOW.setSize(this.width, this.height);
+    window.PX = px;
+    this._canvas.setAttribute('width', this._size.width * px);
+    this._canvas.setAttribute('height', this._size.height * px);
+    this._canvas.style.marginLeft = -((this._size.width * px) / 2) + 'px';
+    this._canvas.style.marginTop = -((this._size.height * px) / 2) + 'px';
+    WINDOW.setSize(this._size.width, this._size.height);
   },
   trigger: function(eventType) {
     window.dispatchEvent(new Event(eventType));
+  },
+  getWidth: function() {
+    return this._size.width;
+  },
+  getHeight: function() {
+    return this._size.height;
   },
   analyze: function(focusOn) {
     var entity, i, inventory, k, l, layer, len, len1, name, ref;
@@ -272,7 +283,7 @@ Engine = {
       focusOn = -1;
     }
     inventory = {};
-    ref = this.entities;
+    ref = this._entities;
     for (i = k = 0, len = ref.length; k < len; i = ++k) {
       layer = ref[i];
       if ((focusOn === i) || focusOn === -1) {
@@ -290,7 +301,7 @@ Engine = {
         }
       }
     }
-    return console.log(inventory);
+    return inventory;
   },
   getAllInstancesOf: function(name, focusOn) {
     var entity, i, instanceName, instances, k, l, layer, len, len1, ref;
@@ -298,7 +309,7 @@ Engine = {
       focusOn = -1;
     }
     instances = [];
-    ref = this.entities;
+    ref = this._entities;
     for (i = k = 0, len = ref.length; k < len; i = ++k) {
       layer = ref[i];
       if ((focusOn === i) || focusOn === -1) {
@@ -317,7 +328,7 @@ Engine = {
   },
   cleanUp: function() {
     var cleanedEntities, entity, i, j, k, l, layer, len, len1, ref;
-    ref = this.entities;
+    ref = this._entities;
     for (i = k = 0, len = ref.length; k < len; i = ++k) {
       layer = ref[i];
       if (layer && layer.length) {
@@ -329,7 +340,7 @@ Engine = {
             cleanedEntities.push(entity);
           }
         }
-        this.entities[i] = cleanedEntities;
+        this._entities[i] = cleanedEntities;
       }
     }
   },
@@ -343,7 +354,7 @@ Engine = {
     }
     totalNumberOfPositions = 0;
     totalNumberOfEntities = 0;
-    ref = this.entities;
+    ref = this._entities;
     for (i = k = 0, len = ref.length; k < len; i = ++k) {
       layer = ref[i];
       numberOfEntitiesOnLayer = 0;
@@ -379,19 +390,19 @@ Entity = (function() {
       layer = 0;
     }
     this._layer = layer;
-    Engine.addEntity(this, this._layer);
+    Engine.add(this, this._layer);
   }
 
-  Entity.prototype.update = function() {};
+  Entity.prototype._update = function() {};
 
-  Entity.prototype.draw = function() {};
+  Entity.prototype._draw = function() {};
 
   Entity.prototype.setId = function(_id) {
     this._id = _id;
   };
 
   Entity.prototype.remove = function() {
-    Engine.removeEntity(this);
+    Engine.remove(this);
   };
 
   return Entity;
@@ -580,7 +591,7 @@ Point = (function(superClass) {
     this._tweenY = new Tween(parameters, duration, easing);
   };
 
-  Point.prototype.update = function() {
+  Point.prototype._update = function() {
     var _previousX, _previousY;
     this.hasChanged = false;
     _previousX = this._x;
@@ -843,7 +854,7 @@ Particle = (function(superClass) {
     return this._isVisible;
   };
 
-  Particle.prototype.draw = function() {
+  Particle.prototype._draw = function() {
     var height, left, top, width;
     if (this.isVisible()) {
       left = snap(this._position.x * PX);
@@ -983,7 +994,7 @@ Line = (function(superClass) {
     }
   };
 
-  Line.prototype.update = function() {
+  Line.prototype._update = function() {
     var i, increment, j, k, l, m, n, particle, ref, ref1, ref2, ref3, ref4, ref5, ref6, results, x, y;
     i = 0;
     this.calculateDimensions();
