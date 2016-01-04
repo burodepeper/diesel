@@ -506,6 +506,7 @@ Point = (function(superClass) {
       x: null,
       y: null
     };
+    this.hasChanged = false;
     this.setPosition(x, y);
   }
 
@@ -620,6 +621,8 @@ Point = (function(superClass) {
   Point.prototype._updatePosition = function() {
     this._position.x = this.getX();
     this._position.y = this.getY();
+    this.hasChanged = true;
+    return true;
   };
 
   Point.prototype.setPosition = function(x, y) {
@@ -632,9 +635,23 @@ Point = (function(superClass) {
     }
   };
 
-  Point.prototype.setX = function(x) {};
+  Point.prototype.setX = function(x) {
+    if (this.isValid(x)) {
+      this._x = x;
+      return this._updatePosition();
+    } else {
+      return false;
+    }
+  };
 
-  Point.prototype.setY = function(y) {};
+  Point.prototype.setY = function(y) {
+    if (this.isValid(y)) {
+      this._y = y;
+      return this._updatePosition();
+    } else {
+      return false;
+    }
+  };
 
   return Point;
 

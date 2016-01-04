@@ -12,8 +12,7 @@ class Point extends Entity
       x: null
       y: null
 
-    # @hasChanged = null
-
+    @hasChanged = false
     @setPosition(x, y)
 
   _setReference: (@_reference, @_id) ->
@@ -50,14 +49,15 @@ class Point extends Entity
     @hasChanged = false
     _previousX = @_x
     _previousY = @_y
+
     if @_tweenX
       @_x = Math.round(@_tweenX.getValue('x'))
       if @_tweenX.isComplete then @_tweenX = null
     if @_tweenY
       @_y = Math.round(@_tweenY.getValue('y'))
       if @_tweenY.isComplete then @_tweenY = null
+
     if (_previousX isnt @_x) or (_previousY isnt @_y)
-      # @hasChanged = true
       @_updatePosition()
     return
 
@@ -77,7 +77,8 @@ class Point extends Entity
     # console.log "#{@constructor.name}._updatePosition()"
     @_position.x = @getX()
     @_position.y = @getY()
-    return
+    @hasChanged = true
+    return true
 
   setPosition: (x, y) ->
     # console.log("#{@constructor.name}.setPosition(): #{x}, #{y}")
@@ -89,5 +90,15 @@ class Point extends Entity
       return false
 
   setX: (x) ->
+    if @isValid(x)
+      @_x = x
+      @_updatePosition()
+    else
+      return false
 
   setY: (y) ->
+    if @isValid(y)
+      @_y = y
+      @_updatePosition()
+    else
+      return false

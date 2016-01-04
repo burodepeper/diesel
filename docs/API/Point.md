@@ -1,5 +1,6 @@
 # Point
-A [Point] describes a position (`x` and `y` coordinates) relative to a `reference`.
+A [Point] describes a position (`x` and `y` coordinates) relative to a `reference` which by default is `WINDOW`.
+
 ```js
 new Point( x, y )
 ```
@@ -66,7 +67,19 @@ void Point.moveToX( x, duration, easing )
 Creates a [Tween] from the current `y` to a new one. See `moveToX()` for more details, because it works exactly the same.
 
 ### setPosition
+Directly sets the `x` and `y` coordinates on the current instance.
+```js
+boolean Point.setPosition( x, y )
+```
 
 ### setX
+Sets the `x` coordinate on the current instance.
+```js
+boolean Point.setX( x )
+```
 
 ### setY
+Sets the `y` coordinate on the current instance.
+```js
+boolean Point.setY( y )
+```
