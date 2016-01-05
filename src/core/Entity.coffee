@@ -14,7 +14,7 @@ class Entity
 
   # onResize: -> return
 
-  setId: (@_id) ->
+  _setId: (@_id) ->
 
   # setState: (@state, @nextState = "idle") ->
 

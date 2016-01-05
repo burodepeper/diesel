@@ -70,7 +70,7 @@ Engine =
 
   add: (entity, layer = 0) ->
     unless @_entities[layer] then @_entities[layer] = []
-    entity.setId(@_entities[layer].length)
+    entity._setId(@_entities[layer].length)
     @_entities[layer].push(entity)
     return
 
@@ -185,7 +185,7 @@ Engine =
         cleanedEntities = []
         for entity, j in layer
           if entity
-            entity.setId(cleanedEntities.length)
+            entity._setId(cleanedEntities.length)
             cleanedEntities.push(entity)
         @_entities[i] = cleanedEntities
     return

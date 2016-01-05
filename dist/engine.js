@@ -208,7 +208,7 @@ Engine = {
     if (!this._entities[layer]) {
       this._entities[layer] = [];
     }
-    entity.setId(this._entities[layer].length);
+    entity._setId(this._entities[layer].length);
     this._entities[layer].push(entity);
   },
   remove: function(entity) {
@@ -336,7 +336,7 @@ Engine = {
         for (j = l = 0, len1 = layer.length; l < len1; j = ++l) {
           entity = layer[j];
           if (entity) {
-            entity.setId(cleanedEntities.length);
+            entity._setId(cleanedEntities.length);
             cleanedEntities.push(entity);
           }
         }
@@ -397,7 +397,7 @@ Entity = (function() {
 
   Entity.prototype._draw = function() {};
 
-  Entity.prototype.setId = function(_id) {
+  Entity.prototype._setId = function(_id) {
     this._id = _id;
   };
 
@@ -521,9 +521,20 @@ Point = (function(superClass) {
     this.setPosition(x, y);
   }
 
-  Point.prototype._setReference = function(_reference, _id) {
-    this._reference = _reference;
-    this._id = _id;
+  Point.prototype.getX = function() {
+    if (this._reference) {
+      return this._reference.getX() + this._x;
+    } else {
+      return this._x;
+    }
+  };
+
+  Point.prototype.getY = function() {
+    if (this._reference) {
+      return this._reference.getY() + this._y;
+    } else {
+      return this._y;
+    }
   };
 
   Point.prototype.isValid = function(x, y) {
@@ -591,51 +602,6 @@ Point = (function(superClass) {
     this._tweenY = new Tween(parameters, duration, easing);
   };
 
-  Point.prototype._update = function() {
-    var _previousX, _previousY;
-    this.hasChanged = false;
-    _previousX = this._x;
-    _previousY = this._y;
-    if (this._tweenX) {
-      this._x = Math.round(this._tweenX.getValue('x'));
-      if (this._tweenX.isComplete) {
-        this._tweenX = null;
-      }
-    }
-    if (this._tweenY) {
-      this._y = Math.round(this._tweenY.getValue('y'));
-      if (this._tweenY.isComplete) {
-        this._tweenY = null;
-      }
-    }
-    if ((_previousX !== this._x) || (_previousY !== this._y)) {
-      this._updatePosition();
-    }
-  };
-
-  Point.prototype.getX = function() {
-    if (this._reference) {
-      return this._reference.getX() + this._x;
-    } else {
-      return this._x;
-    }
-  };
-
-  Point.prototype.getY = function() {
-    if (this._reference) {
-      return this._reference.getY() + this._y;
-    } else {
-      return this._y;
-    }
-  };
-
-  Point.prototype._updatePosition = function() {
-    this._position.x = this.getX();
-    this._position.y = this.getY();
-    this.hasChanged = true;
-    return true;
-  };
-
   Point.prototype.setPosition = function(x, y) {
     if (this.isValid(x, y)) {
       this._x = x;
@@ -662,6 +628,40 @@ Point = (function(superClass) {
     } else {
       return false;
     }
+  };
+
+  Point.prototype._update = function() {
+    var _previousX, _previousY;
+    this.hasChanged = false;
+    _previousX = this._x;
+    _previousY = this._y;
+    if (this._tweenX) {
+      this._x = Math.round(this._tweenX.getValue('x'));
+      if (this._tweenX.isComplete) {
+        this._tweenX = null;
+      }
+    }
+    if (this._tweenY) {
+      this._y = Math.round(this._tweenY.getValue('y'));
+      if (this._tweenY.isComplete) {
+        this._tweenY = null;
+      }
+    }
+    if ((_previousX !== this._x) || (_previousY !== this._y)) {
+      this._updatePosition();
+    }
+  };
+
+  Point.prototype._setReference = function(_reference, _id) {
+    this._reference = _reference;
+    this._id = _id;
+  };
+
+  Point.prototype._updatePosition = function() {
+    this._position.x = this.getX();
+    this._position.y = this.getY();
+    this.hasChanged = true;
+    return true;
   };
 
   return Point;
