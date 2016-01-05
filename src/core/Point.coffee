@@ -35,7 +35,7 @@ class Point extends Entity
       console.warn "Point()", x+","+y, "is not a valid Point"
     return _isValid
 
-  moveTo: (x, y, duration = 1000, easing = 'linear') ->
+  moveTo: (x, y, duration = 1000, easing = 'ease-in-out') ->
     if @isValid(x, y)
       @moveToX(x, duration, easing)
       @moveToY(y, duration, easing)
@@ -44,7 +44,7 @@ class Point extends Entity
       return false
 
   # TODO validate parameters
-  moveToX: (x, duration = 1000, easing = 'linear') ->
+  moveToX: (x, duration = 1000, easing = 'ease-in-out') ->
     parameters = []
     parameters.push({ name:'x', from:@_x, to:x })
     @_tweenX = new Tween(parameters, duration, easing)

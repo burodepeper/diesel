@@ -636,7 +636,7 @@ Point = (function(superClass) {
       duration = 1000;
     }
     if (easing == null) {
-      easing = 'linear';
+      easing = 'ease-in-out';
     }
     if (this.isValid(x, y)) {
       this.moveToX(x, duration, easing);
@@ -653,7 +653,7 @@ Point = (function(superClass) {
       duration = 1000;
     }
     if (easing == null) {
-      easing = 'linear';
+      easing = 'ease-in-out';
     }
     parameters = [];
     parameters.push({
