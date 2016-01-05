@@ -161,6 +161,30 @@ Engine = {
       return false;
     }
   },
+  add: function(entity, layer) {
+    if (layer == null) {
+      layer = 0;
+    }
+    if (!this._entities[layer]) {
+      this._entities[layer] = [];
+    }
+    entity._setId(this._entities[layer].length);
+    this._entities[layer].push(entity);
+  },
+  remove: function(entity) {
+    if (this._entities[entity._layer]) {
+      if (this._entities[entity._layer][entity._id]) {
+        delete this._entities[entity._layer][entity._id];
+      } else {
+        console.info("Engine.remove(): entity[" + entity._layer + "][" + entity._id + "] doesn't exist");
+      }
+    } else {
+      console.warn("Engine.remove(): layer[" + entity._layer + "] doesn't exist");
+    }
+  },
+  trigger: function(eventType) {
+    window.dispatchEvent(new Event(eventType));
+  },
   _run: function(timeElapsed) {
     if (timeElapsed == null) {
       timeElapsed = 0;
@@ -199,27 +223,6 @@ Engine = {
           }
         }
       }
-    }
-  },
-  add: function(entity, layer) {
-    if (layer == null) {
-      layer = 0;
-    }
-    if (!this._entities[layer]) {
-      this._entities[layer] = [];
-    }
-    entity._setId(this._entities[layer].length);
-    this._entities[layer].push(entity);
-  },
-  remove: function(entity) {
-    if (this._entities[entity._layer]) {
-      if (this._entities[entity._layer][entity._id]) {
-        delete this._entities[entity._layer][entity._id];
-      } else {
-        console.info("Engine.remove(): entity[" + entity._layer + "][" + entity._id + "] doesn't exist");
-      }
-    } else {
-      console.warn("Engine.remove(): layer[" + entity._layer + "] doesn't exist");
     }
   },
   _createCanvas: function() {
@@ -267,15 +270,6 @@ Engine = {
     this._canvas.style.marginLeft = -((this._size.width * px) / 2) + 'px';
     this._canvas.style.marginTop = -((this._size.height * px) / 2) + 'px';
     WINDOW.setSize(this._size.width, this._size.height);
-  },
-  trigger: function(eventType) {
-    window.dispatchEvent(new Event(eventType));
-  },
-  getWidth: function() {
-    return this._size.width;
-  },
-  getHeight: function() {
-    return this._size.height;
   },
   analyze: function(focusOn) {
     var entity, i, inventory, k, l, layer, len, len1, name, ref;
@@ -464,7 +458,7 @@ Color = (function(superClass) {
         this._changeG(color.g, duration, easing);
       }
       if (color.b !== this._b) {
-        return this._changeB(color.b, duration, easing);
+        this._changeB(color.b, duration, easing);
       }
     }
   };
@@ -1056,39 +1050,27 @@ Particle = (function(superClass) {
 Timer = (function(superClass) {
   extend(Timer, superClass);
 
-  function Timer(duration1, easing1) {
-    this.duration = duration1;
-    this.easing = easing1 != null ? easing1 : 'linear';
+  function Timer(_duration, _easing) {
+    this._duration = _duration;
+    this._easing = _easing != null ? _easing : 'linear';
     Timer.__super__.constructor.call(this);
-    this.start = NOW;
-    this.stop = this.start + this.duration;
+    this._start = NOW;
+    this._stop = this._start + this._duration;
     this.isComplete = false;
     this.percentage = 0;
     this.value = 0;
   }
 
-  Timer.prototype._update = function() {
-    if (!this.isComplete) {
-      this.percentage = (NOW - this.start) / this.duration;
-      this.value = this.applyEasing();
-      if (this.percentage >= 1) {
-        this.percentage = 1;
-        this.isComplete = true;
-        this.remove();
-      }
-    }
-  };
-
-  Timer.prototype.applyEasing = function() {
+  Timer.prototype._applyEasing = function() {
     var t;
     t = this.percentage;
-    if (this.easing === 'linear') {
+    if (this._easing === 'linear') {
       return t;
-    } else if (this.easing === 'ease-in') {
+    } else if (this._easing === 'ease-in') {
       return t * t;
-    } else if (this.easing === 'ease-out') {
+    } else if (this._easing === 'ease-out') {
       return t * (2 - t);
-    } else if (this.easing === 'ease-in-out') {
+    } else if (this._easing === 'ease-in-out') {
       if (t < 0.5) {
         return 2 * t * t;
       } else {
@@ -1096,6 +1078,18 @@ Timer = (function(superClass) {
       }
     } else {
       return t;
+    }
+  };
+
+  Timer.prototype._update = function() {
+    if (!this.isComplete) {
+      this.percentage = (NOW - this._start) / this._duration;
+      this.value = this._applyEasing();
+      if (this.percentage >= 1) {
+        this.percentage = 1;
+        this.isComplete = true;
+        this.remove();
+      }
     }
   };
 

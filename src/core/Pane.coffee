@@ -14,10 +14,6 @@ class Pane extends VisualEntity
         y: 0
 
     @_reference = WINDOW
-    # if @_reference
-    #   @_color = @_reference.getColor()
-    # else
-    #   @_color = new Color('#fff')
 
     @_children = []
     @_particles = []

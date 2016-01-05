@@ -12,6 +12,7 @@ class Color extends Entity
     @_tweenG = null
     @_tweenB = null
 
+  # Sets the color value. Accepted forms of {color} are the regular and shorthand versions of html hex rgb color values, for example: #e10 or #33333f
   set: (color) ->
     color = @_parse(color)
     if color
@@ -26,12 +27,16 @@ class Color extends Entity
   get: (opacity = 1) ->
     return "rgba(#{@_r}, #{@_g}, #{@_b}, #{opacity})"
 
+  # Creates a {Tween} which gradually changes the color over time.
   change: (color, duration = 1000, easing = 'linear') ->
     color = @_parse(color)
     if color
       if (color.r isnt @_r) then @_changeR(color.r, duration, easing)
       if (color.g isnt @_g) then @_changeG(color.g, duration, easing)
       if (color.b isnt @_b) then @_changeB(color.b, duration, easing)
+    return
+
+  # ----- Private methods -----
 
   _changeR: (value, duration = 1000, easing = 'linear') ->
     parameters = []
@@ -51,8 +56,7 @@ class Color extends Entity
     @_tweenB = new Tween(parameters, duration, easing)
     return
 
-  # ----- Private methods -----
-
+  # Checks if the supplied string {color} is okay, and returns an object with separated {r}, {g} and {b} channels
   _parse: (color) ->
     color = color.replace(/[ ]+/g, '').toLowerCase()
 

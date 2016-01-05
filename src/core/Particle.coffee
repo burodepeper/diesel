@@ -30,6 +30,8 @@ class Particle extends VisualEntity
   #   belowUpper = y <= (@reference.getHeight() - 1)
   #   return (aboveLower and belowUpper)
 
+
+
   # ----- Private methods -----
 
   _draw: ->

@@ -1,7 +1,3 @@
-# Storage
-# -------
-# Abstraction for window.localStorage
-
 class Storage
 
   constructor: (@type = 'localStorage') ->

@@ -1,37 +1,41 @@
 class Timer extends Entity
 
-  constructor: (@duration, @easing = 'linear') ->
+  constructor: (@_duration, @_easing = 'linear') ->
     super()
-    @start = NOW
-    @stop = @start + @duration
+
+    @_start = NOW
+    @_stop = @_start + @_duration
+
     @isComplete = false
-    @percentage = 0
-    @value = 0
+    @percentage = 0     # raw value
+    @value = 0          # value with easing applied
 
-  _update: ->
-    unless @isComplete
-      @percentage = (NOW - @start) / @duration
-      @value = @applyEasing()
-      if @percentage >= 1
-        @percentage = 1
-        @isComplete = true
-        # NOTE
-        # I think auto removal is okay, because a reference to the object remains where it is created, so the content stays accessible until it is deleted there?
-        @remove()
-    return
+  # ----- Private methods -----
 
-  applyEasing: ->
+  _applyEasing: ->
     t = @percentage
-    if @easing is 'linear'
+    if @_easing is 'linear'
       return t
-    else if @easing is 'ease-in'
+    else if @_easing is 'ease-in'
       return t * t
-    else if @easing is 'ease-out'
+    else if @_easing is 'ease-out'
       return t * (2 - t)
-    else if @easing is 'ease-in-out'
+    else if @_easing is 'ease-in-out'
       if t < 0.5
         return 2 * t * t
       else
         return -1 + (4 - 2 * t) * t
     else
       return t
+
+  _update: ->
+    unless @isComplete
+      @percentage = (NOW - @_start) / @_duration
+      @value = @_applyEasing()
+      if @percentage >= 1
+        @percentage = 1
+        @isComplete = true
+        # NOTE
+        # Auto-removal is not a problem. The object where the {Timer} was created still has a reference to it. It does however leave empty spots in {Engine}, which can be cleaned up via {Engine.cleanUp()}.
+        @remove()
+    return

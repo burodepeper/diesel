@@ -43,7 +43,32 @@ Engine =
     else
       return false
 
-  # Cycle ---------------------------------------------------------------------
+  # ----- Entities -----
+
+  # Adds an {Entity} to be processed by {Engine}.
+  add: (entity, layer = 0) ->
+    unless @_entities[layer] then @_entities[layer] = []
+    entity._setId(@_entities[layer].length)
+    @_entities[layer].push(entity)
+    return
+
+  # Removes an {Entity} from being processed by {Engine}.
+  remove: (entity) ->
+    if @_entities[entity._layer]
+      if @_entities[entity._layer][entity._id]
+        delete @_entities[entity._layer][entity._id]
+      else
+        console.info "Engine.remove(): entity[#{entity._layer}][#{entity._id}] doesn't exist"
+    else
+      console.warn "Engine.remove(): layer[#{entity._layer}] doesn't exist"
+    return
+
+  # Shorthand for triggering an event
+  trigger: (eventType) ->
+    window.dispatchEvent(new Event(eventType))
+    return
+
+  # ----- Canvas -----
 
   _run: (timeElapsed = 0) ->
     window.NOW = new Date().getTime()
@@ -67,26 +92,6 @@ Engine =
         for entity in entities
           if entity then entity._draw(NOW)
     return
-
-  # ----- Entities -----
-
-  add: (entity, layer = 0) ->
-    unless @_entities[layer] then @_entities[layer] = []
-    entity._setId(@_entities[layer].length)
-    @_entities[layer].push(entity)
-    return
-
-  remove: (entity) ->
-    if @_entities[entity._layer]
-      if @_entities[entity._layer][entity._id]
-        delete @_entities[entity._layer][entity._id]
-      else
-        console.info "Engine.remove(): entity[#{entity._layer}][#{entity._id}] doesn't exist"
-    else
-      console.warn "Engine.remove(): layer[#{entity._layer}] doesn't exist"
-    return
-
-  # ----- Canvas -----
 
   _createCanvas: ->
 
@@ -144,17 +149,7 @@ Engine =
 
     return
 
-  # ----- Support -----
-
-  trigger: (eventType) ->
-    window.dispatchEvent(new Event(eventType))
-    return
-
-  getWidth: -> return @_size.width
-
-  getHeight: -> return @_size.height
-
-  # ----- Maintenance -----
+  # ----- Maintenance and debugging -----
 
   analyze: (focusOn = -1) ->
     inventory = {}
