@@ -412,13 +412,13 @@ Entity = (function() {
 Color = (function(superClass) {
   extend(Color, superClass);
 
-  Color.prototype.r = 255;
+  Color.prototype._r = 255;
 
-  Color.prototype.g = 255;
+  Color.prototype._g = 255;
 
-  Color.prototype.b = 255;
+  Color.prototype._b = 255;
 
-  Color.prototype.a = 1;
+  Color.prototype._a = 1;
 
   function Color(color, opacity) {
     if (color == null) {
@@ -429,48 +429,206 @@ Color = (function(superClass) {
     }
     Color.__super__.constructor.call(this);
     this.set(color, opacity);
+    this._tweenR = null;
+    this._tweenG = null;
+    this._tweenB = null;
+    this._tweenA = null;
   }
 
   Color.prototype.set = function(color, opacity) {
-    var b, g, match, r;
     if (opacity == null) {
       opacity = null;
     }
+    color = this._parse(color);
+    if (color) {
+      this._r = color.r;
+      this._g = color.g;
+      this._b = color.b;
+      this._a = color.a;
+      if (opacity != null) {
+        this._setOpacity(opacity);
+      }
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  Color.prototype.get = function(opacity) {
+    if (opacity == null) {
+      opacity = 1;
+    }
+    return ("rgba(" + this._r + ", " + this._g + ", " + this._b + ", ") + (opacity * this._a) + ")";
+  };
+
+  Color.prototype.change = function(color, opacity, duration, easing) {
+    if (opacity == null) {
+      opacity = null;
+    }
+    if (duration == null) {
+      duration = 1000;
+    }
+    if (easing == null) {
+      easing = 'linear';
+    }
+    color = this._parse(color);
+    if (color) {
+      if (color.r !== this._r) {
+        this._changeR(color.r, duration, easing);
+      }
+      if (color.g !== this._g) {
+        this._changeG(color.g, duration, easing);
+      }
+      if (color.b !== this._b) {
+        this._changeB(color.b, duration, easing);
+      }
+      if (color.a !== this._a) {
+        return this._changeA(color.a, duration, easing);
+      }
+    }
+  };
+
+  Color.prototype._changeR = function(value, duration, easing) {
+    var parameters;
+    if (duration == null) {
+      duration = 1000;
+    }
+    if (easing == null) {
+      easing = 'linear';
+    }
+    parameters = [];
+    parameters.push({
+      name: 'value',
+      from: this._r,
+      to: value
+    });
+    this._tweenR = new Tween(parameters, duration, easing);
+  };
+
+  Color.prototype._changeG = function(value, duration, easing) {
+    var parameters;
+    if (duration == null) {
+      duration = 1000;
+    }
+    if (easing == null) {
+      easing = 'linear';
+    }
+    parameters = [];
+    parameters.push({
+      name: 'value',
+      from: this._g,
+      to: value
+    });
+    this._tweenG = new Tween(parameters, duration, easing);
+  };
+
+  Color.prototype._changeB = function(value, duration, easing) {
+    var parameters;
+    if (duration == null) {
+      duration = 1000;
+    }
+    if (easing == null) {
+      easing = 'linear';
+    }
+    parameters = [];
+    parameters.push({
+      name: 'value',
+      from: this._b,
+      to: value
+    });
+    this._tweenB = new Tween(parameters, duration, easing);
+  };
+
+  Color.prototype._changeA = function(value, duration, easing) {
+    var parameters;
+    if (duration == null) {
+      duration = 1000;
+    }
+    if (easing == null) {
+      easing = 'linear';
+    }
+    parameters = [];
+    parameters.push({
+      name: 'value',
+      from: this._a,
+      to: value
+    });
+    this._tweenA = new Tween(parameters, duration, easing);
+  };
+
+  Color.prototype._parse = function(color) {
+    var a, b, g, match, r;
     color = color.replace(/[ ]+/g, '').toLowerCase();
     if ((color.length === 7) && color.match(/#[0-9a-f]{6}/)) {
-      this.r = parseInt(color.substring(1, 3), 16);
-      this.g = parseInt(color.substring(3, 5), 16);
-      this.b = parseInt(color.substring(5, 7), 16);
-      this.a = 1;
-      if (opacity != null) {
-        return this.setOpacity(opacity);
-      }
+      r = parseInt(color.substring(1, 3), 16);
+      g = parseInt(color.substring(3, 5), 16);
+      b = parseInt(color.substring(5, 7), 16);
+      a = 1;
+      return {
+        r: r,
+        g: g,
+        b: b,
+        a: a
+      };
     } else if ((color.length === 4) && color.match(/#[0-9a-f]{3}/)) {
       r = parseInt(color.substring(1, 2), 16);
       g = parseInt(color.substring(2, 3), 16);
       b = parseInt(color.substring(3, 4), 16);
-      this.r = (r * 16) + r;
-      this.g = (g * 16) + g;
-      this.b = (b * 16) + b;
-      this.a = 1;
-      if (opacity != null) {
-        return this.setOpacity(opacity);
-      }
+      r = (r * 16) + r;
+      g = (g * 16) + g;
+      b = (b * 16) + b;
+      a = 1;
+      return {
+        r: r,
+        g: g,
+        b: b,
+        a: a
+      };
     } else if (match = color.match(/rgba\(([0-9]+),([0-9]+),([0-9]+),([\.0-9]+)\)/)) {
-      this.r = parseInt(match[1]);
-      this.g = parseInt(match[2]);
-      this.b = parseInt(match[3]);
-      this.a = parseFloat(match[4]);
-      if (opacity != null) {
-        return this.setOpacity(opacity);
-      }
+      r = parseInt(match[1]);
+      g = parseInt(match[2]);
+      b = parseInt(match[3]);
+      a = parseFloat(match[4]);
+      return {
+        r: r,
+        g: g,
+        b: b,
+        a: a
+      };
     } else {
       console.log("Color.set()", color + "' is not valid");
       return false;
     }
   };
 
-  Color.prototype.setOpacity = function(opacity) {
+  Color.prototype._update = function() {
+    if (this._tweenR) {
+      this._r = Math.round(this._tweenR.getValue('value'));
+      if (this._tweenR.isComplete) {
+        this._tweenR = null;
+      }
+    }
+    if (this._tweenG) {
+      this._g = Math.round(this._tweenG.getValue('value'));
+      if (this._tweenG.isComplete) {
+        this._tweenG = null;
+      }
+    }
+    if (this._tweenB) {
+      this._b = Math.round(this._tweenB.getValue('value'));
+      if (this._tweenB.isComplete) {
+        this._tweenB = null;
+      }
+    }
+    if (this._tweenA) {
+      this._a = Math.round(this._tweenA.getValue('value'));
+      if (this._tweenA.isComplete) {
+        this._tweenA = null;
+      }
+    }
+  };
+
+  Color.prototype._setOpacity = function(opacity) {
     opacity = parseFloat(opacity);
     if (opacity === NaN) {
       opacity = 1;
@@ -481,14 +639,7 @@ Color = (function(superClass) {
     if (opacity > 1) {
       opacity = 1;
     }
-    return this.a = opacity;
-  };
-
-  Color.prototype.get = function(opacity) {
-    if (opacity == null) {
-      opacity = 1;
-    }
-    return ("rgba(" + this.r + ", " + this.g + ", " + this.b + ", ") + (opacity * this.a) + ")";
+    return this._a = opacity;
   };
 
   return Color;

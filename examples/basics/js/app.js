@@ -28,9 +28,9 @@ App = {
           return _this.right.moveTo(24, 24, 2500, 'ease-in-out');
         };
       })(this));
-      delay(2500, (function(_this) {
+      delay(500, (function(_this) {
         return function() {
-          return _this.yellow.set('#e10');
+          return _this.yellow.change('#e10', 1, 2500);
         };
       })(this));
     }

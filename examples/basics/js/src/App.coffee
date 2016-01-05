@@ -22,6 +22,6 @@ App =
 
       @left.moveTo(74, 49, 3500, 'ease-in-out')
       delay 1500, => @right.moveTo(24, 24, 2500, 'ease-in-out')
-      delay 2500, => @yellow.set('#e10')
+      delay 500, => @yellow.change('#e10', 1, 2500)
 
     return
