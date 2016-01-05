@@ -30,7 +30,7 @@ App = {
       })(this));
       delay(500, (function(_this) {
         return function() {
-          return _this.yellow.change('#e10', 1, 2500);
+          return _this.yellow.change('#e10', 2500);
         };
       })(this));
     }

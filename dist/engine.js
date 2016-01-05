@@ -418,36 +418,23 @@ Color = (function(superClass) {
 
   Color.prototype._b = 255;
 
-  Color.prototype._a = 1;
-
-  function Color(color, opacity) {
+  function Color(color) {
     if (color == null) {
       color = '#fff';
     }
-    if (opacity == null) {
-      opacity = null;
-    }
     Color.__super__.constructor.call(this);
-    this.set(color, opacity);
+    this.set(color);
     this._tweenR = null;
     this._tweenG = null;
     this._tweenB = null;
-    this._tweenA = null;
   }
 
-  Color.prototype.set = function(color, opacity) {
-    if (opacity == null) {
-      opacity = null;
-    }
+  Color.prototype.set = function(color) {
     color = this._parse(color);
     if (color) {
       this._r = color.r;
       this._g = color.g;
       this._b = color.b;
-      this._a = color.a;
-      if (opacity != null) {
-        this._setOpacity(opacity);
-      }
       return true;
     } else {
       return false;
@@ -458,13 +445,10 @@ Color = (function(superClass) {
     if (opacity == null) {
       opacity = 1;
     }
-    return ("rgba(" + this._r + ", " + this._g + ", " + this._b + ", ") + (opacity * this._a) + ")";
+    return "rgba(" + this._r + ", " + this._g + ", " + this._b + ", " + opacity + ")";
   };
 
-  Color.prototype.change = function(color, opacity, duration, easing) {
-    if (opacity == null) {
-      opacity = null;
-    }
+  Color.prototype.change = function(color, duration, easing) {
     if (duration == null) {
       duration = 1000;
     }
@@ -480,10 +464,7 @@ Color = (function(superClass) {
         this._changeG(color.g, duration, easing);
       }
       if (color.b !== this._b) {
-        this._changeB(color.b, duration, easing);
-      }
-      if (color.a !== this._a) {
-        return this._changeA(color.a, duration, easing);
+        return this._changeB(color.b, duration, easing);
       }
     }
   };
@@ -539,36 +520,17 @@ Color = (function(superClass) {
     this._tweenB = new Tween(parameters, duration, easing);
   };
 
-  Color.prototype._changeA = function(value, duration, easing) {
-    var parameters;
-    if (duration == null) {
-      duration = 1000;
-    }
-    if (easing == null) {
-      easing = 'linear';
-    }
-    parameters = [];
-    parameters.push({
-      name: 'value',
-      from: this._a,
-      to: value
-    });
-    this._tweenA = new Tween(parameters, duration, easing);
-  };
-
   Color.prototype._parse = function(color) {
-    var a, b, g, match, r;
+    var b, g, r;
     color = color.replace(/[ ]+/g, '').toLowerCase();
     if ((color.length === 7) && color.match(/#[0-9a-f]{6}/)) {
       r = parseInt(color.substring(1, 3), 16);
       g = parseInt(color.substring(3, 5), 16);
       b = parseInt(color.substring(5, 7), 16);
-      a = 1;
       return {
         r: r,
         g: g,
-        b: b,
-        a: a
+        b: b
       };
     } else if ((color.length === 4) && color.match(/#[0-9a-f]{3}/)) {
       r = parseInt(color.substring(1, 2), 16);
@@ -577,23 +539,10 @@ Color = (function(superClass) {
       r = (r * 16) + r;
       g = (g * 16) + g;
       b = (b * 16) + b;
-      a = 1;
       return {
         r: r,
         g: g,
-        b: b,
-        a: a
-      };
-    } else if (match = color.match(/rgba\(([0-9]+),([0-9]+),([0-9]+),([\.0-9]+)\)/)) {
-      r = parseInt(match[1]);
-      g = parseInt(match[2]);
-      b = parseInt(match[3]);
-      a = parseFloat(match[4]);
-      return {
-        r: r,
-        g: g,
-        b: b,
-        a: a
+        b: b
       };
     } else {
       console.log("Color.set()", color + "' is not valid");
@@ -620,26 +569,6 @@ Color = (function(superClass) {
         this._tweenB = null;
       }
     }
-    if (this._tweenA) {
-      this._a = Math.round(this._tweenA.getValue('value'));
-      if (this._tweenA.isComplete) {
-        this._tweenA = null;
-      }
-    }
-  };
-
-  Color.prototype._setOpacity = function(opacity) {
-    opacity = parseFloat(opacity);
-    if (opacity === NaN) {
-      opacity = 1;
-    }
-    if (opacity < 0) {
-      opacity = 0;
-    }
-    if (opacity > 1) {
-      opacity = 1;
-    }
-    return this._a = opacity;
   };
 
   return Color;
