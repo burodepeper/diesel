@@ -49,7 +49,5 @@ class Color extends Entity
     if opacity > 1 then opacity = 1
     @a = opacity
 
-  setReference: (@reference) ->
-
-  toString: ->
-    return "rgba(#{@r}, #{@g}, #{@b}, #{@a})"
+  get: (opacity = 1) ->
+    return "rgba(#{@r}, #{@g}, #{@b}, "+(opacity * @a)+")"

@@ -38,7 +38,7 @@ class Point extends Entity
   moveTo: (x, y, duration = 1000, easing = 'linear') ->
     if @isValid(x, y)
       @moveToX(x, duration, easing)
-      @moveToY(x, duration, easing)
+      @moveToY(y, duration, easing)
       return true
     else
       return false
@@ -58,7 +58,6 @@ class Point extends Entity
     return
 
   setPosition: (x, y) ->
-    # console.log("#{@constructor.name}.setPosition(): #{x}, #{y}")
     if @isValid(x, y)
       @_x = x
       @_y = y
@@ -101,7 +100,6 @@ class Point extends Entity
   _setReference: (@_reference, @_id) ->
 
   _updatePosition: ->
-    # console.log "#{@constructor.name}._updatePosition()"
     @_position.x = @getX()
     @_position.y = @getY()
     @hasChanged = true

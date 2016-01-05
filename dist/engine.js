@@ -1,4 +1,4 @@
-var CONTEXT, Color, DEBUG, Engine, Entity, FONT_9PX, Line, NOW, PX, Pane, Particle, Point, Timer, Tween, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
+var CONTEXT, Color, DEBUG, Engine, Entity, FONT_9PX, Line, NOW, PX, Pane, Particle, Point, Timer, Tween, VisualEntity, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -484,12 +484,11 @@ Color = (function(superClass) {
     return this.a = opacity;
   };
 
-  Color.prototype.setReference = function(reference1) {
-    this.reference = reference1;
-  };
-
-  Color.prototype.toString = function() {
-    return "rgba(" + this.r + ", " + this.g + ", " + this.b + ", " + this.a + ")";
+  Color.prototype.get = function(opacity) {
+    if (opacity == null) {
+      opacity = 1;
+    }
+    return ("rgba(" + this.r + ", " + this.g + ", " + this.b + ", ") + (opacity * this.a) + ")";
   };
 
   return Color;
@@ -561,7 +560,7 @@ Point = (function(superClass) {
     }
     if (this.isValid(x, y)) {
       this.moveToX(x, duration, easing);
-      this.moveToY(x, duration, easing);
+      this.moveToY(y, duration, easing);
       return true;
     } else {
       return false;
@@ -668,6 +667,85 @@ Point = (function(superClass) {
 
 })(Entity);
 
+VisualEntity = (function(superClass) {
+  extend(VisualEntity, superClass);
+
+  function VisualEntity() {
+    return VisualEntity.__super__.constructor.apply(this, arguments);
+  }
+
+  VisualEntity.prototype.isVisible = function() {
+    if (this._reference) {
+      return this._isVisible && this._reference.isVisible();
+    } else {
+      return this._isVisible;
+    }
+  };
+
+  VisualEntity.prototype.setVisibility = function(visibility) {
+    if (visibility) {
+      this._isVisible = true;
+    } else {
+      this._isVisible = false;
+    }
+  };
+
+  VisualEntity.prototype.show = function() {
+    this.setVisibility(true);
+    return this;
+  };
+
+  VisualEntity.prototype.hide = function() {
+    this.setVisibility(false);
+    return this;
+  };
+
+  VisualEntity.prototype.setOpacity = function(opacity) {
+    if (opacity == null) {
+      opacity = 1;
+    }
+    opacity = parseFloat(opacity);
+    if (opacity === NaN) {
+      opacity = 1;
+    }
+    if (opacity < 0) {
+      opacity = 0;
+    }
+    if (opacity > 1) {
+      opacity = 1;
+    }
+    this._opacity = opacity;
+  };
+
+  VisualEntity.prototype.setColor = function(color, opacity) {
+    if (opacity == null) {
+      opacity = null;
+    }
+    if (typeof color === 'object') {
+      this._color = color;
+    } else {
+      this._color.set(color);
+    }
+    if (opacity != null) {
+      this.setOpacity(opacity);
+    }
+  };
+
+  VisualEntity.prototype._init = function() {
+    this._opacity = 1;
+    if (this._reference) {
+      this._color = this._reference.getColor();
+      return this._isVisible = this._reference.isVisible();
+    } else {
+      this._color = new Color('#fff');
+      return this._isVisible = true;
+    }
+  };
+
+  return VisualEntity;
+
+})(Point);
+
 Pane = (function(superClass) {
   extend(Pane, superClass);
 
@@ -681,11 +759,15 @@ Pane = (function(superClass) {
     }
     Pane.__super__.constructor.call(this, x, y, this._layer);
     this._position = null;
-    this._size = {
+    this._dimensions = {
       width: 0,
       height: 0,
       surface: 0,
-      circumference: 0
+      circumference: 0,
+      center: {
+        x: 0,
+        y: 0
+      }
     };
     this._reference = WINDOW;
     this._children = [];
@@ -698,26 +780,13 @@ Pane = (function(superClass) {
       width: null,
       height: null
     };
-    this._isVisible = true;
+    this._init();
   }
 
   Pane.prototype.setSize = function(width, height) {
-    this._size.width = width;
-    this._size.height = height;
-    if (width && height) {
-      this._size.surface = width * height;
-      this._size.circumference = (2 * width) + (2 * height);
-    } else {
-      if (width) {
-        this._size.surface = width;
-        this._size.circumference = width * 2;
-        this._size.height = 0;
-      } else {
-        this._size.surface = height;
-        this._size.circumference = height * 2;
-        this._size.width = 0;
-      }
-    }
+    this._dimensions.width = width;
+    this._dimensions.height = height;
+    this._updateDimensions();
   };
 
   Pane.prototype.setCSS = function(properties) {
@@ -742,11 +811,27 @@ Pane = (function(superClass) {
   };
 
   Pane.prototype.getWidth = function() {
-    return this._size.width;
+    return this._dimensions.width;
   };
 
   Pane.prototype.getHeight = function() {
-    return this._size.height;
+    return this._dimensions.height;
+  };
+
+  Pane.prototype.getCenter = function() {
+    return this._dimensions.center;
+  };
+
+  Pane.prototype.getSurface = function() {
+    return this._dimensions.surface;
+  };
+
+  Pane.prototype.getCircumference = function() {
+    return this._dimensions.circumference;
+  };
+
+  Pane.prototype.getColor = function() {
+    return this._color;
   };
 
   Pane.prototype.onResize = function() {
@@ -797,7 +882,6 @@ Pane = (function(superClass) {
   Pane.prototype.addParticle = function(particle) {
     this._particles.push(particle);
     particle._setReference(this, this._particles.length + this._children.length - 1);
-    particle.color = this.color;
   };
 
   Pane.prototype.updateParticles = function(method, value) {
@@ -820,9 +904,33 @@ Pane = (function(superClass) {
     }
   };
 
+  Pane.prototype._updateDimensions = function() {
+    var height, width;
+    width = this._dimensions.width;
+    height = this._dimensions.height;
+    if (width && height) {
+      this._dimensions.surface = width * height;
+      this._dimensions.circumference = (2 * width) + (2 * height);
+    } else {
+      if (width) {
+        this._dimensions.surface = width;
+        this._dimensions.circumference = width * 2;
+        this._dimensions.height = 1;
+      } else {
+        this._dimensions.surface = height;
+        this._dimensions.circumference = height * 2;
+        this._dimensions.width = 1;
+      }
+    }
+    this._dimensions.center = {
+      x: (this._dimensions.width - 1) / 2,
+      y: (this._dimensions.height - 1) / 2
+    };
+  };
+
   return Pane;
 
-})(Point);
+})(VisualEntity);
 
 Particle = (function(superClass) {
   extend(Particle, superClass);
@@ -836,49 +944,34 @@ Particle = (function(superClass) {
       y = 0;
     }
     Particle.__super__.constructor.call(this, x, y, this._layer);
-    this._color = new Color('#fff');
-    this._opacity = 1;
     this._size = {
       width: 1,
       height: 1
     };
-    this._isVisible = true;
     this._reference = WINDOW;
+    this._init();
   }
-
-  Particle.prototype._setReference = function(reference, particleID) {
-    return Particle.__super__._setReference.call(this, reference, particleID);
-  };
-
-  Particle.prototype.isVisible = function() {
-    return this._isVisible;
-  };
 
   Particle.prototype._draw = function() {
     var height, left, top, width;
-    if (this.isVisible()) {
+    if (this.isVisible() && this._color) {
       left = snap(this._position.x * PX);
       top = snap(this._position.y * PX);
       width = snap(this._size.width * PX);
       height = snap(this._size.height * PX);
-      CONTEXT.fillStyle = this._color;
+      CONTEXT.fillStyle = this._color.get(this.opacity);
       CONTEXT.fillRect(left, top, width, height);
     }
   };
 
-  Particle.prototype.show = function() {
-    this._isVisible = true;
-    return this;
-  };
-
-  Particle.prototype.hide = function() {
-    this._isVisible = false;
-    return this;
+  Particle.prototype._setReference = function(reference, id) {
+    Particle.__super__._setReference.call(this, reference, id);
+    return this.setColor(reference.getColor());
   };
 
   return Particle;
 
-})(Point);
+})(VisualEntity);
 
 Timer = (function(superClass) {
   extend(Timer, superClass);
@@ -980,7 +1073,7 @@ Line = (function(superClass) {
     return this;
   };
 
-  Line.prototype.calculateDimensions = function() {
+  Line.prototype._calculateDimensions = function() {
     var x, y;
     if ((this._from != null) && (this._to != null)) {
       this.diffX = this._to.getX() - this._from.getX();
@@ -997,7 +1090,7 @@ Line = (function(superClass) {
   Line.prototype._update = function() {
     var i, increment, j, k, l, m, n, particle, ref, ref1, ref2, ref3, ref4, ref5, ref6, results, x, y;
     i = 0;
-    this.calculateDimensions();
+    this._calculateDimensions();
     if (Math.abs(this.diffX) >= Math.abs(this.diffY)) {
       y = this._from.getY();
       increment = this.diffY / Math.abs(this.diffX);

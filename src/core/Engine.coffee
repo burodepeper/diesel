@@ -34,6 +34,8 @@ Engine =
 
       # WINDOW is on level 1, otherwise draw() won't be executed
       window.WINDOW = new Pane(1)
+      # WINDOW.setColor(new Color('#fff'))
+      # WINDOW.color = new Color('#fff')
 
       @trigger('resize')
       @_run()

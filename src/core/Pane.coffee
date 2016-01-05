@@ -1,17 +1,23 @@
-class Pane extends Point
+class Pane extends VisualEntity
 
   constructor: (@_layer = 1, x = 0, y = 0) ->
     super(x, y, @_layer)
 
     @_position = null
-    @_size =
+    @_dimensions =
       width: 0
       height: 0
       surface: 0
       circumference: 0
+      center:
+        x: 0
+        y: 0
 
-    # @_color = new Color()
     @_reference = WINDOW
+    # if @_reference
+    #   @_color = @_reference.getColor()
+    # else
+    #   @_color = new Color('#fff')
 
     @_children = []
     @_particles = []
@@ -24,32 +30,15 @@ class Pane extends Point
       width: null
       height: null
 
-    @_isVisible = true
-    # @_hasCSS = false
-    # @hasBoundingBox = false
-    # @boundingBox = null
-    # @hasChanged = false
-
-    # @setPosition(x, y)
+    @_init()
 
   # ----- Setters -----
 
   # TODO Check validaty of width and height
   setSize: (width, height) ->
-    @_size.width = width
-    @_size.height = height
-    if (width and height)
-      @_size.surface = width * height
-      @_size.circumference = (2 * width) + (2 * height)
-    else
-      if width
-        @_size.surface = width
-        @_size.circumference = width * 2
-        @_size.height = 0
-      else
-        @_size.surface = height
-        @_size.circumference = height * 2
-        @_size.width = 0
+    @_dimensions.width = width
+    @_dimensions.height = height
+    @_updateDimensions()
     return
 
   setCSS: (properties) ->
@@ -67,55 +56,19 @@ class Pane extends Point
       @css[key] = value
     return
 
-  # setOpacity: (opacity = 1) ->
-  #   if @color
-  #     opacity = parseFloat(opacity)
-  #     if opacity is NaN then opacity = 1
-  #     if opacity < 0 then opacity = 0
-  #     if opacity > 1 then opacity = 1
-  #     @color.setOpacity(opacity)
-  #     @updateParticles('setColor', @color)
-  #   return
+  # ----- Getters -----
 
-  # setReference: (@reference, @_childID) ->
+  getWidth: -> return @_dimensions.width
 
-  # setColor: (color, opacity = null) ->
-  #   if typeof color is 'object'
-  #     @color = color
-  #   else
-  #     @color.set(color)
-  #   if opacity? then @color.setOpacity(opacity)
-  #   @color.setReference(this)
-  #   @updateParticles('setColor', @color)
+  getHeight: -> return @_dimensions.height
 
-  # Helpers -------------------------------------------------------------------
+  getCenter: -> return @_dimensions.center
 
-  getWidth: ->
-    return @_size.width
+  getSurface: -> return @_dimensions.surface
 
-  getHeight: ->
-    return @_size.height
+  getCircumference: -> return @_dimensions.circumference
 
-  # getX: ->
-  #   if @reference
-  #     return @reference.getX() + @position.relative.x
-  #   else
-  #     return @position.relative.x
-  #
-  # getY: ->
-  #   if @reference
-  #     return @reference.getY() + @position.relative.y
-  #   else
-  #     return @position.relative.y
-
-  # getCenter: ->
-  #   @center =
-  #     x: (@size.width - 1) / 2
-  #     y: (@size.height - 1) / 2
-  #   return @center
-
-  # getColor: ->
-  #   return @color
+  getColor: -> return @_color
 
   # isWithinBounds: (x = @position.relative.x, y = @position.relative.y, width = @getWidth(), height = @getHeight()) ->
   #   if @reference
@@ -165,13 +118,10 @@ class Pane extends Point
 
   # ----- Children -----
 
-  # TODO
-  # Check if {child} is a valid Entity
+  # TODO Check if {child} is a valid Entity
   addChild: (child) ->
     @children.push(child)
     child._setReference(this, (@children.length + @particles.length - 1))
-    # child.isVisible = @isVisible
-    # child.isVisible = true
     return
 
   # updateChildren: (method, value) ->
@@ -192,8 +142,6 @@ class Pane extends Point
   addParticle: (particle) ->
     @_particles.push(particle)
     particle._setReference(this, (@_particles.length + @_children.length - 1))
-    # particle.isVisible = @isVisible
-    particle.color = @color
     return
 
   updateParticles: (method, value) ->
@@ -209,24 +157,24 @@ class Pane extends Point
       @addParticle(particle)
       return particle
 
-  # ----- Debug -----
+  # ----- Private methods -----
 
-  # enableBoundingBox: (color = '#fff') ->
-  #   @hasBoundingBox = true
-  #   @boundingBox = new BoundingBox()
-  #   @boundingBox.setColor(color)
-  #   @addChild(@boundingBox)
-
-  # NOTE untested
-  # disableBoundingBox: ->
-  #   @hasBoundingBox = false
-  #   if @boundingBox
-  #     @boundingBox.remove()
-  #     @boundingBox = false
-
-  # remove: ->
-  #   for particle in @particles
-  #     particle.remove()
-  #   for child in @children
-  #     child.remove()
-  #   super()
+  _updateDimensions: ->
+    width = @_dimensions.width
+    height = @_dimensions.height
+    if (width and height)
+      @_dimensions.surface = width * height
+      @_dimensions.circumference = (2 * width) + (2 * height)
+    else
+      if width
+        @_dimensions.surface = width
+        @_dimensions.circumference = width * 2
+        @_dimensions.height = 1
+      else
+        @_dimensions.surface = height
+        @_dimensions.circumference = height * 2
+        @_dimensions.width = 1
+    @_dimensions.center =
+      x: (@_dimensions.width - 1) / 2
+      y: (@_dimensions.height - 1) / 2
+    return

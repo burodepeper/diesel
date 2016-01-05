@@ -28,15 +28,14 @@ module.exports = function(grunt) {
 
             'src/core/Engine.coffee',
             'src/core/Entity.coffee',
-            // 'src/core/Controller.coffee',
             'src/core/Color.coffee',
             'src/core/Point.coffee',
+            'src/core/VisualEntity.coffee',
             'src/core/Pane.coffee',
             'src/core/Particle.coffee',
             'src/core/Timer.coffee',
             // 'src/core/Storage.coffee',
 
-            // 'src/extended/BoundingBox.coffee',
             // 'src/extended/Circle.coffee',
             // 'src/extended/Font.coffee',
             'src/extended/Line.coffee',

@@ -47,7 +47,7 @@ class Line extends Pane
 
     return this
 
-  calculateDimensions: ->
+  _calculateDimensions: ->
     if @_from? and @_to?
       @diffX = @_to.getX() - @_from.getX()
       @diffY = @_to.getY() - @_from.getY()
@@ -64,7 +64,7 @@ class Line extends Pane
   _update: ->
 
     i = 0
-    @calculateDimensions()
+    @_calculateDimensions()
 
     if Math.abs(@diffX) >= Math.abs(@diffY)
       y = @_from.getY()

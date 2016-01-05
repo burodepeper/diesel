@@ -1,60 +1,21 @@
-class Particle extends Point
+class Particle extends VisualEntity
 
   constructor: (@_layer = 1, x = 0, y = 0) ->
     super(x, y, @_layer)
 
-    # @_color = null
-    @_color = new Color('#fff')
-    @_opacity = 1
     @_size =
       width: 1
       height: 1
-    @_isVisible = true
     @_reference = WINDOW
-
-    # @setPosition(x, y)
+    @_init()
 
   # setSize: (width, height) ->
   #   @size = {width, height}
   #   @hasChanged = true
 
-  # setOpacity: (opacity) ->
-  #   if @color? then @color.setOpacity(opacity)
-  #   @hasChanged = true
-  #   return
 
-  # setColor: (color, opacity = null) ->
-  #   if typeof color is 'object'
-  #     @color = color
-  #   else
-  #     @color.set(color)
-  #   if opacity? then @setOpacity(opacity)
-  #   return
 
-  _setReference: (reference, particleID) ->
-    super(reference, particleID)
-    # @color = @reference.getColor()
-
-  isVisible: ->
-    return @_isVisible
-
-  _draw: ->
-    if @isVisible()
-      left = snap(@_position.x * PX)
-      top = snap(@_position.y * PX)
-      width = snap(@_size.width * PX)
-      height = snap(@_size.height * PX)
-      CONTEXT.fillStyle = @_color
-      CONTEXT.fillRect(left, top, width, height)
-    return
-
-  show: ->
-    @_isVisible = true
-    return this
-
-  hide: ->
-    @_isVisible = false
-    return this
+  # TODO move within-bounds methods to {Point} ?
 
   # isWithinBounds: ->
   #   return (@isWithinHorizontalBounds() and @isWithinVerticalBounds())
@@ -68,3 +29,19 @@ class Particle extends Point
   #   aboveLower = y >= 0
   #   belowUpper = y <= (@reference.getHeight() - 1)
   #   return (aboveLower and belowUpper)
+
+  # ----- Private methods -----
+
+  _draw: ->
+    if @isVisible() and @_color
+      left = snap(@_position.x * PX)
+      top = snap(@_position.y * PX)
+      width = snap(@_size.width * PX)
+      height = snap(@_size.height * PX)
+      CONTEXT.fillStyle = @_color.get(@opacity)
+      CONTEXT.fillRect(left, top, width, height)
+    return
+
+  _setReference: (reference, id) ->
+    super(reference, id)
+    @setColor(reference.getColor())
