@@ -11,6 +11,12 @@ App =
 
     if Engine.init(settings)
 
-      @controller = new Controller()
+      @lightsabers = []
+      for i in [1 .. 100]
+        lightsaber = new Lightsaber()
+        lightsaber.setPosition(0, 0)
+        lightsaber.setSize(100, 100)
+        lightsaber.init()
+        @lightsabers.push(lightsaber)
 
     return

@@ -1,4 +1,4 @@
-var App, Controller, LAYER_BACKGROUND, LAYER_FOREGROUND, layer,
+var App, LAYER_BACKGROUND, LAYER_FOREGROUND, Lightsaber, layer,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -10,7 +10,7 @@ LAYER_FOREGROUND = layer++;
 
 App = {
   init: function() {
-    var settings;
+    var i, j, lightsaber, settings;
     settings = {
       viewport: {
         width: 100,
@@ -18,27 +18,40 @@ App = {
       }
     };
     if (Engine.init(settings)) {
-      this.controller = new Controller();
+      this.lightsabers = [];
+      for (i = j = 1; j <= 100; i = ++j) {
+        lightsaber = new Lightsaber();
+        lightsaber.setPosition(0, 0);
+        lightsaber.setSize(100, 100);
+        lightsaber.init();
+        this.lightsabers.push(lightsaber);
+      }
     }
   }
 };
 
-Controller = (function(superClass) {
-  extend(Controller, superClass);
+Lightsaber = (function(superClass) {
+  extend(Lightsaber, superClass);
 
-  function Controller() {
-    Controller.__super__.constructor.call(this);
+  function Lightsaber() {
+    Lightsaber.__super__.constructor.call(this);
     this.color = new Color('#fff');
-    this.a = new Point(24, 24);
-    this.b = new Point(74, 74);
+    this.timer = null;
+    this.count = 0;
+    this.speed = getRandomInt(500, 1500) * 2;
+  }
+
+  Lightsaber.prototype.init = function() {
+    this.width = this.getWidth() - 1;
+    this.height = this.getHeight() - 1;
+    this.a = new Point(getRandomInt(0, this.width), getRandomInt(0, this.height));
+    this.b = new Point(getRandomInt(0, this.width), getRandomInt(0, this.height));
     this.line = new Line(LAYER_FOREGROUND);
     this.line.setColor(this.color);
     this.line.from(this.a).to(this.b);
-    this.timer = null;
-    this.count = 0;
-  }
+  };
 
-  Controller.prototype.pickRandomColor = function() {
+  Lightsaber.prototype.pickRandomColor = function() {
     var color, i, j, values;
     values = [0, 3, 6, 9, 'c', 'f'];
     color = '#';
@@ -48,23 +61,23 @@ Controller = (function(superClass) {
     this.color.change(color);
   };
 
-  Controller.prototype.pickRandomA = function() {
+  Lightsaber.prototype.pickRandomA = function() {
     var x, y;
-    x = getRandomInt(0, 99);
-    y = getRandomInt(0, 99);
-    this.a.moveTo(x, y, 2000);
+    x = getRandomInt(0, this.width);
+    y = getRandomInt(0, this.height);
+    this.a.moveTo(x, y, this.speed);
   };
 
-  Controller.prototype.pickRandomB = function() {
+  Lightsaber.prototype.pickRandomB = function() {
     var x, y;
-    x = getRandomInt(0, 99);
-    y = getRandomInt(0, 99);
-    this.b.moveTo(x, y, 2000);
+    x = getRandomInt(0, this.width);
+    y = getRandomInt(0, this.height);
+    this.b.moveTo(x, y, this.speed);
   };
 
-  Controller.prototype._update = function() {
+  Lightsaber.prototype._update = function() {
     if (!this.timer) {
-      this.timer = new Timer(1000);
+      this.timer = new Timer(this.speed / 2);
     } else {
       if (this.timer.isComplete) {
         this.pickRandomColor();
@@ -79,6 +92,6 @@ Controller = (function(superClass) {
     }
   };
 
-  return Controller;
+  return Lightsaber;
 
-})(Entity);
+})(Pane);
