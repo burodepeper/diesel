@@ -19,10 +19,10 @@ App = {
     };
     if (Engine.init(settings)) {
       this.lightsabers = [];
-      for (i = j = 1; j <= 100; i = ++j) {
+      for (i = j = 1; j <= 5; i = ++j) {
         lightsaber = new Lightsaber();
         lightsaber.setPosition(0, 0);
-        lightsaber.setSize(100, 100);
+        lightsaber.setSize(WINDOW.getWidth(), WINDOW.getHeight());
         lightsaber.init();
         this.lightsabers.push(lightsaber);
       }
@@ -38,7 +38,7 @@ Lightsaber = (function(superClass) {
     this.color = new Color('#fff');
     this.timer = null;
     this.count = 0;
-    this.speed = getRandomInt(500, 1500) * 2;
+    this.speed = getRandomInt(1000, 1500) * 2;
   }
 
   Lightsaber.prototype.init = function() {
@@ -49,6 +49,11 @@ Lightsaber = (function(superClass) {
     this.line = new Line(LAYER_FOREGROUND);
     this.line.setColor(this.color);
     this.line.from(this.a).to(this.b);
+    this.center = new Point(0, 0);
+    this.circle = new Circle(LAYER_FOREGROUND);
+    this.circle.setCenter(this.center);
+    this.circle.setRadius(5);
+    this.circle.outline(this.color);
   };
 
   Lightsaber.prototype.pickRandomColor = function() {
@@ -76,9 +81,14 @@ Lightsaber = (function(superClass) {
   };
 
   Lightsaber.prototype._update = function() {
+    var x, y;
     if (!this.timer) {
       this.timer = new Timer(this.speed / 2);
     } else {
+      x = Math.round(Math.abs((this.a.getX() + this.b.getX()) / 2));
+      y = Math.round(Math.abs((this.a.getY() + this.b.getY()) / 2));
+      this.center.setPosition(x, y);
+      this.circle.setRadius((this.line.getLength() / 2) + 1);
       if (this.timer.isComplete) {
         this.pickRandomColor();
         if (this.count % 2) {

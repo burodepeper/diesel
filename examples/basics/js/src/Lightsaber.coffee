@@ -6,16 +6,7 @@ class Lightsaber extends Pane
     @color = new Color('#fff')
     @timer = null
     @count = 0
-    @speed = getRandomInt(500, 1500) * 2
-
-    # TODO
-    # Move the code for the weird lightsaber to its own class, and have for instances of it moving around, each confined to its own {Pane}
-
-    # TODO
-    # Create two {Circles}, centered on {@left} and {@right}; they should update their position automatically
-
-    # TODO
-    # Create a {Circle}, centered on the center of {@line}
+    @speed = getRandomInt(1000, 1500) * 2
 
     # TODO
     # Add moving text labels with the current coordinates
@@ -30,6 +21,14 @@ class Lightsaber extends Pane
     @line = new Line(LAYER_FOREGROUND)
     @line.setColor(@color)
     @line.from(@a).to(@b)
+
+    @center = new Point(0,0)
+
+    @circle = new Circle(LAYER_FOREGROUND)
+    @circle.setCenter(@center)
+    @circle.setRadius(5)
+    @circle.outline(@color)
+
     return
 
   pickRandomColor: ->
@@ -56,6 +55,13 @@ class Lightsaber extends Pane
     unless @timer
       @timer = new Timer(@speed / 2)
     else
+
+      # Update the center and radius of the {circle}
+      x = Math.round(Math.abs((@a.getX() + @b.getX()) / 2))
+      y = Math.round(Math.abs((@a.getY() + @b.getY()) / 2))
+      @center.setPosition(x, y)
+      @circle.setRadius((@line.getLength() / 2) + 1)
+
       if @timer.isComplete
         @pickRandomColor()
         if @count % 2
