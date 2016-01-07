@@ -3,7 +3,6 @@ class Pane extends VisualEntity
   constructor: (@_layer = 1, x = 0, y = 0) ->
     super(x, y, @_layer)
 
-    @_position = null
     @_dimensions =
       width: 0
       height: 0

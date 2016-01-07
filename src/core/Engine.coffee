@@ -8,8 +8,13 @@ DEBUG = false
 Engine =
 
   _entities: []
+  _numberOfEntities: 0
+  _numberOfEntitiesAdded: 0
+  _numberOfEntitiesRemoved: 0
+
   _context: null
   _canvas: null
+
   _size:
     width: null
     height: null
@@ -50,6 +55,7 @@ Engine =
     unless @_entities[layer] then @_entities[layer] = []
     entity._setId(@_entities[layer].length)
     @_entities[layer].push(entity)
+    @_numberOfEntitiesAdded++
     return
 
   # Removes an {Entity} from being processed by {Engine}.
@@ -57,6 +63,7 @@ Engine =
     if @_entities[entity._layer]
       if @_entities[entity._layer][entity._id]
         delete @_entities[entity._layer][entity._id]
+        @_numberOfEntitiesRemoved++
       else
         console.info "Engine.remove(): entity[#{entity._layer}][#{entity._id}] doesn't exist"
     else
@@ -74,8 +81,14 @@ Engine =
     window.NOW = new Date().getTime()
     Engine._update()
     Engine._draw()
+    Engine._check()
     window.requestAnimationFrame(Engine._run)
     return
+
+  _check: ->
+    # Remove (undefined) entities whenever more than a thousand have accumulated
+    if @_numberOfEntitiesRemoved >= 1000
+      @cleanUp()
 
   _update: ->
     for entities in @_entities
@@ -177,6 +190,7 @@ Engine =
     return instances
 
   cleanUp: ->
+    numberOfEntities = 0
     for layer, i in @_entities
       if layer and layer.length
         cleanedEntities = []
@@ -184,7 +198,10 @@ Engine =
           if entity
             entity._setId(cleanedEntities.length)
             cleanedEntities.push(entity)
+            numberOfEntities++
         @_entities[i] = cleanedEntities
+    @_numberOfEntitiesRemoved = 0
+    @_numberOfEntities = numberOfEntities
     return
 
   diagnostics: (verbose = false) ->

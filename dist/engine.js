@@ -132,6 +132,9 @@ DEBUG = false;
 
 Engine = {
   _entities: [],
+  _numberOfEntities: 0,
+  _numberOfEntitiesAdded: 0,
+  _numberOfEntitiesRemoved: 0,
   _context: null,
   _canvas: null,
   _size: {
@@ -170,11 +173,13 @@ Engine = {
     }
     entity._setId(this._entities[layer].length);
     this._entities[layer].push(entity);
+    this._numberOfEntitiesAdded++;
   },
   remove: function(entity) {
     if (this._entities[entity._layer]) {
       if (this._entities[entity._layer][entity._id]) {
         delete this._entities[entity._layer][entity._id];
+        this._numberOfEntitiesRemoved++;
       } else {
         console.info("Engine.remove(): entity[" + entity._layer + "][" + entity._id + "] doesn't exist");
       }
@@ -192,7 +197,13 @@ Engine = {
     window.NOW = new Date().getTime();
     Engine._update();
     Engine._draw();
+    Engine._check();
     window.requestAnimationFrame(Engine._run);
+  },
+  _check: function() {
+    if (this._numberOfEntitiesRemoved >= 1000) {
+      return this.cleanUp();
+    }
   },
   _update: function() {
     var entities, entity, k, l, len, len1, ref;
@@ -321,7 +332,8 @@ Engine = {
     return instances;
   },
   cleanUp: function() {
-    var cleanedEntities, entity, i, j, k, l, layer, len, len1, ref;
+    var cleanedEntities, entity, i, j, k, l, layer, len, len1, numberOfEntities, ref;
+    numberOfEntities = 0;
     ref = this._entities;
     for (i = k = 0, len = ref.length; k < len; i = ++k) {
       layer = ref[i];
@@ -332,11 +344,14 @@ Engine = {
           if (entity) {
             entity._setId(cleanedEntities.length);
             cleanedEntities.push(entity);
+            numberOfEntities++;
           }
         }
         this._entities[i] = cleanedEntities;
       }
     }
+    this._numberOfEntitiesRemoved = 0;
+    this._numberOfEntities = numberOfEntities;
   },
   diagnostics: function(verbose) {
     var efficiency, entity, i, j, k, l, layer, len, len1, numberOfEntitiesOnLayer, ref, totalNumberOfEntities, totalNumberOfPositions;
@@ -832,7 +847,6 @@ Pane = (function(superClass) {
       y = 0;
     }
     Pane.__super__.constructor.call(this, x, y, this._layer);
-    this._position = null;
     this._dimensions = {
       width: 0,
       height: 0,
