@@ -47,6 +47,9 @@ class Line extends Pane
 
     return this
 
+  getLength: ->
+    return @length
+
   _calculateDimensions: ->
     if @_from? and @_to?
       @diffX = @_to.getX() - @_from.getX()

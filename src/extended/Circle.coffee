@@ -3,9 +3,10 @@ class Circle extends Pane
   constructor: (@_layer = 1) ->
     super(@_layer)
 
-    @diameter = null
-    @radius = null
-    @center = new Point(0, 0)
+    @_diameter = null
+    @_radius = null
+    @_center = new Point(0, 0)
+
     @type = null
     @hasOutline = false
 
@@ -24,60 +25,90 @@ class Circle extends Pane
     @hasOutline = true
     return
 
-  setSize: (@diameter) ->
-    super(@diameter, @diameter)
-    @updateDimensions()
+  # setSize: (@diameter) ->
+  #   super(@diameter, @diameter)
+  #   @updateDimensions()
+  #   return
+
+  setSize: ->
+    if @_radius
+      @_diameter = (@_radius * 2) - 1
+      @_dimensions.width = @_diameter
+      @_dimensions.height = @_diameter
+      @_updateDimensions()
+      return
+
+  _updateDimensions: ->
+    @_dimensions.circumference = Math.PI * @diameter
+    @_dimensions.surface = Math.PI * (@_radius * @_radius)
     return
 
-  updateDimensions: ->
-    if @diameter
-      @radius = @diameter / 2
-      @center.x = (@getWidth() - 1) / 2
-      @center.y = (@getHeight() - 1) / 2
-      @hasChanged = true
+  setPosition: ->
+    if @_radius
+      x = @_center.getX() - @_radius
+      y = @_center.getY() - @_radius
+      @_updateDimensions()
+      super(x, y)
 
-  getMinY: ->
+  setRadius: (@_radius) ->
+    @_diameter = (@_radius * 2) - 1
+    @setPosition()
+
+  # TODO Verify that the argument is a {Point}
+  setCenter: (@_center) ->
+
+  # updateDimensions: ->
+  #   if @diameter
+  #     @radius = @diameter / 2
+  #     @center.x = (@getWidth() - 1) / 2
+  #     @center.y = (@getHeight() - 1) / 2
+  #     @hasChanged = true
+
+  _getMinY: ->
     minY = []
-    for x in [0 .. @diameter - 1]
-      minY.push(@diameter)
+    for x in [0 .. @_diameter - 1]
+      minY.push(@_radius)
 
     # NOTE
     # The number of samples needed to accurately calculate a minY for every x is relative to @diameter
-    samples = Math.ceil(@diameter * Math.PI)
+    samples = Math.ceil(Math.PI * @_radius)
     increment = 180 / samples
     angle = 0
-    for i in [0 .. samples - 1]
+    for i in [0 .. samples]
       radians = angle * (Math.PI / 180)
-      x = Math.ceil(@center.x + (Math.cos(radians) * @radius))
-      y = Math.ceil(@center.y - (Math.sin(radians) * @radius))
-      if (y < minY[x]) then minY[x] = y
+      x = Math.ceil(@_radius - 0.5 + (Math.cos(radians) * (@_radius - 1)))
+      y = Math.ceil(@_radius - 0.5 - (Math.sin(radians) * (@_radius - 1)))
+      if (y < minY[x - 1]) then minY[x - 1] = y
       angle += increment
 
     return minY
 
-  update: ->
+  _update: ->
 
-    if @hasChanged
-      if @center and @radius
+    @setPosition()
+
+    # if @hasChanged
+    if true
+      if @_center and @_radius
 
         i = 0
 
         if @type is 'fill'
-          for x in [0 .. @diameter]
-            for y in [0 .. @diameter]
-              diffX = @center.x - x
-              diffY = @center.y - y
+          for x in [0 .. @_diameter]
+            for y in [0 .. @_diameter]
+              diffX = x - @_radius
+              diffY = y - @_radius
               distanceFromCenter = Math.sqrt((diffX * diffX) + (diffY * diffY))
-              if distanceFromCenter < @radius
+              if distanceFromCenter < @_radius
                 particle = @getParticle(i)
                 particle.setPosition(x, y)
                 particle.show()
                 i++
 
         else if @type is 'stretch'
-          minY = @getMinY()
+          minY = @_getMinY()
           for y, x in minY
-            height = @diameter - (y * 2)
+            height = @_diameter - (y * 2)
             particle = @getParticle(i)
             particle.setPosition(x, y)
             particle.setSize(1, height)
@@ -85,32 +116,38 @@ class Circle extends Pane
             i++
 
         if @hasOutline
-          minY = @getMinY()
-          fromY = Math.round(@radius - 1)
+          minY = @_getMinY()
+          fromY = @_radius
           for toY, x in minY
 
-            # Use only half of minY (top left quadrant of the Circle),
-            # fill in the gaps, and horizontally duplicate each particle,
-            # then vertically duplicate each particle to create the lower half of the ouline
-            if x < @radius
+            # Only use half of the minY coordinates, essentially drawing the upper-left corner. The other points will be mirrored.
+            if x < @_radius
 
               # In horizontal areas (where the y coordinate doesn't change), fromY can never be smaller than toY
               if fromY < toY then fromY = toY
+
+              # The last x-coordinate always has to go down to {@_radius}
+              if x is @_diameter - 1 then toY = @_radius
+
               for y in [fromY .. toY]
 
                 # Mirrored x and y coordinates
-                _x = (@diameter - 1) - x
-                _y = (@diameter - 1) - y
+                _x = @_diameter - x - 1
+                _y = @_diameter - y + 1
 
                 positions = []
                 positions.push({ x:x, y:y })
 
-                # If any of the mirrored coordinates is larger than or equal to @radius its mirror should not be drawn because it will overlap an existing particle
-                if _x >= @radius
+                # Upper-right corner
+                if _x >= @_radius
                   positions.push({ x:_x, y:y })
-                if _y >= @radius
+
+                # Bottom-left corner
+                if _y > @_radius
                   positions.push({ x:x, y:_y })
-                if _x >= @radius and _y >= @radius
+
+                # Bottom-right corner
+                if _x >= @_radius and _y > @_radius
                   positions.push({ x:_x, y:_y })
 
                 for position in positions
@@ -122,6 +159,9 @@ class Circle extends Pane
 
               # The fromY coordinate for the next {Particle} is set to be 1 lower than the current toY. This prevents any overlap, and thus insures that a 1px outline is drawn.
               fromY = toY - 1
+
+          # Log the amount of particles drawn
+          # console.log i
 
 
         # TODO

@@ -36,7 +36,7 @@ module.exports = function(grunt) {
             'src/core/Timer.coffee',
             // 'src/core/Storage.coffee',
 
-            // 'src/extended/Circle.coffee',
+            'src/extended/Circle.coffee',
             // 'src/extended/Font.coffee',
             'src/extended/Line.coffee',
             // 'src/extended/Path.coffee',

@@ -1,4 +1,4 @@
-var CONTEXT, Color, DEBUG, Engine, Entity, FONT_9PX, Line, NOW, PX, Pane, Particle, Point, Timer, Tween, VisualEntity, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
+var CONTEXT, Circle, Color, DEBUG, Engine, Entity, FONT_9PX, Line, NOW, PX, Pane, Particle, Point, Timer, Tween, VisualEntity, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -1111,6 +1111,197 @@ Timer = (function(superClass) {
 
 })(Entity);
 
+Circle = (function(superClass) {
+  extend(Circle, superClass);
+
+  function Circle(_layer) {
+    this._layer = _layer != null ? _layer : 1;
+    Circle.__super__.constructor.call(this, this._layer);
+    this._diameter = null;
+    this._radius = null;
+    this._center = new Point(0, 0);
+    this.type = null;
+    this.hasOutline = false;
+  }
+
+  Circle.prototype.fill = function(color, opacity) {
+    if (color == null) {
+      color = null;
+    }
+    if (opacity == null) {
+      opacity = null;
+    }
+    this.type = 'fill';
+    if (color != null) {
+      this.setColor(color, opacity);
+    }
+  };
+
+  Circle.prototype.stretch = function(color, opacity) {
+    if (color == null) {
+      color = null;
+    }
+    if (opacity == null) {
+      opacity = null;
+    }
+    this.type = 'stretch';
+    if (color != null) {
+      this.setColor(color, opacity);
+    }
+  };
+
+  Circle.prototype.outline = function(color) {
+    this.outlineColor = color;
+    this.hasOutline = true;
+  };
+
+  Circle.prototype.setSize = function() {
+    if (this._radius) {
+      this._diameter = (this._radius * 2) - 1;
+      this._dimensions.width = this._diameter;
+      this._dimensions.height = this._diameter;
+      this._updateDimensions();
+    }
+  };
+
+  Circle.prototype._updateDimensions = function() {
+    this._dimensions.circumference = Math.PI * this.diameter;
+    this._dimensions.surface = Math.PI * (this._radius * this._radius);
+  };
+
+  Circle.prototype.setPosition = function() {
+    var x, y;
+    if (this._radius) {
+      x = this._center.getX() - this._radius;
+      y = this._center.getY() - this._radius;
+      this._updateDimensions();
+      return Circle.__super__.setPosition.call(this, x, y);
+    }
+  };
+
+  Circle.prototype.setRadius = function(_radius) {
+    this._radius = _radius;
+    this._diameter = (this._radius * 2) - 1;
+    return this.setPosition();
+  };
+
+  Circle.prototype.setCenter = function(_center) {
+    this._center = _center;
+  };
+
+  Circle.prototype._getMinY = function() {
+    var angle, i, increment, k, l, minY, radians, ref, ref1, samples, x, y;
+    minY = [];
+    for (x = k = 0, ref = this._diameter - 1; 0 <= ref ? k <= ref : k >= ref; x = 0 <= ref ? ++k : --k) {
+      minY.push(this._radius);
+    }
+    samples = Math.ceil(Math.PI * this._radius);
+    increment = 180 / samples;
+    angle = 0;
+    for (i = l = 0, ref1 = samples; 0 <= ref1 ? l <= ref1 : l >= ref1; i = 0 <= ref1 ? ++l : --l) {
+      radians = angle * (Math.PI / 180);
+      x = Math.ceil(this._radius - 0.5 + (Math.cos(radians) * (this._radius - 1)));
+      y = Math.ceil(this._radius - 0.5 - (Math.sin(radians) * (this._radius - 1)));
+      if (y < minY[x - 1]) {
+        minY[x - 1] = y;
+      }
+      angle += increment;
+    }
+    return minY;
+  };
+
+  Circle.prototype._update = function() {
+    var _x, _y, diffX, diffY, distanceFromCenter, fromY, height, i, k, l, len, len1, len2, m, minY, n, o, p, particle, position, positions, ref, ref1, ref2, ref3, toY, x, y;
+    this.setPosition();
+    if (true) {
+      if (this._center && this._radius) {
+        i = 0;
+        if (this.type === 'fill') {
+          for (x = k = 0, ref = this._diameter; 0 <= ref ? k <= ref : k >= ref; x = 0 <= ref ? ++k : --k) {
+            for (y = l = 0, ref1 = this._diameter; 0 <= ref1 ? l <= ref1 : l >= ref1; y = 0 <= ref1 ? ++l : --l) {
+              diffX = x - this._radius;
+              diffY = y - this._radius;
+              distanceFromCenter = Math.sqrt((diffX * diffX) + (diffY * diffY));
+              if (distanceFromCenter < this._radius) {
+                particle = this.getParticle(i);
+                particle.setPosition(x, y);
+                particle.show();
+                i++;
+              }
+            }
+          }
+        } else if (this.type === 'stretch') {
+          minY = this._getMinY();
+          for (x = m = 0, len = minY.length; m < len; x = ++m) {
+            y = minY[x];
+            height = this._diameter - (y * 2);
+            particle = this.getParticle(i);
+            particle.setPosition(x, y);
+            particle.setSize(1, height);
+            particle.show();
+            i++;
+          }
+        }
+        if (this.hasOutline) {
+          minY = this._getMinY();
+          fromY = this._radius;
+          for (x = n = 0, len1 = minY.length; n < len1; x = ++n) {
+            toY = minY[x];
+            if (x < this._radius) {
+              if (fromY < toY) {
+                fromY = toY;
+              }
+              if (x === this._diameter - 1) {
+                toY = this._radius;
+              }
+              for (y = o = ref2 = fromY, ref3 = toY; ref2 <= ref3 ? o <= ref3 : o >= ref3; y = ref2 <= ref3 ? ++o : --o) {
+                _x = this._diameter - x - 1;
+                _y = this._diameter - y + 1;
+                positions = [];
+                positions.push({
+                  x: x,
+                  y: y
+                });
+                if (_x >= this._radius) {
+                  positions.push({
+                    x: _x,
+                    y: y
+                  });
+                }
+                if (_y > this._radius) {
+                  positions.push({
+                    x: x,
+                    y: _y
+                  });
+                }
+                if (_x >= this._radius && _y > this._radius) {
+                  positions.push({
+                    x: _x,
+                    y: _y
+                  });
+                }
+                for (p = 0, len2 = positions.length; p < len2; p++) {
+                  position = positions[p];
+                  particle = this.getParticle(i);
+                  particle.setPosition(position.x, position.y);
+                  particle.setColor(this.outlineColor);
+                  particle.show();
+                  i++;
+                }
+              }
+              fromY = toY - 1;
+            }
+          }
+        }
+        return this.hasChanged = false;
+      }
+    }
+  };
+
+  return Circle;
+
+})(Pane);
+
 Line = (function(superClass) {
   extend(Line, superClass);
 
@@ -1159,6 +1350,10 @@ Line = (function(superClass) {
       this._to.y = y;
     }
     return this;
+  };
+
+  Line.prototype.getLength = function() {
+    return this.length;
   };
 
   Line.prototype._calculateDimensions = function() {
