@@ -164,7 +164,9 @@ class Circle extends Pane
           # console.log i
 
 
-        # TODO
-        # hide particles larger than i
+        # Remove trailing particles (larger than i)
+        if (@_particles.length - 1) > i
+          for j in [i .. @_particles.length - 1]
+            @getParticle(j).hide()
 
         @hasChanged = false

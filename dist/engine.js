@@ -1211,7 +1211,7 @@ Circle = (function(superClass) {
   };
 
   Circle.prototype._update = function() {
-    var _x, _y, diffX, diffY, distanceFromCenter, fromY, height, i, k, l, len, len1, len2, m, minY, n, o, p, particle, position, positions, ref, ref1, ref2, ref3, toY, x, y;
+    var _x, _y, diffX, diffY, distanceFromCenter, fromY, height, i, j, k, l, len, len1, len2, m, minY, n, o, p, particle, position, positions, q, ref, ref1, ref2, ref3, ref4, ref5, toY, x, y;
     this.setPosition();
     if (true) {
       if (this._center && this._radius) {
@@ -1291,6 +1291,11 @@ Circle = (function(superClass) {
               }
               fromY = toY - 1;
             }
+          }
+        }
+        if ((this._particles.length - 1) > i) {
+          for (j = q = ref4 = i, ref5 = this._particles.length - 1; ref4 <= ref5 ? q <= ref5 : q >= ref5; j = ref4 <= ref5 ? ++q : --q) {
+            this.getParticle(j).hide();
           }
         }
         return this.hasChanged = false;

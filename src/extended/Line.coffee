@@ -59,7 +59,6 @@ class Line extends Pane
       @length = Math.sqrt((@width * @width) + (@height * @height))
       x = Math.min(@_to.getX(), @_from.getY())
       y = Math.min(@_to.getX(), @_from.getY())
-      # @setAbsolutePosition(@getX() + x, @getY() + y)
       @setSize(@width, @height)
       # TODO calculate @_angle
     return
