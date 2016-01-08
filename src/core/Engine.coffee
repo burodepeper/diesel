@@ -23,6 +23,7 @@ Engine =
     viewport:
       width: null
       height: null
+      grid: false
 
   # TODO: No idea how to replicate this in CoffeeScript
   isTouchDevice: `'ontouchstart' in document.documentElement`
@@ -36,6 +37,8 @@ Engine =
         @config.viewport.width = settings.viewport.width
       if settings.viewport.height
         @config.viewport.height = settings.viewport.height
+      if settings.viewport.grid
+        @config.viewport.grid = settings.viewport.grid
 
       # WINDOW is on level 1, otherwise draw() won't be executed
       window.WINDOW = new Pane(1)
@@ -99,12 +102,35 @@ Engine =
 
   _draw: ->
     @_context.clearRect(0, 0, @_size.width * PX, @_size.height * PX)
+    if @config.viewport.grid then @_drawGrid()
+
     for entities, i in @_entities
       # entities in level 0 are not drawn
       if i and entities
         for entity in entities
           if entity then entity._draw(NOW)
     return
+
+  _drawGrid: ->
+    CONTEXT.strokeStyle = 'rgba(255, 255, 255, 0.25)'
+    CONTEXT.beginPath()
+
+    top = 0
+    bottom = @_size.height * PX
+    for x in [1 .. @_size.width - 1]
+      left = x * PX
+      CONTEXT.moveTo(left, top)
+      CONTEXT.lineTo(left, bottom)
+
+    left = 0
+    right = @_size.width * PX
+    for y in [1 .. @_size.height - 1]
+      top = y * PX
+      CONTEXT.moveTo(left, top)
+      CONTEXT.lineTo(right, top)
+
+    CONTEXT.stroke()
+    CONTEXT.closePath()
 
   _createCanvas: ->
 

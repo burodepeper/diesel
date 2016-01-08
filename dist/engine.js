@@ -144,7 +144,8 @@ Engine = {
   config: {
     viewport: {
       width: null,
-      height: null
+      height: null,
+      grid: false
     }
   },
   isTouchDevice: 'ontouchstart' in document.documentElement,
@@ -155,6 +156,9 @@ Engine = {
       }
       if (settings.viewport.height) {
         this.config.viewport.height = settings.viewport.height;
+      }
+      if (settings.viewport.grid) {
+        this.config.viewport.grid = settings.viewport.grid;
       }
       window.WINDOW = new Pane(1);
       this.trigger('resize');
@@ -223,6 +227,9 @@ Engine = {
   _draw: function() {
     var entities, entity, i, k, l, len, len1, ref;
     this._context.clearRect(0, 0, this._size.width * PX, this._size.height * PX);
+    if (this.config.viewport.grid) {
+      this._drawGrid();
+    }
     ref = this._entities;
     for (i = k = 0, len = ref.length; k < len; i = ++k) {
       entities = ref[i];
@@ -235,6 +242,27 @@ Engine = {
         }
       }
     }
+  },
+  _drawGrid: function() {
+    var bottom, k, l, left, ref, ref1, right, top, x, y;
+    CONTEXT.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    CONTEXT.beginPath();
+    top = 0;
+    bottom = this._size.height * PX;
+    for (x = k = 1, ref = this._size.width - 1; 1 <= ref ? k <= ref : k >= ref; x = 1 <= ref ? ++k : --k) {
+      left = x * PX;
+      CONTEXT.moveTo(left, top);
+      CONTEXT.lineTo(left, bottom);
+    }
+    left = 0;
+    right = this._size.width * PX;
+    for (y = l = 1, ref1 = this._size.height - 1; 1 <= ref1 ? l <= ref1 : l >= ref1; y = 1 <= ref1 ? ++l : --l) {
+      top = y * PX;
+      CONTEXT.moveTo(left, top);
+      CONTEXT.lineTo(right, top);
+    }
+    CONTEXT.stroke();
+    return CONTEXT.closePath();
   },
   _createCanvas: function() {
     this._canvas = document.createElement("canvas");
