@@ -9,9 +9,8 @@ class Particle extends VisualEntity
     @_reference = WINDOW
     @_init()
 
-  # setSize: (width, height) ->
-  #   @size = {width, height}
-  #   @hasChanged = true
+  setSize: (width, height) ->
+    @_size = {width, height}
 
 
 

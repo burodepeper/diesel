@@ -1069,6 +1069,13 @@ Particle = (function(superClass) {
     this._init();
   }
 
+  Particle.prototype.setSize = function(width, height) {
+    return this._size = {
+      width: width,
+      height: height
+    };
+  };
+
   Particle.prototype._draw = function() {
     var height, left, top, width;
     if (this.isVisible() && this._color) {
