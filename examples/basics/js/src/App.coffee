@@ -8,6 +8,7 @@ App =
       viewport:
         width: 100
         height: 100
+        # grid: true
 
     if Engine.init(settings)
 
@@ -19,10 +20,24 @@ App =
         lightsaber.init()
         @lightsabers.push(lightsaber)
 
-      # @circle = new Circle(LAYER_BACKGROUND)
-      # @circle.setCenter(new Point(5, 5))
+      # @colors =
+      #   red: new Color('#e10')
+      #   orange: new Color('#f80')
+      #   yellow: new Color('#fd0')
+      #
+      # @center = new Particle()
+      # @center.setPosition(24, 24)
+      # @center.setColor(@colors.red)
+      #
+      # @circle = new Circle(LAYER_FOREGROUND)
+      # @circle.setCenter(@center)
       # @circle.setRadius(5)
-      # @circle.outline('#fd0')
-      # @circle.fill(new Color('#e10'))
+      # # @circle.fill(@colors.yellow)
+      # @circle.stretch(@colors.yellow)
+
+      # @anotherCircle = new Circle(LAYER_BACKGROUND)
+      # @anotherCircle.setCenter(@center)
+      # @anotherCircle.setRadius(6)
+      # @anotherCircle.outline(@colors.orange)
 
     return
