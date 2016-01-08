@@ -777,6 +777,7 @@ Point = (function(superClass) {
     this._position.x = this.getX();
     this._position.y = this.getY();
     this.hasChanged = true;
+    this._positionHasChanged = true;
     return true;
   };
 
@@ -1150,6 +1151,8 @@ Circle = (function(superClass) {
     this._center = new Point(0, 0);
     this.type = null;
     this.hasOutline = false;
+    this._positionHasChanged = true;
+    this._sizeHasChanged = true;
   }
 
   Circle.prototype.fill = function(color, opacity) {
@@ -1193,24 +1196,26 @@ Circle = (function(superClass) {
   };
 
   Circle.prototype._updateDimensions = function() {
-    this._dimensions.circumference = Math.PI * this.diameter;
+    this._dimensions.circumference = Math.PI * this._diameter;
     this._dimensions.surface = Math.PI * (this._radius * this._radius);
   };
 
-  Circle.prototype.setPosition = function() {
+  Circle.prototype._updatePosition = function() {
     var x, y;
     if (this._radius) {
-      x = this._center.getX() - this._radius;
-      y = this._center.getY() - this._radius;
+      x = this._center.getX() - this._radius + 1;
+      y = this._center.getY() - this._radius + 1;
       this._updateDimensions();
-      return Circle.__super__.setPosition.call(this, x, y);
+      this._x = x;
+      this._y = y;
+      return Circle.__super__._updatePosition.call(this);
     }
   };
 
   Circle.prototype.setRadius = function(_radius) {
     this._radius = _radius;
     this._diameter = (this._radius * 2) - 1;
-    return this.setPosition();
+    return this._updatePosition();
   };
 
   Circle.prototype.setCenter = function(_center) {
@@ -1229,7 +1234,7 @@ Circle = (function(superClass) {
     for (i = l = 0, ref1 = samples; 0 <= ref1 ? l <= ref1 : l >= ref1; i = 0 <= ref1 ? ++l : --l) {
       radians = angle * (Math.PI / 180);
       x = Math.ceil(this._radius - 0.5 + (Math.cos(radians) * (this._radius - 1)));
-      y = Math.ceil(this._radius - 0.5 - (Math.sin(radians) * (this._radius - 1)));
+      y = Math.ceil(this._radius - 0.5 - (Math.sin(radians) * (this._radius - 1))) - 1;
       if (y < minY[x - 1]) {
         minY[x - 1] = y;
       }
@@ -1240,8 +1245,8 @@ Circle = (function(superClass) {
 
   Circle.prototype._update = function() {
     var _x, _y, diffX, diffY, distanceFromCenter, fromY, height, i, j, k, l, len, len1, len2, m, minY, n, o, p, particle, position, positions, q, ref, ref1, ref2, ref3, ref4, ref5, toY, x, y;
-    this.setPosition();
-    if (true) {
+    this._updatePosition();
+    if (this._sizeHasChanged || this._positionHasChanged) {
       if (this._center && this._radius) {
         i = 0;
         if (this.type === 'fill') {
@@ -1272,7 +1277,7 @@ Circle = (function(superClass) {
         }
         if (this.hasOutline) {
           minY = this._getMinY();
-          fromY = this._radius;
+          fromY = this._radius - 1;
           for (x = n = 0, len1 = minY.length; n < len1; x = ++n) {
             toY = minY[x];
             if (x < this._radius) {
@@ -1280,11 +1285,11 @@ Circle = (function(superClass) {
                 fromY = toY;
               }
               if (x === this._diameter - 1) {
-                toY = this._radius;
+                toY = this._radius - 1;
               }
               for (y = o = ref2 = fromY, ref3 = toY; ref2 <= ref3 ? o <= ref3 : o >= ref3; y = ref2 <= ref3 ? ++o : --o) {
                 _x = this._diameter - x - 1;
-                _y = this._diameter - y + 1;
+                _y = this._diameter - y - 1;
                 positions = [];
                 positions.push({
                   x: x,
@@ -1296,13 +1301,13 @@ Circle = (function(superClass) {
                     y: y
                   });
                 }
-                if (_y > this._radius) {
+                if (_y >= this._radius) {
                   positions.push({
                     x: x,
                     y: _y
                   });
                 }
-                if (_x >= this._radius && _y > this._radius) {
+                if (_x >= this._radius && _y >= this._radius) {
                   positions.push({
                     x: _x,
                     y: _y
@@ -1326,7 +1331,8 @@ Circle = (function(superClass) {
             this.getParticle(j).hide();
           }
         }
-        return this.hasChanged = false;
+        this._positionHasChanged = false;
+        return this._sizeHasChanged = false;
       }
     }
   };

@@ -10,6 +10,9 @@ class Circle extends Pane
     @type = null
     @hasOutline = false
 
+    @_positionHasChanged = true
+    @_sizeHasChanged = true
+
   fill: (color = null, opacity = null) ->
     @type = 'fill'
     if color? then @setColor(color, opacity)
@@ -25,11 +28,6 @@ class Circle extends Pane
     @hasOutline = true
     return
 
-  # setSize: (@diameter) ->
-  #   super(@diameter, @diameter)
-  #   @updateDimensions()
-  #   return
-
   setSize: ->
     if @_radius
       @_diameter = (@_radius * 2) - 1
@@ -39,30 +37,27 @@ class Circle extends Pane
       return
 
   _updateDimensions: ->
-    @_dimensions.circumference = Math.PI * @diameter
+    @_dimensions.circumference = Math.PI * @_diameter
     @_dimensions.surface = Math.PI * (@_radius * @_radius)
     return
 
-  setPosition: ->
+  _updatePosition: ->
     if @_radius
-      x = @_center.getX() - @_radius
-      y = @_center.getY() - @_radius
+      x = @_center.getX() - @_radius + 1
+      y = @_center.getY() - @_radius + 1
       @_updateDimensions()
-      super(x, y)
+      # super(x, y)
+      @_x = x
+      @_y = y
+      super()
 
+  # TODO Non integer values for {@_radius} cause incomplete circles/outlines
   setRadius: (@_radius) ->
     @_diameter = (@_radius * 2) - 1
-    @setPosition()
+    @_updatePosition()
 
   # TODO Verify that the argument is a {Point}
   setCenter: (@_center) ->
-
-  # updateDimensions: ->
-  #   if @diameter
-  #     @radius = @diameter / 2
-  #     @center.x = (@getWidth() - 1) / 2
-  #     @center.y = (@getHeight() - 1) / 2
-  #     @hasChanged = true
 
   _getMinY: ->
     minY = []
@@ -77,7 +72,7 @@ class Circle extends Pane
     for i in [0 .. samples]
       radians = angle * (Math.PI / 180)
       x = Math.ceil(@_radius - 0.5 + (Math.cos(radians) * (@_radius - 1)))
-      y = Math.ceil(@_radius - 0.5 - (Math.sin(radians) * (@_radius - 1)))
+      y = Math.ceil(@_radius - 0.5 - (Math.sin(radians) * (@_radius - 1))) - 1
       if (y < minY[x - 1]) then minY[x - 1] = y
       angle += increment
 
@@ -85,10 +80,9 @@ class Circle extends Pane
 
   _update: ->
 
-    @setPosition()
+    @_updatePosition()
 
-    # if @hasChanged
-    if true
+    if @_sizeHasChanged or @_positionHasChanged
       if @_center and @_radius
 
         i = 0
@@ -117,7 +111,8 @@ class Circle extends Pane
 
         if @hasOutline
           minY = @_getMinY()
-          fromY = @_radius
+          # The first x-coordinate always starts at {@_radius - 1}
+          fromY = @_radius - 1
           for toY, x in minY
 
             # Only use half of the minY coordinates, essentially drawing the upper-left corner. The other points will be mirrored.
@@ -126,14 +121,14 @@ class Circle extends Pane
               # In horizontal areas (where the y coordinate doesn't change), fromY can never be smaller than toY
               if fromY < toY then fromY = toY
 
-              # The last x-coordinate always has to go down to {@_radius}
-              if x is @_diameter - 1 then toY = @_radius
+              # The last x-coordinate always has to go down to {@_radius - 1}
+              if x is @_diameter - 1 then toY = @_radius - 1
 
               for y in [fromY .. toY]
 
                 # Mirrored x and y coordinates
                 _x = @_diameter - x - 1
-                _y = @_diameter - y + 1
+                _y = @_diameter - y - 1
 
                 positions = []
                 positions.push({ x:x, y:y })
@@ -143,11 +138,11 @@ class Circle extends Pane
                   positions.push({ x:_x, y:y })
 
                 # Bottom-left corner
-                if _y > @_radius
+                if _y >= @_radius
                   positions.push({ x:x, y:_y })
 
                 # Bottom-right corner
-                if _x >= @_radius and _y > @_radius
+                if _x >= @_radius and _y >= @_radius
                   positions.push({ x:_x, y:_y })
 
                 for position in positions
@@ -169,4 +164,5 @@ class Circle extends Pane
           for j in [i .. @_particles.length - 1]
             @getParticle(j).hide()
 
-        @hasChanged = false
+        @_positionHasChanged = false
+        @_sizeHasChanged = false

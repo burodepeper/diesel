@@ -103,4 +103,5 @@ class Point extends Entity
     @_position.x = @getX()
     @_position.y = @getY()
     @hasChanged = true
+    @_positionHasChanged = true
     return true
