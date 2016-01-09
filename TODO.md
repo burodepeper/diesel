@@ -7,38 +7,39 @@ This document is used in favor of Github issues until a first public release
 - [ ] Refactor the foundation
   - [ ] Remove `opacity` as part of [Color]; it should merely be an element of [VisualEntity] perhaps
   - [ ] Move "within-bounds" methods from [Particle] to [Point].
+  - [ ] [Pane] - Rename `outline` to `stroke`, and standardize the `fill` method
 
 ## Class structure
 
-  - [ ] [Engine]
-  - [ ] [Entity]
-    - [ ] [Color]
-      - [ ] [Gradient]
-    - [ ] [Controller]
-      - [ ] [SpriteSet] - a collection of sprites
-        - [ ] [Animation] - an automated collection of sprites
-    - [ ] [Point]
-      - [ ] [VisualEntity]
-        - [ ] [Pane]
-          - [ ] [Circle]
-          - [ ] [Line]
-            - [ ] [Curve] - a [Line] with a `via` [Point] which acts as a magnet
-          - [ ] [Oval] - implement as parent for [Circle]
-          - [ ] [Path]
-            - [ ] [Polygon] - center, radius, number of points, rotation, inward or outward -> triangle, star, hexagon, etc.
-            - [ ] [Triangle] - closed path of three points, options for fill/outline/stretch
-          - [ ] [Rectangle]
-            - [ ] [Square]
-          - [ ] [Shape] - a collection of [Panes], that are either added or subtracted
-          - [ ] [Sprite]
-          - [ ] [Text]
-          - [ ] `isButton()`
-          - [ ] `isHitbox()`
-        - [ ] [Particle]
-    - [ ] [Timer]
-      - [ ] [Tween]
-  - [ ] [Font]
-  - [ ] [Storage]
+  - [Engine]
+  - [Entity]
+    - [Color]
+      - [Gradient]
+    - [Controller]
+      - [SpriteSet] - a collection of sprites
+        - [Animation] - an automated collection of sprites
+    - [Point]
+      - [VisualEntity]
+        - [Pane]
+          - [Circle]
+          - [Line]
+            - [Curve] - a [Line] with a `via` [Point] which acts as a magnet
+          - [Oval] - implement as parent for [Circle]
+          - [Path]
+            - [Polygon] - center, radius, number of points, rotation, inward or outward -> triangle, star, hexagon, etc.
+            - [Triangle] - closed path of three points, options for fill/outline/stretch
+          - [Rectangle]
+            - [Square]
+          - [Shape] - a collection of [Panes], that are either added or subtracted
+          - [Sprite]
+          - [Text]
+          - `isButton()`
+          - `isHitbox()`
+        - [Particle]
+    - [Timer]
+      - [Tween]
+  - [Font]
+  - [Storage]
 
 - [ ] Add keyboard, mouse and touch events
 - [ ] Think of more practical examples to showcase the tools and allow for visual regression testing
@@ -62,17 +63,12 @@ This document is used in favor of Github issues until a first public release
 - [ ] `update()`: `hasChanged` should also check if its reference has changed
 - [ ] `outline()`: draw partial outline
 - [ ] `stretch()` and `fill()` don't result in the same circle. At first glance (because `outline()` uses the same method), `fill()` is more accurate, though also highly more cpu intensive. `stretch()` looks as if it rounds up, while `fill()` regularly rounds coordinates.
-  - [ ] See [example-05]; the inner, smallest circle is definitely not a circle, and the spokes don't line up consistenly with the other circles
 
 ### Color
 
-- [ ] Implement possibility for gradients
-- [ ] `change()`, initiates a color transition tween
-- [ ] The `opacity` of an [Entity] should be separate from the opacity of the [Color]. The base color for a particle (and as such, a base opacity) are shared, but the private `opacity` of an instance remains private. Ergo, `Entity.setOpacity()` does something else than `Color.setOpacity()`.
+- [ ] Allow setting color via hsl(a)
 
 ### Controller
-
-- [ ] Deprecate the concept of a [Controller] in favor of just extending an [Entity]?
 
 ### Engine
 
@@ -104,13 +100,14 @@ This document is used in favor of Github issues until a first public release
   - [ ] `N` could use semi-transparency
   - [ ] `&` is too complex
   - [ ] `€` and `£`, and perhaps other latin extended glyphs?
-- [ ] Create default font at `11px` (basically 9px with an added px at the top and bottom)
 - [ ] Create an uppercase only font at `5px`; glyphs are converted to uppercase behind the scenes
 - [ ] Possibly create a 5x7 fixed width default font
 - [ ] Allow a `fallback`
   - [ ] Test with extending a default font (with a é for instance)
   - [ ] Test with replacing a glyph in a default font
 - [ ] Allow opacities to be defined similar to colors in regular [Sprites]
+
+### Gradient
 
 ### Hitbox
 
@@ -122,34 +119,34 @@ This document is used in favor of Github issues until a first public release
 - [ ] Add relative positioning (relative to `@_from`)
 - [ ] `setColor()`
 - [ ] BUG: occassionally, particles stay in their old positions
-- [ ] Allow a start and a stop offset
+- [ ] Allow a start and a stop `offset`
 
 ### Pane
 
 - [ ] `setCSSProperty()`: allow percentages (or floats) as values. Will need an update of `onResize()` as well.
 - [ ] `setOverflow()`: defaults to 'visible'
 - [ ] `setColor()` does not work when called before the `addChild()` is executed on that [Pane]
-- [ ] Calculate overlap between this [Pane] and another, optionally on the level of its children
-- [ ] Rename `addChild()` to `add()`; the concept of children is technical, and not necessary on the front-end
+- [ ] Calculate `overlap` between this [Pane] and another, optionally on the level of its children
+- [ ] Rename `addChild()` to `add()`; the concept of children is technical, and not necessary on the front-end (perhaps goes for particles as well)
 - [ ] FUTURE PLAN: Create a separate canvas/context for every [Pane] that is created with when a `_layer` is specified. All children and particles added to that instance will be drawn on its private context. This will inherently mean that any overflow is hidden.
 - [ ] Shared method to clean up unused `particles`
-- [ ] Remove the default [Color] that's created, and possibly replace with a reference to a default color set on [Engine] (foreground vs background)
+- [ ] Remove the default [Color] that's created, and possibly replace with a reference to a default color set on [Engine] (foreground and background color)
 
 ### Particle
 
-- [ ] Optionally display [Particles] as separate rectangles (with a 1px margin)
+- [ ] Optionally display [Particles] as separate rectangles (with a percentual margin)
 
 ### Path
 
 - [ ] `setColor()`
 - [ ] `close()`; attaches last to first points
-- [ ] `fill()`
+- [ ] `fill()` (is that a realistic option for any path is longer than three points?)
 
 ### Point
 
 ### Polygon
 
-- a collection of [Points], grouped in [Triangles], to draw more complex shapes
+- An extended [Path], with an amount of points (minimum of three), a rotation, an inner and an outer radius, a center; creates triangles, stars, hexagons, etc.
 
 ### Rectangle
 
@@ -160,7 +157,7 @@ This document is used in favor of Github issues until a first public release
 ### Sprite
 
 - [ ] `rotate()`: in increments of 90 degrees
-- [ ] Allow whitespace to be added to `particles` which is removed upon loading
+- [ ] Allow whitespace to be added to `particles`-data which is removed upon loading
 
 ### SpriteSet
 
@@ -204,6 +201,7 @@ This document is used in favor of Github issues until a first public release
 - [ ] `Pane.setColor()` and `Particle.setColor()` do the same thing (including the various places these methods are invoked)
 - [ ] Uglify the combined Javascript in [/dist]
 - [ ] Generate a standalone version with a blank template for a project
+- [ ] Rename `outline` to `stroke`, and standardize the `fill` method
 
 ### References
 
