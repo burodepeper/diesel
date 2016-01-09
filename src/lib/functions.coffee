@@ -30,7 +30,7 @@ getWeighedInt = (low, high, gravity, i) ->
   else if gravity is "high"
     if chance <= r
       okay = true
-  else if gravity is "middle" or "center"
+  else if (gravity is "middle") or (gravity is "center")
     chance /= 2
     if r >= chance and r <= 1 - chance
       okay = true

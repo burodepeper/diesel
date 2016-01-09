@@ -37,7 +37,7 @@ getWeighedInt = function(low, high, gravity, i) {
     if (chance <= r) {
       okay = true;
     }
-  } else if (gravity === "middle" || "center") {
+  } else if ((gravity === "middle") || (gravity === "center")) {
     chance /= 2;
     if (r >= chance && r <= 1 - chance) {
       okay = true;
