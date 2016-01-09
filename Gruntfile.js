@@ -29,6 +29,7 @@ module.exports = function(grunt) {
             'src/core/Engine.coffee',
             'src/core/Entity.coffee',
             'src/core/Color.coffee',
+            'src/core/Controller.coffee',
             'src/core/Point.coffee',
             'src/core/VisualEntity.coffee',
             'src/core/Pane.coffee',
