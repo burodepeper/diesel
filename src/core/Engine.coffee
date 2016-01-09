@@ -85,6 +85,7 @@ Engine =
     Engine._update()
     Engine._draw()
     Engine._check()
+    # elapsed = new Date().getTime() - NOW
     window.requestAnimationFrame(Engine._run)
     return
 

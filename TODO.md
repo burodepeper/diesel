@@ -52,7 +52,7 @@ This document is used in favor of Github issues until a first public release
     - [ ] `extend`: (default = false) if only a width or height is specified, extend allows that value to be increased to fill the window as optimal as possible
     - [ ] `maxPX`: (default = false) if set, the value of PX will be limited
   - [ ] Color channel limitations
-  - [ ] Show grid
+  - [x] Show grid
   - [ ] Optional browser window padding
   - [ ] Full screen
 - [ ] `pause()`
@@ -62,6 +62,7 @@ This document is used in favor of Github issues until a first public release
 - [ ] Add a `numberOfEntities` property, and throw a warning when this amount exceeds a certain limit. Throw consecutive warnings on certain increments.
 - [ ] Add a `window.DT` for timing related stuff that doesn't use a [Timer]
 - [ ] BUG: When removing an [Entity], other entities such as [Points] and [Colors] stay behind, because they are not automatically cleaned up. Cleaning up these leftovers can be implemented manually in an instance's `remove()` before calling `super()`, but entities that are shared pose an issue. A possible solution would be for entities to know their parents, and to self-destruct when they become orphans. However, this poses the issue that some Entities are deliberately parentless.
+- [ ] Display an estimation of the capacity currently in use; possibly throw a warning when capacity is peaks over 50%
 
 ### Entity
 
