@@ -1,4 +1,4 @@
-var CONTEXT, Circle, Color, DEBUG, Engine, Entity, FONT_9PX, Line, NOW, PX, Pane, Particle, Point, Timer, Tween, VisualEntity, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
+var CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, FONT_9PX, Line, NOW, PX, Pane, Particle, Point, Timer, Tween, VisualEntity, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -609,6 +609,17 @@ Color = (function(superClass) {
   };
 
   return Color;
+
+})(Entity);
+
+Controller = (function(superClass) {
+  extend(Controller, superClass);
+
+  function Controller() {
+    Controller.__super__.constructor.call(this);
+  }
+
+  return Controller;
 
 })(Entity);
 
