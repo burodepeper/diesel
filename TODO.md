@@ -6,8 +6,39 @@ This document is used in favor of Github issues until a first public release
 
 - [ ] Refactor the foundation
   - [ ] Remove `opacity` as part of [Color]; it should merely be an element of [VisualEntity] perhaps
-  - [ ] Move within-bounds methods from [Particle] to [Point].
-  - [ ] Refactor the extended classes
+  - [ ] Move "within-bounds" methods from [Particle] to [Point].
+
+## Class structure
+
+  - [ ] [Engine]
+  - [ ] [Entity]
+    - [ ] [Color]
+      - [ ] [Gradient]
+    - [ ] [Controller]
+      - [ ] [SpriteSet] - a collection of sprites
+        - [ ] [Animation] - an automated collection of sprites
+    - [ ] [Point]
+      - [ ] [VisualEntity]
+        - [ ] [Pane]
+          - [ ] [Circle]
+          - [ ] [Line]
+            - [ ] [Curve] - a [Line] with a `via` [Point] which acts as a magnet
+          - [ ] [Oval] - implement as parent for [Circle]
+          - [ ] [Path]
+            - [ ] [Polygon] - center, radius, number of points, rotation, inward or outward -> triangle, star, hexagon, etc.
+            - [ ] [Triangle] - closed path of three points, options for fill/outline/stretch
+          - [ ] [Rectangle]
+            - [ ] [Square]
+          - [ ] [Shape] - a collection of [Panes], that are either added or subtracted
+          - [ ] [Sprite]
+          - [ ] [Text]
+          - [ ] `isButton()`
+          - [ ] `isHitbox()`
+        - [ ] [Particle]
+    - [ ] [Timer]
+      - [ ] [Tween]
+  - [ ] [Font]
+  - [ ] [Storage]
 
 - [ ] Add keyboard, mouse and touch events
 - [ ] Think of more practical examples to showcase the tools and allow for visual regression testing
@@ -19,8 +50,6 @@ This document is used in favor of Github issues until a first public release
 ## API
 
 ### Animation
-
-### BoundingBox
 
 ### Button
 
