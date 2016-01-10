@@ -135,6 +135,7 @@ Engine = {
   _numberOfEntities: 0,
   _numberOfEntitiesAdded: 0,
   _numberOfEntitiesRemoved: 0,
+  _capacity: [],
   _context: null,
   _canvas: null,
   _size: {
@@ -150,6 +151,7 @@ Engine = {
   },
   isTouchDevice: 'ontouchstart' in document.documentElement,
   init: function(settings) {
+    var i, k;
     if (this._createCanvas()) {
       if (settings.viewport.width) {
         this.config.viewport.width = settings.viewport.width;
@@ -161,6 +163,9 @@ Engine = {
         this.config.viewport.grid = settings.viewport.grid;
       }
       window.WINDOW = new Pane(1);
+      for (i = k = 1; k <= 60; i = ++k) {
+        this._capacity.push(1);
+      }
       this.trigger('resize');
       this._run();
       return true;
@@ -202,6 +207,8 @@ Engine = {
     Engine._update();
     Engine._draw();
     Engine._check();
+    Engine._capacity.shift();
+    Engine._capacity.push(new Date().getTime() - NOW);
     window.requestAnimationFrame(Engine._run);
   },
   _check: function() {
@@ -416,6 +423,23 @@ Engine = {
       console.log("efficiency:", Math.round(efficiency * 1000) / 10 + "%");
     }
     return efficiency;
+  },
+  getCapacity: function() {
+    var k, len, max, ref, sum, value;
+    sum = 0;
+    max = 0;
+    ref = this._capacity;
+    for (k = 0, len = ref.length; k < len; k++) {
+      value = ref[k];
+      sum += value;
+      if (value > max) {
+        max = value;
+      }
+    }
+    return {
+      capacity: sum / 1000,
+      max: max
+    };
   }
 };
 

@@ -12,6 +12,9 @@ Engine =
   _numberOfEntitiesAdded: 0
   _numberOfEntitiesRemoved: 0
 
+  # {@_capacity} is an array with an assumed length of 60 that holds a representation of processing time (in ms) used over the last 60 frames. One very cycle of {Engine._run()}, the first element is removed, and a new one appended. The method {Engine.getCapacity()} returns a float that represents the accumulative capacity of the last 60 frames.
+  _capacity: []
+
   _context: null
   _canvas: null
 
@@ -44,6 +47,10 @@ Engine =
       window.WINDOW = new Pane(1)
       # WINDOW.setColor(new Color('#fff'))
       # WINDOW.color = new Color('#fff')
+
+      # Fill {@_capacity} with empty values
+      for i in [1 .. 60]
+        @_capacity.push(1)
 
       @trigger('resize')
       @_run()
@@ -85,7 +92,10 @@ Engine =
     Engine._update()
     Engine._draw()
     Engine._check()
-    # elapsed = new Date().getTime() - NOW
+
+    Engine._capacity.shift()
+    Engine._capacity.push(new Date().getTime() - NOW)
+
     window.requestAnimationFrame(Engine._run)
     return
 
@@ -253,3 +263,26 @@ Engine =
       console.log totalNumberOfEntities, "on", totalNumberOfPositions, "positions"
       console.log "efficiency:", Math.round(efficiency * 1000) / 10 + "%"
     return efficiency
+
+  # Public: Returns an approximation of the processing capacity used by Engine
+  # over the last 60 frames.
+  #
+  # The `capacity` is ideally between 0 and 1. A value higher than 1 means by
+  # definition that the average drawrate was less than 60fps. A value of 0.5
+  # means that on average 50% of processing power was used during the last 60
+  # frames.
+  #
+  # The `max` value returned is the maximum duration recorded of a single
+  # frame, in ms. A value larger than 16 means a drop below 60fps. A value
+  # larger than 33 means a drop below 30fps.
+  #
+  # Returns an {Object} with these keys:
+  #   * `capacity` a {Float}
+  #   * `max` an {Integer}
+  getCapacity: ->
+    sum = 0
+    max = 0
+    for value in @_capacity
+      sum += value
+      if value > max then max = value
+    return { capacity:sum / 1000, max:max }

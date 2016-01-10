@@ -13,13 +13,13 @@ App = {
     var i, j, lightsaber, settings;
     settings = {
       viewport: {
-        width: 100,
-        height: 100
+        width: 320,
+        height: 180
       }
     };
     if (Engine.init(settings)) {
       this.lightsabers = [];
-      for (i = j = 1; j <= 5; i = ++j) {
+      for (i = j = 1; j <= 10; i = ++j) {
         lightsaber = new Lightsaber();
         lightsaber.setPosition(0, 0);
         lightsaber.setSize(WINDOW.getWidth(), WINDOW.getHeight());

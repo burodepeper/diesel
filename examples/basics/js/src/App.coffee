@@ -6,14 +6,14 @@ App =
   init: ->
     settings =
       viewport:
-        width: 100
-        height: 100
+        width: 320
+        height: 180
         # grid: true
 
     if Engine.init(settings)
 
       @lightsabers = []
-      for i in [1 .. 5]
+      for i in [1 .. 10]
         lightsaber = new Lightsaber()
         lightsaber.setPosition(0, 0)
         lightsaber.setSize(WINDOW.getWidth(), WINDOW.getHeight())
