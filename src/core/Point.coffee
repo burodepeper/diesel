@@ -57,6 +57,12 @@ class Point extends Entity
     @_tweenY = new Tween(parameters, duration, easing)
     return
 
+  # relativeTo: (point) ->
+
+  # atAngle: (angle, distance) ->
+
+  # atOffset: (x, y) ->
+
   setPosition: (x, y) ->
     if @isValid(x, y)
       @_x = x

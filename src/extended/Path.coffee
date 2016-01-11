@@ -1,24 +1,28 @@
 class Path extends Pane
 
-  points: []
-  lines: []
+  _points: []
+  _lines: []
+
+  # _isClosed: false
 
   addPoint: (point) ->
     point = isPoint(point)
     if point
-      @points.push(point)
-      if @points.length > 1
-        @addLine()
+      @_points.push(point)
+      if @_points.length > 1
+        @_addLine()
       return true
     else
       console.warn "Path.addPoint()", point, "is not valid"
       return false
 
-  addLine: ->
-    @a = @points[@points.length - 2]
-    @b = @points[@points.length - 1]
+  # stroke: ->
+
+  _addLine: ->
+    @a = @_points[@_points.length - 2]
+    @b = @_points[@_points.length - 1]
     line = new Line()
     line.from(@a).to(@b)
-    @lines.push(line)
+    @_lines.push(line)
     @addChild(line)
     return

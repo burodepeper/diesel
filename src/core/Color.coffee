@@ -25,6 +25,7 @@ class Color extends Entity
 
   # Returns the current color value of this object, multiplied by a given opacity (probably from the particle invoking this method)
   get: (opacity = 1) ->
+    # TODO validate {opacity}
     return "rgba(#{@_r}, #{@_g}, #{@_b}, #{opacity})"
 
   # Creates a {Tween} which gradually changes the color over time.

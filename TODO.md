@@ -3,50 +3,50 @@
 This document is used in favor of Github issues until a first public release
 
 ## Short term focus
-
 - [ ] Refactor the foundation
   - [ ] Make [TODO.md] more practical
   - [ ] Remove `opacity` as part of [Color]; it should merely be an element of [VisualEntity] perhaps
   - [ ] Move "within-bounds" methods from [Particle] to [Point].
   - [ ] [Pane] - Rename `outline` to `stroke`, and standardize the `fill` method
 
+## Examples
+- [ ] Spaceship simulator (radar, bleeps, labels, sounds)
+- [ ] Paratrooper (remake of the classic game)
+- [ ] Grid that moves away from mouse (input)
+
 ## Class structure
+- [Engine]
+- [Entity]
+  - [Color]
+    - [Gradient]
+  - [Controller]
+    - [SpriteSet] - a collection of sprites
+      - [Animation] - an automated collection of sprites
+  - [Point]
+    - [VisualEntity]
+      - [Pane]
+        - [Circle]
+        - [Line]
+          - [Curve] - a [Line] with a `via` [Point] which acts as a magnet
+        - [Oval] - implement as parent for [Circle]
+        - [Path]
+          - [Polygon] - center, radius, number of points, rotation, inward or outward -> triangle, star, hexagon, etc.
+          - [Triangle] - closed path of three points, options for fill/outline/stretch
+        - [Rectangle]
+          - [Square]
+        - [Shape] - a collection of [Panes], that are either added or subtracted
+        - [Sprite]
+        - [Text]
+        - `isButton()`
+        - `isHitbox()`
+      - [Particle]
+  - [Timer]
+    - [Tween]
+- [Font]
+- [Storage]
 
-  - [Engine]
-  - [Entity]
-    - [Color]
-      - [Gradient]
-    - [Controller]
-      - [SpriteSet] - a collection of sprites
-        - [Animation] - an automated collection of sprites
-    - [Point]
-      - [VisualEntity]
-        - [Pane]
-          - [Circle]
-          - [Line]
-            - [Curve] - a [Line] with a `via` [Point] which acts as a magnet
-          - [Oval] - implement as parent for [Circle]
-          - [Path]
-            - [Polygon] - center, radius, number of points, rotation, inward or outward -> triangle, star, hexagon, etc.
-            - [Triangle] - closed path of three points, options for fill/outline/stretch
-          - [Rectangle]
-            - [Square]
-          - [Shape] - a collection of [Panes], that are either added or subtracted
-          - [Sprite]
-          - [Text]
-          - `isButton()`
-          - `isHitbox()`
-        - [Particle]
-    - [Timer]
-      - [Tween]
-  - [Font]
-  - [Storage]
-
+## Other stuff
 - [ ] Add keyboard, mouse and touch events
-- [ ] Think of more practical examples to showcase the tools and allow for visual regression testing
-  - [ ] Spaceship dashboard thing: recreate the old Windows screensaver where you appear to be travelling across the stars. On top of that is a rotating radar, which 'beeps' when it touches a stars that is 'within range'. The range of a star is visualized by its opacity. Additionally, some bogus sensor stuff can be added to make it more awesome. Each star that is within reach is tagged with a Sprite and a random code or something.
-- [x] Can [Particle] be a child of [Point] to avoid all the extra entities created?
-
 - [ ] Upgrade [/dist] to include an uglified version
 - [ ] Add a stand-alone template to quickly get started on a new project
 
