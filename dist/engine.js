@@ -1,4 +1,4 @@
-var CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, FONT_9PX, Line, NOW, PX, Pane, Particle, Point, Timer, Tween, VisualEntity, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
+var CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, FONT_9PX, Line, NOW, PX, Pane, Particle, Path, Point, Polygon, Timer, Tween, VisualEntity, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -668,6 +668,10 @@ Point = (function(superClass) {
       x: null,
       y: null
     };
+    this._relativeTo = null;
+    this._angle = null;
+    this._distance = null;
+    this._offset = null;
     this.hasChanged = false;
     this.setPosition(x, y);
   }
@@ -778,6 +782,24 @@ Point = (function(superClass) {
       return this._updatePosition();
     } else {
       return false;
+    }
+  };
+
+  Point.prototype.relativeTo = function(point) {
+    return this._relativeTo = point;
+  };
+
+  Point.prototype.atAngle = function(angle, distance) {
+    this._angle = angle;
+    return this._distance = distance;
+  };
+
+  Point.prototype.atOffset = function(x, y) {
+    if (this.isValid(x, y)) {
+      return this._offset = {
+        x: x,
+        y: y
+      };
     }
   };
 
@@ -958,7 +980,7 @@ Pane = (function(superClass) {
       if (!(((key === 'top') || (key === 'left')) && value === 'center')) {
         value = parseInt(value);
       }
-      this.css[key] = value;
+      this._css[key] = value;
     }
   };
 
@@ -987,37 +1009,38 @@ Pane = (function(superClass) {
   };
 
   Pane.prototype.onResize = function() {
-    var height, ref, ref1, width, x, y;
+    var height, ref, width, x, y;
     if (this.hasCSS) {
-      ref = this.position.relative, x = ref.x, y = ref.y;
-      ref1 = this.size, width = ref1.width, height = ref1.height;
-      if (this.css.width) {
-        width = this.css.width;
+      x = this.getX();
+      y = this.getY();
+      ref = this._dimensions, width = ref.width, height = ref.height;
+      if (this._css.width) {
+        width = this._css.width;
       }
-      if (this.css.height) {
-        height = this.css.height;
+      if (this._css.height) {
+        height = this._css.height;
       }
-      if ((this.css.left === 'center') && width) {
-        x = Math.floor((this.reference.getWidth() - width) / 2);
-      } else if ((this.css.left != null) && (this.css.right != null)) {
-        width = this.reference.getWidth() - this.css.left - this.css.right;
-        x = this.css.left;
-      } else if (this.css.left != null) {
-        x = this.css.left;
-      } else if ((this.css.right != null) && width) {
-        x = this.reference.getWidth() - width - this.css.right;
+      if ((this._css.left === 'center') && width) {
+        x = Math.floor((this._reference.getWidth() - width) / 2);
+      } else if ((this._css.left != null) && (this._css.right != null)) {
+        width = this._reference.getWidth() - this._css.left - this._css.right;
+        x = this._css.left;
+      } else if (this._css.left != null) {
+        x = this._css.left;
+      } else if ((this._css.right != null) && width) {
+        x = this._reference.getWidth() - width - this._css.right;
       } else {
         console.warn("Pane.onResize()", this, "invalid horizontal positioning");
       }
-      if ((this.css.top === 'center') && height) {
-        y = Math.floor((this.reference.getHeight() - height) / 2);
-      } else if ((this.css.top != null) && (this.css.bottom != null)) {
-        height = this.reference.getHeight() - this.css.top - this.css.bottom;
-        y = this.css.top;
-      } else if (this.css.top != null) {
-        y = this.css.top;
-      } else if ((this.css.bottom != null) && height) {
-        y = this.reference.getHeight() - height - this.css.bottom;
+      if ((this._css.top === 'center') && height) {
+        y = Math.floor((this._reference.getHeight() - height) / 2);
+      } else if ((this._css.top != null) && (this._css.bottom != null)) {
+        height = this._reference.getHeight() - this._css.top - this._css.bottom;
+        y = this._css.top;
+      } else if (this._css.top != null) {
+        y = this._css.top;
+      } else if ((this._css.bottom != null) && height) {
+        y = this._reference.getHeight() - height - this._css.bottom;
       } else {
         console.warn("Pane.onResize()", this, "invalid vertical positioning");
       }
@@ -1118,7 +1141,7 @@ Particle = (function(superClass) {
       top = snap(this._position.y * PX);
       width = snap(this._size.width * PX);
       height = snap(this._size.height * PX);
-      CONTEXT.fillStyle = this._color.get(this.opacity);
+      CONTEXT.fillStyle = this._color.get(this._opacity);
       CONTEXT.fillRect(left, top, width, height);
     }
   };
@@ -1493,6 +1516,118 @@ Line = (function(superClass) {
   return Line;
 
 })(Pane);
+
+Path = (function(superClass) {
+  extend(Path, superClass);
+
+  function Path() {
+    return Path.__super__.constructor.apply(this, arguments);
+  }
+
+  Path.prototype._points = [];
+
+  Path.prototype._lines = [];
+
+  Path.prototype.addPoint = function(point) {
+    point = isPoint(point);
+    if (point) {
+      this._points.push(point);
+      if (this._points.length > 1) {
+        this._addLine();
+      }
+      return true;
+    } else {
+      console.warn("Path.addPoint()", point, "is not valid");
+      return false;
+    }
+  };
+
+  Path.prototype._addLine = function() {
+    var line;
+    this.a = this._points[this._points.length - 2];
+    this.b = this._points[this._points.length - 1];
+    line = new Line();
+    line.from(this.a).to(this.b);
+    this._lines.push(line);
+    this.addChild(line);
+  };
+
+  return Path;
+
+})(Pane);
+
+Polygon = (function(superClass) {
+  extend(Polygon, superClass);
+
+  function Polygon() {
+    Polygon.__super__.constructor.call(this);
+    ({
+      _numberOfSides: null,
+      _center: null,
+      _innerRadius: null,
+      _outerRadius: null,
+      _rotation: null
+    });
+  }
+
+  Polygon.prototype.setCenter = function(center) {
+    if (isPoint(center)) {
+      return this._center = center;
+    } else {
+      console.warn("Polygon.setCenter(): ", center, "is not a valid {Point}");
+      return false;
+    }
+  };
+
+  Polygon.prototype.setRotation = function(degrees) {};
+
+  Polygon.prototype.setRadius = function(radius) {
+    return this.setOuterRadius(radius);
+  };
+
+  Polygon.prototype.setInnerRadius = function(radius) {
+    if (typeof radius === "number") {
+      if (radius > 0) {
+        return this._innerRadius = radius;
+      }
+    }
+  };
+
+  Polygon.prototype.setOuterRadius = function(radius) {
+    if (typeof radius === "number") {
+      if (radius > 0) {
+        return this._outerRadius = radius;
+      }
+    }
+  };
+
+  Polygon.prototype.setNumberOfSides = function(number) {
+    number = parseInt(number);
+    if (number >= 3) {
+      return this._numberOfSides = number;
+    } else {
+      return false;
+    }
+  };
+
+  Polygon.prototype._createLines = function() {
+    var i, k, ref, results;
+    if ((this._center != null) && (this._numberOfSides != null) && (this._outerRadius != null)) {
+      if (this._innerRadius != null) {
+        return console.log("inner and outer");
+      } else {
+        results = [];
+        for (i = k = 1, ref = this._numberOfSides; 1 <= ref ? k <= ref : k >= ref; i = 1 <= ref ? ++k : --k) {
+          results.push(console.log("Create point, relative to center"));
+        }
+        return results;
+      }
+    }
+  };
+
+  return Polygon;
+
+})(Path);
 
 Tween = (function(superClass) {
   extend(Tween, superClass);

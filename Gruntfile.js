@@ -55,6 +55,7 @@ module.exports = function(grunt) {
       examples: {
         files: {
           'examples/basics/js/app.js': ['examples/basics/js/src/*.coffee'],
+          'examples/stars/js/app.js': ['examples/stars/js/src/*.coffee'],
           'examples/01-bounce/js/app.js': ['examples/01-bounce/js/src/*.coffee'],
           'examples/02-bounce/js/app.js': ['examples/02-bounce/js/src/*.coffee'],
           'examples/03-stars/js/app.js': ['examples/03-stars/js/src/*.coffee'],

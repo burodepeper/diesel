@@ -12,6 +12,11 @@ class Point extends Entity
       x: null
       y: null
 
+    @_relativeTo = null
+    @_angle = null
+    @_distance = null
+    @_offset = null
+
     @hasChanged = false
     @setPosition(x, y)
 
@@ -57,12 +62,6 @@ class Point extends Entity
     @_tweenY = new Tween(parameters, duration, easing)
     return
 
-  # relativeTo: (point) ->
-
-  # atAngle: (angle, distance) ->
-
-  # atOffset: (x, y) ->
-
   setPosition: (x, y) ->
     if @isValid(x, y)
       @_x = x
@@ -84,6 +83,22 @@ class Point extends Entity
       @_updatePosition()
     else
       return false
+
+  # TODO Validate arguments
+  relativeTo: (point) ->
+    @_relativeTo = point
+
+  # TODO Validate arguments
+  atAngle: (angle, distance) ->
+    @_angle = angle
+    @_distance = distance
+
+  # TODO Validate arguments
+  atOffset: (x, y) ->
+    if @isValid(x, y)
+      @_offset =
+        x: x
+        y: y
 
   # ----- Private methods -----
 

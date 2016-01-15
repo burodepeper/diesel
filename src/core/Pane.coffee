@@ -48,7 +48,7 @@ class Pane extends VisualEntity
     if validKeys.indexOf(key) isnt -1
       unless ((key is 'top') or (key is 'left')) and value is 'center'
         value = parseInt(value)
-      @css[key] = value
+      @_css[key] = value
     return
 
   # ----- Getters -----
@@ -66,9 +66,9 @@ class Pane extends VisualEntity
   getColor: -> return @_color
 
   # isWithinBounds: (x = @position.relative.x, y = @position.relative.y, width = @getWidth(), height = @getHeight()) ->
-  #   if @reference
+  #   if @_reference
   #     if (x >= 0) and (y >= 0)
-  #       if (x + width <= @reference.getWidth()) and (y + height <= @reference.getHeight())
+  #       if (x + width <= @_reference.getWidth()) and (y + height <= @_reference.getHeight())
   #         return true
   #     return false
 
@@ -76,35 +76,37 @@ class Pane extends VisualEntity
 
   onResize: ->
     if @hasCSS
-      {x, y} = @position.relative
-      {width, height} = @size
+      # {x, y} = @position.relative
+      x = @getX()
+      y = @getY()
+      {width, height} = @_dimensions
 
-      if @css.width then width = @css.width
-      if @css.height then height = @css.height
+      if @_css.width then width = @_css.width
+      if @_css.height then height = @_css.height
 
       # Horizontal positioning
-      if (@css.left is 'center') and width
-        x = Math.floor((@reference.getWidth() - width) / 2)
-      else if @css.left? and @css.right?
-        width = @reference.getWidth() - @css.left - @css.right
-        x = @css.left
-      else if @css.left?
-        x = @css.left
-      else if @css.right? and width
-        x = @reference.getWidth() - width - @css.right
+      if (@_css.left is 'center') and width
+        x = Math.floor((@_reference.getWidth() - width) / 2)
+      else if @_css.left? and @_css.right?
+        width = @_reference.getWidth() - @_css.left - @_css.right
+        x = @_css.left
+      else if @_css.left?
+        x = @_css.left
+      else if @_css.right? and width
+        x = @_reference.getWidth() - width - @_css.right
       else
         console.warn "Pane.onResize()", this, "invalid horizontal positioning"
 
       # Vertical positioning
-      if (@css.top is 'center') and height
-        y = Math.floor((@reference.getHeight() - height) / 2)
-      else if @css.top? and @css.bottom?
-        height = @reference.getHeight() - @css.top - @css.bottom
-        y = @css.top
-      else if @css.top?
-        y = @css.top
-      else if @css.bottom? and height
-        y = @reference.getHeight() - height - @css.bottom
+      if (@_css.top is 'center') and height
+        y = Math.floor((@_reference.getHeight() - height) / 2)
+      else if @_css.top? and @_css.bottom?
+        height = @_reference.getHeight() - @_css.top - @_css.bottom
+        y = @_css.top
+      else if @_css.top?
+        y = @_css.top
+      else if @_css.bottom? and height
+        y = @_reference.getHeight() - height - @_css.bottom
       else
         console.warn "Pane.onResize()", this, "invalid vertical positioning"
 
