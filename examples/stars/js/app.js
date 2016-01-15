@@ -1,4 +1,4 @@
-var App, LAYER_BACKGROUND, LAYER_STARS, LAYER_UI, Spaceship, Star, Stars, layer,
+var App, LAYER_BACKGROUND, LAYER_STARS, LAYER_UI, Radar, Spaceship, Star, Stars, Tracker, layer,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -21,6 +21,7 @@ App = {
     };
     if (Engine.init(settings)) {
       this.spaceship = new Spaceship();
+      this.radar = new Radar();
       this.stars = new Stars();
       this.stars.setCSS({
         top: 0,
@@ -32,6 +33,26 @@ App = {
     }
   }
 };
+
+Radar = (function(superClass) {
+  extend(Radar, superClass);
+
+  function Radar() {
+    Radar.__super__.constructor.call(this);
+  }
+
+  Radar.prototype.track = function(star, priority) {
+    var tracker;
+    if (priority == null) {
+      priority = false;
+    }
+    tracker = new Tracker(star);
+    return tracker;
+  };
+
+  return Radar;
+
+})(Controller);
 
 Spaceship = (function(superClass) {
   extend(Spaceship, superClass);
@@ -81,6 +102,8 @@ Star = (function(superClass) {
 
   Star.prototype._maxDistance = 10000;
 
+  Star.prototype._trackingDistance = 100;
+
   function Star(_layer) {
     this._layer = _layer;
     Star.__super__.constructor.call(this, this._layer);
@@ -97,11 +120,17 @@ Star = (function(superClass) {
     this.passingDistance = Math.sqrt(this.x * this.x + this.y * this.y);
     this.maxOpacity = 1 - (this.passingDistance / (this._offsetX * this._offsetY));
     this._calculatePosition();
-    return this._calculateOpacity();
+    this._calculateOpacity();
+    if (this.passingDistance <= this._trackingDistance) {
+      return this._tracker = App.radar.track(this, this.passingDistance <= 50);
+    }
   };
 
   Star.prototype._update = function() {
     if ((this.z < Math.abs(this.x)) || (this.z < Math.abs(this.y))) {
+      if (this._tracker != null) {
+        this._tracker.remove();
+      }
       this.remove();
       return App.stars.addStar();
     } else {
@@ -165,3 +194,36 @@ Stars = (function(superClass) {
   return Stars;
 
 })(Pane);
+
+Tracker = (function(superClass) {
+  extend(Tracker, superClass);
+
+  function Tracker(_target) {
+    this._target = _target;
+    Tracker.__super__.constructor.call(this);
+    this._marker = new Circle(LAYER_UI);
+    this._marker.setRadius(3);
+    this._marker.setCenter(this._target);
+    this._marker.outline(new Color('#e10'));
+    this._marker.hide();
+  }
+
+  Tracker.prototype._update = function() {
+    var threshold;
+    threshold = App.spaceship.getSpeed() * 100;
+    if (this._target._distance < threshold) {
+      this._marker.show();
+      return this._marker.setOpacity(1 - (this._target._distance / threshold));
+    } else {
+      return this._marker.hide();
+    }
+  };
+
+  Tracker.prototype.remove = function() {
+    this._marker.remove();
+    return Tracker.__super__.remove.call(this);
+  };
+
+  return Tracker;
+
+})(Controller);

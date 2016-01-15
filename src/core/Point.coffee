@@ -118,7 +118,8 @@ class Point extends Entity
       @_updatePosition()
     return
 
-  _setReference: (@_reference, @_id) ->
+  # _setReference: (@_reference, @_id) ->
+  _setReference: (@_reference) ->
 
   _updatePosition: ->
     @_position.x = @getX()

@@ -115,10 +115,21 @@ class Pane extends VisualEntity
 
   # ----- Children -----
 
+  _getNextId: ->
+    if @_particles.length and @_children.length
+      id = @_particles.length + @_children.length - 1
+    else if @_particles.length or @_children.length
+      id = @_particles.length + @_children.length
+    else
+      id = 0
+    return id
+
   # TODO Check if {child} is a valid Entity
   addChild: (child) ->
     @children.push(child)
-    child._setReference(this, (@children.length + @particles.length - 1))
+    # id = @_getNextId()
+    # child._setReference(this, id)
+    child._setReference(this)
     return
 
   # updateChildren: (method, value) ->
@@ -138,11 +149,13 @@ class Pane extends VisualEntity
 
   addParticle: (particle) ->
     @_particles.push(particle)
-    particle._setReference(this, (@_particles.length + @_children.length - 1))
+    # id = @_getNextId()
+    # particle._setReference(this, id)
+    particle._setReference(this)
     return
 
   updateParticles: (method, value) ->
-    for particle in @particles
+    for particle in @_particles
       particle[method](value)
     return
 
@@ -153,6 +166,12 @@ class Pane extends VisualEntity
       particle = new Particle(@_layer)
       @addParticle(particle)
       return particle
+
+  remove: ->
+    if @_particles.length
+      for particle in @_particles
+        particle.remove()
+    super()
 
   # ----- Private methods -----
 

@@ -135,6 +135,7 @@ Engine = {
   _numberOfEntities: 0,
   _numberOfEntitiesAdded: 0,
   _numberOfEntitiesRemoved: 0,
+  _numberOfCleanUps: 0,
   _capacity: [],
   _context: null,
   _canvas: null,
@@ -213,7 +214,8 @@ Engine = {
   },
   _check: function() {
     if (this._numberOfEntitiesRemoved >= 1000) {
-      return this.cleanUp();
+      this.cleanUp();
+      return this._numberOfCleanUps++;
     }
   },
   _update: function() {
@@ -825,9 +827,8 @@ Point = (function(superClass) {
     }
   };
 
-  Point.prototype._setReference = function(_reference, _id) {
+  Point.prototype._setReference = function(_reference) {
     this._reference = _reference;
-    this._id = _id;
   };
 
   Point.prototype._updatePosition = function() {
@@ -890,6 +891,10 @@ VisualEntity = (function(superClass) {
       opacity = 1;
     }
     this._opacity = opacity;
+  };
+
+  VisualEntity.prototype.getOpacity = function() {
+    return this._opacity;
   };
 
   VisualEntity.prototype.setColor = function(color, opacity) {
@@ -1049,19 +1054,31 @@ Pane = (function(superClass) {
     }
   };
 
+  Pane.prototype._getNextId = function() {
+    var id;
+    if (this._particles.length && this._children.length) {
+      id = this._particles.length + this._children.length - 1;
+    } else if (this._particles.length || this._children.length) {
+      id = this._particles.length + this._children.length;
+    } else {
+      id = 0;
+    }
+    return id;
+  };
+
   Pane.prototype.addChild = function(child) {
     this.children.push(child);
-    child._setReference(this, this.children.length + this.particles.length - 1);
+    child._setReference(this);
   };
 
   Pane.prototype.addParticle = function(particle) {
     this._particles.push(particle);
-    particle._setReference(this, this._particles.length + this._children.length - 1);
+    particle._setReference(this);
   };
 
   Pane.prototype.updateParticles = function(method, value) {
     var k, len, particle, ref;
-    ref = this.particles;
+    ref = this._particles;
     for (k = 0, len = ref.length; k < len; k++) {
       particle = ref[k];
       particle[method](value);
@@ -1077,6 +1094,18 @@ Pane = (function(superClass) {
       this.addParticle(particle);
       return particle;
     }
+  };
+
+  Pane.prototype.remove = function() {
+    var k, len, particle, ref;
+    if (this._particles.length) {
+      ref = this._particles;
+      for (k = 0, len = ref.length; k < len; k++) {
+        particle = ref[k];
+        particle.remove();
+      }
+    }
+    return Pane.__super__.remove.call(this);
   };
 
   Pane.prototype._updateDimensions = function() {
@@ -1141,7 +1170,7 @@ Particle = (function(superClass) {
       top = snap(this._position.y * PX);
       width = snap(this._size.width * PX);
       height = snap(this._size.height * PX);
-      CONTEXT.fillStyle = this._color.get(this._opacity);
+      CONTEXT.fillStyle = this._color.get(this._reference.getOpacity() * this._opacity);
       CONTEXT.fillRect(left, top, width, height);
     }
   };

@@ -39,7 +39,7 @@ class Particle extends VisualEntity
       top = snap(@_position.y * PX)
       width = snap(@_size.width * PX)
       height = snap(@_size.height * PX)
-      CONTEXT.fillStyle = @_color.get(@_opacity)
+      CONTEXT.fillStyle = @_color.get(@_reference.getOpacity() * @_opacity)
       CONTEXT.fillRect(left, top, width, height)
     return
 

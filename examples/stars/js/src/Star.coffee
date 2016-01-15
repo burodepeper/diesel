@@ -1,7 +1,10 @@
 class Star extends Particle
 
+  # TODO
+  # Changing the value of {_viewportDistance} doesn't seem to have any effect. Test if it can be removed entirely, because it saves a lot of calculations
   _viewportDistance: 10
   _maxDistance: 10000
+  _trackingDistance: 100
 
   constructor: (@_layer) ->
     super(@_layer)
@@ -16,12 +19,14 @@ class Star extends Particle
     @maxOpacity = 1 - (@passingDistance / (@_offsetX * @_offsetY))
     @_calculatePosition()
     @_calculateOpacity()
-    # if @passingDistance < @_viewportDistance
-    #   console.warn this
+    if @passingDistance <= @_trackingDistance
+      @_tracker = App.radar.track(this, @passingDistance <= 50)
 
   _update: ->
 
     if (@z < Math.abs(@x)) or (@z < Math.abs(@y))
+      if @_tracker?
+        @_tracker.remove()
       @remove()
       App.stars.addStar()
 
@@ -36,6 +41,7 @@ class Star extends Particle
     yDistance = Math.sqrt(@z * @z + @y * @y)
     y = @y * (@_viewportDistance / yDistance) * @_yMultiplier
     @setPosition(@_offsetX + x, @_offsetY + y)
+
     @_distance = (xDistance + yDistance) / 2
     return
 

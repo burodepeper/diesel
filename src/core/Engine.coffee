@@ -11,6 +11,7 @@ Engine =
   _numberOfEntities: 0
   _numberOfEntitiesAdded: 0
   _numberOfEntitiesRemoved: 0
+  _numberOfCleanUps: 0
 
   # {@_capacity} is an array with an assumed length of 60 that holds a representation of processing time (in ms) used over the last 60 frames. One very cycle of {Engine._run()}, the first element is removed, and a new one appended. The method {Engine.getCapacity()} returns a float that represents the accumulative capacity of the last 60 frames.
   _capacity: []
@@ -103,6 +104,7 @@ Engine =
     # Remove (undefined) entities whenever more than a thousand have accumulated
     if @_numberOfEntitiesRemoved >= 1000
       @cleanUp()
+      @_numberOfCleanUps++
 
   _update: ->
     for entities in @_entities
