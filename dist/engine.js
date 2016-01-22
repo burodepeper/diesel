@@ -1757,34 +1757,12 @@ Rectangle = (function(superClass) {
   };
 
   Rectangle.prototype._update = function() {
-    var i, j, k, l, len, len1, m, n, o, p, particle, q, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, results, results1, s, x, y;
+    var i, j, k, l, m, n, particle, ref, ref1, ref2, ref3, ref4, ref5, results, results1, x, y;
     if (this.type === 'stretch') {
       particle = this.getParticle(0).show();
-      particle.setPosition(this._position.x, this._position.y);
+      particle.setPosition(0, 0);
       particle.setSize(this._dimensions.width, this._dimensions.height);
       i = 1;
-      if (this.hasOutline) {
-        particle = this.getParticle(i);
-        particle.setPosition(0, 0);
-        particle.setSize(this._dimensions.width, 1);
-        particle.setColor(this.outlineColor);
-        i++;
-        particle = this.getParticle(i);
-        particle.setPosition(0, this._dimensions.height - 1);
-        particle.setSize(this._dimensions.width, 1);
-        particle.setColor(this.outlineColor);
-        i++;
-        particle = this.getParticle(i);
-        particle.setPosition(0, 1);
-        particle.setSize(1, this._dimensions.height - 2);
-        particle.setColor(this.outlineColor);
-        i++;
-        particle = this.getParticle(i);
-        particle.setPosition(this._dimensions.width - 1, 1);
-        particle.setSize(1, this._dimensions.height - 2);
-        particle.setColor(this.outlineColor);
-        i++;
-      }
       if ((this._particles.length - 1) > i) {
         results = [];
         for (j = k = ref = i, ref1 = this._particles.length - 1; ref <= ref1 ? k <= ref1 : k >= ref1; j = ref <= ref1 ? ++k : --k) {
@@ -1802,33 +1780,9 @@ Rectangle = (function(superClass) {
           i++;
         }
       }
-      if (this.hasOutline) {
-        for (x = n = 0, ref4 = this._dimensions.width - 1; 0 <= ref4 ? n <= ref4 : n >= ref4; x = 0 <= ref4 ? ++n : --n) {
-          ref5 = [0, this._dimensions.height - 1];
-          for (o = 0, len = ref5.length; o < len; o++) {
-            y = ref5[o];
-            particle = this.getParticle(i);
-            particle.setPosition(x, y);
-            particle.setColor(this.outlineColor);
-            particle.show();
-            i++;
-          }
-        }
-        for (y = p = 1, ref6 = this._dimensions.height - 2; 1 <= ref6 ? p <= ref6 : p >= ref6; y = 1 <= ref6 ? ++p : --p) {
-          ref7 = [0, this._dimensions.width - 1];
-          for (q = 0, len1 = ref7.length; q < len1; q++) {
-            x = ref7[q];
-            particle = this.getParticle(i);
-            particle.setPosition(x, y);
-            particle.setColor(this.outlineColor);
-            particle.show();
-            i++;
-          }
-        }
-      }
       if ((this._particles.length - 1) > i) {
         results1 = [];
-        for (j = s = ref8 = i, ref9 = this._particles.length - 1; ref8 <= ref9 ? s <= ref9 : s >= ref9; j = ref8 <= ref9 ? ++s : --s) {
+        for (j = n = ref4 = i, ref5 = this._particles.length - 1; ref4 <= ref5 ? n <= ref5 : n >= ref5; j = ref4 <= ref5 ? ++n : --n) {
           results1.push(this.getParticle(j).hide());
         }
         return results1;
@@ -2027,7 +1981,7 @@ EngineDebugPane = (function(superClass) {
       this.addChild(bar);
       bar.setSize(2, 6);
       bar.setPosition(i * 3, 0);
-      bar.fill(new Color('#fff'));
+      bar.stretch(new Color('#fff'));
       this._capacity.push(bar);
     }
   }

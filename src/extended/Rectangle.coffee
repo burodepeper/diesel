@@ -26,31 +26,32 @@ class Rectangle extends Pane
     if @type is 'stretch'
 
       particle = @getParticle(0).show()
-      particle.setPosition(@_position.x, @_position.y)
+      # particle.setPosition(@_position.x, @_position.y)
+      particle.setPosition(0, 0);
       particle.setSize(@_dimensions.width, @_dimensions.height)
       i = 1
 
-      if @hasOutline
-        particle = @getParticle(i)
-        particle.setPosition(0, 0)
-        particle.setSize(@_dimensions.width, 1)
-        particle.setColor(@outlineColor)
-        i++
-        particle = @getParticle(i)
-        particle.setPosition(0, @_dimensions.height - 1)
-        particle.setSize(@_dimensions.width, 1)
-        particle.setColor(@outlineColor)
-        i++
-        particle = @getParticle(i)
-        particle.setPosition(0, 1)
-        particle.setSize(1, @_dimensions.height - 2)
-        particle.setColor(@outlineColor)
-        i++
-        particle = @getParticle(i)
-        particle.setPosition(@_dimensions.width - 1, 1)
-        particle.setSize(1, @_dimensions.height - 2)
-        particle.setColor(@outlineColor)
-        i++
+      # if @hasOutline
+      #   particle = @getParticle(i)
+      #   particle.setPosition(0, 0)
+      #   particle.setSize(@_dimensions.width, 1)
+      #   particle.setColor(@outlineColor)
+      #   i++
+      #   particle = @getParticle(i)
+      #   particle.setPosition(0, @_dimensions.height - 1)
+      #   particle.setSize(@_dimensions.width, 1)
+      #   particle.setColor(@outlineColor)
+      #   i++
+      #   particle = @getParticle(i)
+      #   particle.setPosition(0, 1)
+      #   particle.setSize(1, @_dimensions.height - 2)
+      #   particle.setColor(@outlineColor)
+      #   i++
+      #   particle = @getParticle(i)
+      #   particle.setPosition(@_dimensions.width - 1, 1)
+      #   particle.setSize(1, @_dimensions.height - 2)
+      #   particle.setColor(@outlineColor)
+      #   i++
 
       if (@_particles.length - 1) > i
         for j in [i .. @_particles.length - 1]
@@ -66,21 +67,21 @@ class Rectangle extends Pane
           particle.show()
           i++
 
-      if @hasOutline
-        for x in [0 .. @_dimensions.width - 1]
-          for y in [0, @_dimensions.height - 1]
-            particle = @getParticle(i)
-            particle.setPosition(x, y)
-            particle.setColor(@outlineColor)
-            particle.show()
-            i++
-        for y in [1 .. @_dimensions.height - 2]
-          for x in [0, @_dimensions.width - 1]
-            particle = @getParticle(i)
-            particle.setPosition(x, y)
-            particle.setColor(@outlineColor)
-            particle.show()
-            i++
+      # if @hasOutline
+      #   for x in [0 .. @_dimensions.width - 1]
+      #     for y in [0, @_dimensions.height - 1]
+      #       particle = @getParticle(i)
+      #       particle.setPosition(x, y)
+      #       particle.setColor(@outlineColor)
+      #       particle.show()
+      #       i++
+      #   for y in [1 .. @_dimensions.height - 2]
+      #     for x in [0, @_dimensions.width - 1]
+      #       particle = @getParticle(i)
+      #       particle.setPosition(x, y)
+      #       particle.setColor(@outlineColor)
+      #       particle.show()
+      #       i++
 
       if (@_particles.length - 1) > i
         for j in [i .. @_particles.length - 1]

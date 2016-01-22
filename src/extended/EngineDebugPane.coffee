@@ -17,7 +17,7 @@ class EngineDebugPane extends Pane
       @addChild(bar)
       bar.setSize(2, 6)
       bar.setPosition(i * 3, 0)
-      bar.fill(new Color('#fff'))
+      bar.stretch(new Color('#fff'))
       @_capacity.push(bar)
 
   _update: ->

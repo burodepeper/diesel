@@ -59,7 +59,7 @@ Engine =
 
       @trigger('resize')
 
-      # Attach the debug pane
+      # Attach the debug pane (after resize)
       if @config.debug
         @_debugPane = new EngineDebugPane()
 
