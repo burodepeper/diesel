@@ -207,6 +207,13 @@ Tracker = (function(superClass) {
     this._marker.setCenter(this._target);
     this._marker.outline(new Color('#e10'));
     this._marker.hide();
+    this._label = new Text(LAYER_UI);
+    this._label._setReference(this._target);
+    this._label.setPosition(5, -3);
+    this._label.setFont(new Font('9PX'));
+    this._label.setColor(new Color('#e10'));
+    this._label.setText(Math.floor(this._target.passingDistance));
+    this._label.hide();
   }
 
   Tracker.prototype._update = function() {
@@ -214,14 +221,18 @@ Tracker = (function(superClass) {
     threshold = App.spaceship.getSpeed() * 100;
     if (this._target._distance < threshold) {
       this._marker.show();
-      return this._marker.setOpacity(1 - (this._target._distance / threshold));
+      this._marker.setOpacity(1 - (this._target._distance / threshold));
+      this._label.show();
+      return this._label.setOpacity(1 - (this._target._distance / threshold));
     } else {
-      return this._marker.hide();
+      this._marker.hide();
+      return this._label.hide();
     }
   };
 
   Tracker.prototype.remove = function() {
     this._marker.remove();
+    this._label.remove();
     return Tracker.__super__.remove.call(this);
   };
 

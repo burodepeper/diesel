@@ -1102,12 +1102,19 @@ Pane = (function(superClass) {
   };
 
   Pane.prototype.remove = function() {
-    var k, len, particle, ref;
+    var child, k, l, len, len1, particle, ref, ref1;
     if (this._particles.length) {
       ref = this._particles;
       for (k = 0, len = ref.length; k < len; k++) {
         particle = ref[k];
         particle.remove();
+      }
+    }
+    if (this._children.length) {
+      ref1 = this._children;
+      for (l = 0, len1 = ref1.length; l < len1; l++) {
+        child = ref1[l];
+        child.remove();
       }
     }
     return Pane.__super__.remove.call(this);
@@ -1879,9 +1886,9 @@ Text = (function(superClass) {
     this.color = color1;
   };
 
-  Text.prototype.clear = function() {
+  Text.prototype._clear = function() {
     var child, k, len, ref, results;
-    ref = this.children;
+    ref = this._children;
     results = [];
     for (k = 0, len = ref.length; k < len; k++) {
       child = ref[k];
@@ -1906,7 +1913,6 @@ Text = (function(superClass) {
         glyph.load(data);
         glyph.setPosition(x, y);
         x += glyph.getWidth() + 1;
-        console.log(glyph);
       }
     }
     return this.setSize(x - 1, this.font.getHeight());

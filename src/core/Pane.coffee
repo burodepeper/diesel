@@ -171,6 +171,9 @@ class Pane extends VisualEntity
     if @_particles.length
       for particle in @_particles
         particle.remove()
+    if @_children.length
+      for child in @_children
+        child.remove()
     super()
 
   # ----- Private methods -----
