@@ -6,6 +6,7 @@ LAYER_UI = layer++
 App =
   init: ->
     settings =
+      debug: true
       viewport:
         width: 320
         height: 180

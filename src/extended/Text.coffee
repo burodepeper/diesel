@@ -5,7 +5,7 @@ class Text extends Pane
   setText: (text) ->
     @text = text + "" # Force {@text} to be a string
     # @clear()
-    @drawGlyphs()
+    @_drawGlyphs()
 
   setColor: (@color) ->
 
@@ -13,7 +13,7 @@ class Text extends Pane
     for child in @children
       child.remove()
 
-  drawGlyphs: ->
+  _drawGlyphs: ->
     x = 0
     y = 0
     for i in [0 .. @text.length - 1]
@@ -27,4 +27,5 @@ class Text extends Pane
         glyph.load(data)
         glyph.setPosition(x, y)
         x += glyph.getWidth() + 1
+        console.log glyph
     @setSize(x - 1, @font.getHeight())

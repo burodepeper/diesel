@@ -4,7 +4,7 @@ class Sprite extends Pane
     super(@_layer)
 
   load: (@data) ->
-    if @parseData()
+    if @_parseData()
       for i in [0 .. @data.particles.length - 1]
         value = @data.particles.charAt(i)
         x = i % @data.width
@@ -19,7 +19,7 @@ class Sprite extends Pane
     else
       console.error "Sprite.load(): Can't load Sprite, data is not valid", @data
 
-  parseData: ->
+  _parseData: ->
     # Are {width}, {particles} and {colors} specified?
     if @data.particles? and @data.colors? and @data.width?
       # Does the number of particles match the width?

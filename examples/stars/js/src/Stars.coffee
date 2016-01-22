@@ -6,8 +6,9 @@ class Stars extends Pane
     @height = WINDOW.getHeight()
     @center = WINDOW.getCenter()
 
-    # 5000 stars is acceptable on big machine
-    numberOfStars = @width * @height / 10 / 4
+    # 5000 stars is acceptable on imac
+    # 720 is acceptable on macbook air
+    numberOfStars = @width * @height / 10 / 4 / 2
     for i in [1 .. numberOfStars]
       z = getRandomInt(100, 10000)
       @addStar(z)

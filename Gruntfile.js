@@ -38,15 +38,17 @@ module.exports = function(grunt) {
             // 'src/core/Storage.coffee',
 
             'src/extended/Circle.coffee',
-            // 'src/extended/Font.coffee',
+            'src/extended/Font.coffee',
             'src/extended/Line.coffee',
             'src/extended/Path.coffee',
             'src/extended/Polygon.coffee',
-            // 'src/extended/Rectangle.coffee',
-            // 'src/extended/Sprite.coffee',
+            'src/extended/Rectangle.coffee',
+            'src/extended/Sprite.coffee',
             // 'src/extended/Square.coffee',
-            // 'src/extended/Text.coffee',
+            'src/extended/Text.coffee',
             'src/extended/Tween.coffee',
+
+            'src/extended/EngineDebugPane.coffee',
 
             'src/fonts/9px.coffee'
           ]

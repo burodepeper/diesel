@@ -114,8 +114,8 @@ class Point extends Entity
       @_y = Math.round(@_tweenY.getValue('y'))
       if @_tweenY.isComplete then @_tweenY = null
 
-    if (_previousX isnt @_x) or (_previousY isnt @_y)
-      @_updatePosition()
+    # if (_previousX isnt @_x) or (_previousY isnt @_y)
+    @_updatePosition()
     return
 
   # _setReference: (@_reference, @_id) ->

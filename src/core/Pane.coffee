@@ -126,7 +126,7 @@ class Pane extends VisualEntity
 
   # TODO Check if {child} is a valid Entity
   addChild: (child) ->
-    @children.push(child)
+    @_children.push(child)
     # id = @_getNextId()
     # child._setReference(this, id)
     child._setReference(this)

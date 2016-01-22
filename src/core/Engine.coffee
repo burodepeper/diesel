@@ -24,6 +24,7 @@ Engine =
     height: null
 
   config:
+    debug: false
     viewport:
       width: null
       height: null
@@ -44,6 +45,9 @@ Engine =
       if settings.viewport.grid
         @config.viewport.grid = settings.viewport.grid
 
+      if settings.debug
+        @config.debug = settings.debug
+
       # WINDOW is on level 1, otherwise draw() won't be executed
       window.WINDOW = new Pane(1)
       # WINDOW.setColor(new Color('#fff'))
@@ -54,6 +58,11 @@ Engine =
         @_capacity.push(1)
 
       @trigger('resize')
+
+      # Attach the debug pane
+      if @config.debug
+        @_debugPane = new EngineDebugPane()
+
       @_run()
       return true
     else

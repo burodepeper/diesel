@@ -3,16 +3,16 @@ class Font
   constructor: (name) ->
     @name = "FONT_" + name
     if window[@name]
-      @loadFont()
+      @_loadFont()
     else
       console.error "Font(): '#{@name}' doesn't exist"
 
-  loadFont: ->
+  _loadFont: ->
     @data = window[@name]
 
   getGlyph: (glyph) ->
     if @data.glyphs[glyph]?
-      data = @isValid(@data.glyphs[glyph])
+      data = @_isValid(@data.glyphs[glyph])
       unless data
         console.log "Font.getGlyph(): data for '#{glyph}' in '#{@name}' is not valid"
       return data
@@ -23,7 +23,7 @@ class Font
   getHeight: ->
     return @data.height
 
-  isValid: (data) ->
+  _isValid: (data) ->
     if data.length % @data.height is 0
       return { particles:data, width:data.length / @data.height }
     else

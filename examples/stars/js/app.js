@@ -14,6 +14,7 @@ App = {
   init: function() {
     var settings;
     settings = {
+      debug: true,
       viewport: {
         width: 320,
         height: 180
@@ -173,7 +174,7 @@ Stars = (function(superClass) {
     this.width = WINDOW.getWidth();
     this.height = WINDOW.getHeight();
     this.center = WINDOW.getCenter();
-    numberOfStars = this.width * this.height / 10 / 4;
+    numberOfStars = this.width * this.height / 10 / 4 / 2;
     for (i = j = 1, ref = numberOfStars; 1 <= ref ? j <= ref : j >= ref; i = 1 <= ref ? ++j : --j) {
       z = getRandomInt(100, 10000);
       this.addStar(z);

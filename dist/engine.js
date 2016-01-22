@@ -1,4 +1,4 @@
-var CONTEXT, Circle, Color, Controller, DEBUG, Engine, Entity, FONT_9PX, Line, NOW, PX, Pane, Particle, Path, Point, Polygon, Timer, Tween, VisualEntity, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
+var CONTEXT, Circle, Color, Controller, DEBUG, Engine, EngineDebugPane, Entity, FONT_9PX, Font, Line, NOW, PX, Pane, Particle, Path, Point, Polygon, Rectangle, Sprite, Text, Timer, Tween, VisualEntity, WINDOW, addDiversity, average, delay, getRandomFromArray, getRandomFromObject, getRandomInt, getWeighedInt, isPoint, shuffle, snap,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -144,6 +144,7 @@ Engine = {
     height: null
   },
   config: {
+    debug: false,
     viewport: {
       width: null,
       height: null,
@@ -163,11 +164,17 @@ Engine = {
       if (settings.viewport.grid) {
         this.config.viewport.grid = settings.viewport.grid;
       }
+      if (settings.debug) {
+        this.config.debug = settings.debug;
+      }
       window.WINDOW = new Pane(1);
       for (i = k = 1; k <= 60; i = ++k) {
         this._capacity.push(1);
       }
       this.trigger('resize');
+      if (this.config.debug) {
+        this._debugPane = new EngineDebugPane();
+      }
       this._run();
       return true;
     } else {
@@ -822,9 +829,7 @@ Point = (function(superClass) {
         this._tweenY = null;
       }
     }
-    if ((_previousX !== this._x) || (_previousY !== this._y)) {
-      this._updatePosition();
-    }
+    this._updatePosition();
   };
 
   Point.prototype._setReference = function(_reference) {
@@ -1067,7 +1072,7 @@ Pane = (function(superClass) {
   };
 
   Pane.prototype.addChild = function(child) {
-    this.children.push(child);
+    this._children.push(child);
     child._setReference(this);
   };
 
@@ -1435,6 +1440,53 @@ Circle = (function(superClass) {
 
 })(Pane);
 
+Font = (function() {
+  function Font(name) {
+    this.name = "FONT_" + name;
+    if (window[this.name]) {
+      this._loadFont();
+    } else {
+      console.error("Font(): '" + this.name + "' doesn't exist");
+    }
+  }
+
+  Font.prototype._loadFont = function() {
+    return this.data = window[this.name];
+  };
+
+  Font.prototype.getGlyph = function(glyph) {
+    var data;
+    if (this.data.glyphs[glyph] != null) {
+      data = this._isValid(this.data.glyphs[glyph]);
+      if (!data) {
+        console.log("Font.getGlyph(): data for '" + glyph + "' in '" + this.name + "' is not valid");
+      }
+      return data;
+    } else {
+      console.warn("Font.getGlyph(): '" + glyph + "' not found in '" + this.name + "'");
+      return false;
+    }
+  };
+
+  Font.prototype.getHeight = function() {
+    return this.data.height;
+  };
+
+  Font.prototype._isValid = function(data) {
+    if (data.length % this.data.height === 0) {
+      return {
+        particles: data,
+        width: data.length / this.data.height
+      };
+    } else {
+      return false;
+    }
+  };
+
+  return Font;
+
+})();
+
 Line = (function(superClass) {
   extend(Line, superClass);
 
@@ -1658,6 +1710,258 @@ Polygon = (function(superClass) {
 
 })(Path);
 
+Rectangle = (function(superClass) {
+  extend(Rectangle, superClass);
+
+  function Rectangle() {
+    return Rectangle.__super__.constructor.apply(this, arguments);
+  }
+
+  Rectangle.prototype.type = null;
+
+  Rectangle.prototype.constuctor = function(_layer) {
+    this._layer = _layer != null ? _layer : 1;
+    Rectangle.__super__.constuctor.call(this, this._layer);
+    return this.hasOutline = false;
+  };
+
+  Rectangle.prototype.fill = function(color, opacity) {
+    if (color == null) {
+      color = null;
+    }
+    if (opacity == null) {
+      opacity = null;
+    }
+    this.type = 'fill';
+    if (color != null) {
+      this.setColor(color, opacity);
+    }
+  };
+
+  Rectangle.prototype.stretch = function(color, opacity) {
+    if (color == null) {
+      color = null;
+    }
+    if (opacity == null) {
+      opacity = null;
+    }
+    this.type = 'stretch';
+    if (color != null) {
+      this.setColor(color, opacity);
+    }
+  };
+
+  Rectangle.prototype.outline = function(color) {
+    this.outlineColor = color;
+    this.hasOutline = true;
+  };
+
+  Rectangle.prototype._update = function() {
+    var i, j, k, l, len, len1, m, n, o, p, particle, q, ref, ref1, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, results, results1, s, x, y;
+    if (this.type === 'stretch') {
+      particle = this.getParticle(0).show();
+      particle.setPosition(this._position.x, this._position.y);
+      particle.setSize(this._dimensions.width, this._dimensions.height);
+      i = 1;
+      if (this.hasOutline) {
+        particle = this.getParticle(i);
+        particle.setPosition(0, 0);
+        particle.setSize(this._dimensions.width, 1);
+        particle.setColor(this.outlineColor);
+        i++;
+        particle = this.getParticle(i);
+        particle.setPosition(0, this._dimensions.height - 1);
+        particle.setSize(this._dimensions.width, 1);
+        particle.setColor(this.outlineColor);
+        i++;
+        particle = this.getParticle(i);
+        particle.setPosition(0, 1);
+        particle.setSize(1, this._dimensions.height - 2);
+        particle.setColor(this.outlineColor);
+        i++;
+        particle = this.getParticle(i);
+        particle.setPosition(this._dimensions.width - 1, 1);
+        particle.setSize(1, this._dimensions.height - 2);
+        particle.setColor(this.outlineColor);
+        i++;
+      }
+      if ((this._particles.length - 1) > i) {
+        results = [];
+        for (j = k = ref = i, ref1 = this._particles.length - 1; ref <= ref1 ? k <= ref1 : k >= ref1; j = ref <= ref1 ? ++k : --k) {
+          results.push(this.getParticle(j).hide());
+        }
+        return results;
+      }
+    } else if (this.type === 'fill') {
+      i = 0;
+      for (x = l = 0, ref2 = this._dimensions.width - 1; 0 <= ref2 ? l <= ref2 : l >= ref2; x = 0 <= ref2 ? ++l : --l) {
+        for (y = m = 0, ref3 = this._dimensions.height - 1; 0 <= ref3 ? m <= ref3 : m >= ref3; y = 0 <= ref3 ? ++m : --m) {
+          particle = this.getParticle(i);
+          particle.setPosition(x, y);
+          particle.show();
+          i++;
+        }
+      }
+      if (this.hasOutline) {
+        for (x = n = 0, ref4 = this._dimensions.width - 1; 0 <= ref4 ? n <= ref4 : n >= ref4; x = 0 <= ref4 ? ++n : --n) {
+          ref5 = [0, this._dimensions.height - 1];
+          for (o = 0, len = ref5.length; o < len; o++) {
+            y = ref5[o];
+            particle = this.getParticle(i);
+            particle.setPosition(x, y);
+            particle.setColor(this.outlineColor);
+            particle.show();
+            i++;
+          }
+        }
+        for (y = p = 1, ref6 = this._dimensions.height - 2; 1 <= ref6 ? p <= ref6 : p >= ref6; y = 1 <= ref6 ? ++p : --p) {
+          ref7 = [0, this._dimensions.width - 1];
+          for (q = 0, len1 = ref7.length; q < len1; q++) {
+            x = ref7[q];
+            particle = this.getParticle(i);
+            particle.setPosition(x, y);
+            particle.setColor(this.outlineColor);
+            particle.show();
+            i++;
+          }
+        }
+      }
+      if ((this._particles.length - 1) > i) {
+        results1 = [];
+        for (j = s = ref8 = i, ref9 = this._particles.length - 1; ref8 <= ref9 ? s <= ref9 : s >= ref9; j = ref8 <= ref9 ? ++s : --s) {
+          results1.push(this.getParticle(j).hide());
+        }
+        return results1;
+      }
+    }
+  };
+
+  return Rectangle;
+
+})(Pane);
+
+Sprite = (function(superClass) {
+  extend(Sprite, superClass);
+
+  function Sprite(_layer) {
+    this._layer = _layer != null ? _layer : 1;
+    Sprite.__super__.constructor.call(this, this._layer);
+  }
+
+  Sprite.prototype.load = function(data1) {
+    var i, k, particle, ref, results, value, x, y;
+    this.data = data1;
+    if (this._parseData()) {
+      results = [];
+      for (i = k = 0, ref = this.data.particles.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
+        value = this.data.particles.charAt(i);
+        x = i % this.data.width;
+        y = Math.floor(i / this.data.width);
+        if (value !== '0') {
+          particle = new Particle();
+          this.addParticle(particle);
+          particle.setColor(this.data.colors[value]);
+          results.push(particle.setPosition(x, y));
+        } else {
+          results.push(void 0);
+        }
+      }
+      return results;
+    } else {
+      return console.error("Sprite.load(): Can't load Sprite, data is not valid", this.data);
+    }
+  };
+
+  Sprite.prototype._parseData = function() {
+    var height, i, k, ref, value;
+    if ((this.data.particles != null) && (this.data.colors != null) && (this.data.width != null)) {
+      if (this.data.particles.length % this.data.width === 0) {
+        height = this.data.particles.length / this.data.width;
+        this.setSize(this.data.width, height);
+        for (i = k = 0, ref = this.data.particles.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
+          value = this.data.particles.charAt(i);
+          if (value !== '0') {
+            if (this.data.colors[value] == null) {
+              console.warn("Sprite.parseData():", value, "is not a valid color index");
+              return false;
+            }
+          }
+        }
+      } else {
+        console.warn("Sprite.parseData(): number of particles (" + this.data.particles.length + ") isn't a multiple of width (" + this.data.width + ")");
+        return false;
+      }
+    }
+    return true;
+  };
+
+  Sprite.prototype.update = function() {
+    if (this.reference.hasChanged) {
+      return Sprite.__super__.update.call(this);
+    }
+  };
+
+  return Sprite;
+
+})(Pane);
+
+Text = (function(superClass) {
+  extend(Text, superClass);
+
+  function Text() {
+    return Text.__super__.constructor.apply(this, arguments);
+  }
+
+  Text.prototype.setFont = function(font) {
+    this.font = font;
+  };
+
+  Text.prototype.setText = function(text) {
+    this.text = text + "";
+    return this._drawGlyphs();
+  };
+
+  Text.prototype.setColor = function(color1) {
+    this.color = color1;
+  };
+
+  Text.prototype.clear = function() {
+    var child, k, len, ref, results;
+    ref = this.children;
+    results = [];
+    for (k = 0, len = ref.length; k < len; k++) {
+      child = ref[k];
+      results.push(child.remove());
+    }
+    return results;
+  };
+
+  Text.prototype._drawGlyphs = function() {
+    var data, glyph, i, k, ref, value, x, y;
+    x = 0;
+    y = 0;
+    for (i = k = 0, ref = this.text.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
+      value = this.text.charAt(i);
+      data = this.font.getGlyph(value);
+      if (data) {
+        data.colors = {
+          1: this.color
+        };
+        glyph = new Sprite();
+        this.addChild(glyph);
+        glyph.load(data);
+        glyph.setPosition(x, y);
+        x += glyph.getWidth() + 1;
+        console.log(glyph);
+      }
+    }
+    return this.setSize(x - 1, this.font.getHeight());
+  };
+
+  return Text;
+
+})(Pane);
+
 Tween = (function(superClass) {
   extend(Tween, superClass);
 
@@ -1705,6 +2009,47 @@ Tween = (function(superClass) {
   return Tween;
 
 })(Timer);
+
+EngineDebugPane = (function(superClass) {
+  extend(EngineDebugPane, superClass);
+
+  function EngineDebugPane() {
+    var bar, i, k;
+    EngineDebugPane.__super__.constructor.call(this);
+    this.setCSS({
+      bottom: 2,
+      left: 2,
+      height: 6
+    });
+    this._capacity = [];
+    for (i = k = 0; k <= 9; i = ++k) {
+      bar = new Rectangle();
+      this.addChild(bar);
+      bar.setSize(2, 6);
+      bar.setPosition(i * 3, 0);
+      bar.fill(new Color('#fff'));
+      this._capacity.push(bar);
+    }
+  }
+
+  EngineDebugPane.prototype._update = function() {
+    var bar, capacity, i, k, results;
+    capacity = Math.floor(Engine.getCapacity().capacity * 10);
+    results = [];
+    for (i = k = 0; k <= 9; i = ++k) {
+      bar = this._capacity[i];
+      if (i <= capacity) {
+        results.push(bar.setOpacity(1));
+      } else {
+        results.push(bar.setOpacity(0.25));
+      }
+    }
+    return results;
+  };
+
+  return EngineDebugPane;
+
+})(Pane);
 
 FONT_9PX = {
   height: 9,
