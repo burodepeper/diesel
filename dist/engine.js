@@ -899,7 +899,11 @@ VisualEntity = (function(superClass) {
   };
 
   VisualEntity.prototype.getOpacity = function() {
-    return this._opacity;
+    if ((this._reference != null) && (this._reference.getOpacity != null)) {
+      return this._reference.getOpacity() * this._opacity;
+    } else {
+      return this._opacity;
+    }
   };
 
   VisualEntity.prototype.setColor = function(color, opacity) {

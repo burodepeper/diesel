@@ -34,7 +34,10 @@ class VisualEntity extends Point
     return
 
   getOpacity: ->
-    return @_opacity
+    if @_reference? and @_reference.getOpacity?
+      return @_reference.getOpacity() * @_opacity
+    else
+      return @_opacity
 
   setColor: (color, opacity = null) ->
     if typeof color is 'object'

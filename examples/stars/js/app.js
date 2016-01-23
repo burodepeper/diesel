@@ -30,7 +30,7 @@ App = {
         bottom: 0,
         left: 0
       });
-      this.spaceship.accelerateTo(25);
+      this.spaceship.accelerateTo(10);
     }
   }
 };
@@ -224,7 +224,7 @@ Tracker = (function(superClass) {
       this._marker.setOpacity(1 - (this._target._distance / threshold));
       this._label.show();
       this._label.setOpacity(1 - (this._target._distance / threshold));
-      return this._label.setText(Math.floor(this._target._distance));
+      return this._label.setText(Math.floor(this._target._distance / 100));
     } else {
       this._marker.hide();
       return this._label.hide();

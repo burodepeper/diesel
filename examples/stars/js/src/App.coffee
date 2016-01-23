@@ -20,7 +20,7 @@ App =
       @stars = new Stars()
       @stars.setCSS({ top:0, right:0, bottom:0, left:0 })
 
-      @spaceship.accelerateTo(25)
+      @spaceship.accelerateTo(10)
 
       # TODO
       # - Radar

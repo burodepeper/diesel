@@ -24,7 +24,8 @@ class Tracker extends Controller
 
       @_label.show()
       @_label.setOpacity(1 - (@_target._distance / threshold))
-      @_label.setText(Math.floor(@_target._distance))
+
+      @_label.setText(Math.floor(@_target._distance / 100))
     else
       @_marker.hide()
       @_label.hide()
