@@ -5,16 +5,24 @@ class Sprite extends Pane
 
   load: (@data) ->
     if @_parseData()
+      n = 0
       for i in [0 .. @data.particles.length - 1]
         value = @data.particles.charAt(i)
         x = i % @data.width
         y = Math.floor(i / @data.width)
 
         if value isnt '0'
-          particle = new Particle()
-          @addParticle(particle)
+          # particle = new Particle()
+          particle = @getParticle(n)
+          # @addParticle(particle)
           particle.setColor(@data.colors[value])
           particle.setPosition(x, y)
+          particle.show()
+          n++
+
+      if (@_particles.length - 1) > n
+        for j in [n .. @_particles.length - 1]
+          @getParticle(j).hide()
 
     else
       console.error "Sprite.load(): Can't load Sprite, data is not valid", @data

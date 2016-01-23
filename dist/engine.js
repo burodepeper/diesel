@@ -1076,6 +1076,14 @@ Pane = (function(superClass) {
     child._setReference(this);
   };
 
+  Pane.prototype.getChild = function(num) {
+    if (this._children[num] != null) {
+      return this._children[num];
+    } else {
+      return false;
+    }
+  };
+
   Pane.prototype.addParticle = function(particle) {
     this._particles.push(particle);
     particle._setReference(this);
@@ -1350,7 +1358,7 @@ Circle = (function(superClass) {
   };
 
   Circle.prototype._update = function() {
-    var _x, _y, diffX, diffY, distanceFromCenter, fromY, height, i, j, k, l, len, len1, len2, m, minY, n, o, p, particle, position, positions, q, ref, ref1, ref2, ref3, ref4, ref5, toY, x, y;
+    var _x, _y, diffX, diffY, distanceFromCenter, fromY, height, i, j, k, l, len, len1, len2, m, minY, o, p, particle, position, positions, q, ref, ref1, ref2, ref3, ref4, ref5, s, toY, x, y;
     this._updatePosition();
     if (this._sizeHasChanged || this._positionHasChanged) {
       if (this._center && this._radius) {
@@ -1384,7 +1392,7 @@ Circle = (function(superClass) {
         if (this.hasOutline) {
           minY = this._getMinY();
           fromY = this._radius - 1;
-          for (x = n = 0, len1 = minY.length; n < len1; x = ++n) {
+          for (x = o = 0, len1 = minY.length; o < len1; x = ++o) {
             toY = minY[x];
             if (x < this._radius) {
               if (fromY < toY) {
@@ -1393,7 +1401,7 @@ Circle = (function(superClass) {
               if (x === this._diameter - 1) {
                 toY = this._radius - 1;
               }
-              for (y = o = ref2 = fromY, ref3 = toY; ref2 <= ref3 ? o <= ref3 : o >= ref3; y = ref2 <= ref3 ? ++o : --o) {
+              for (y = p = ref2 = fromY, ref3 = toY; ref2 <= ref3 ? p <= ref3 : p >= ref3; y = ref2 <= ref3 ? ++p : --p) {
                 _x = this._diameter - x - 1;
                 _y = this._diameter - y - 1;
                 positions = [];
@@ -1419,8 +1427,8 @@ Circle = (function(superClass) {
                     y: _y
                   });
                 }
-                for (p = 0, len2 = positions.length; p < len2; p++) {
-                  position = positions[p];
+                for (q = 0, len2 = positions.length; q < len2; q++) {
+                  position = positions[q];
                   particle = this.getParticle(i);
                   particle.setPosition(position.x, position.y);
                   particle.setColor(this.outlineColor);
@@ -1433,7 +1441,7 @@ Circle = (function(superClass) {
           }
         }
         if ((this._particles.length - 1) > i) {
-          for (j = q = ref4 = i, ref5 = this._particles.length - 1; ref4 <= ref5 ? q <= ref5 : q >= ref5; j = ref4 <= ref5 ? ++q : --q) {
+          for (j = s = ref4 = i, ref5 = this._particles.length - 1; ref4 <= ref5 ? s <= ref5 : s >= ref5; j = ref4 <= ref5 ? ++s : --s) {
             this.getParticle(j).hide();
           }
         }
@@ -1563,7 +1571,7 @@ Line = (function(superClass) {
   };
 
   Line.prototype._update = function() {
-    var i, increment, j, k, l, m, n, particle, ref, ref1, ref2, ref3, ref4, ref5, ref6, results, x, y;
+    var i, increment, j, k, l, m, o, particle, ref, ref1, ref2, ref3, ref4, ref5, ref6, results, x, y;
     i = 0;
     this._calculateDimensions();
     if (Math.abs(this.diffX) >= Math.abs(this.diffY)) {
@@ -1594,7 +1602,7 @@ Line = (function(superClass) {
     }
     if ((this._particles.length - 1) > i) {
       results = [];
-      for (j = n = ref5 = i, ref6 = this._particles.length - 1; ref5 <= ref6 ? n <= ref6 : n >= ref6; j = ref5 <= ref6 ? ++n : --n) {
+      for (j = o = ref5 = i, ref6 = this._particles.length - 1; ref5 <= ref6 ? o <= ref6 : o >= ref6; j = ref5 <= ref6 ? ++o : --o) {
         results.push(this.getParticle(j).hide());
       }
       return results;
@@ -1764,7 +1772,7 @@ Rectangle = (function(superClass) {
   };
 
   Rectangle.prototype._update = function() {
-    var i, j, k, l, m, n, particle, ref, ref1, ref2, ref3, ref4, ref5, results, results1, x, y;
+    var i, j, k, l, m, o, particle, ref, ref1, ref2, ref3, ref4, ref5, results, results1, x, y;
     if (this.type === 'stretch') {
       particle = this.getParticle(0).show();
       particle.setPosition(0, 0);
@@ -1789,7 +1797,7 @@ Rectangle = (function(superClass) {
       }
       if ((this._particles.length - 1) > i) {
         results1 = [];
-        for (j = n = ref4 = i, ref5 = this._particles.length - 1; ref4 <= ref5 ? n <= ref5 : n >= ref5; j = ref4 <= ref5 ? ++n : --n) {
+        for (j = o = ref4 = i, ref5 = this._particles.length - 1; ref4 <= ref5 ? o <= ref5 : o >= ref5; j = ref4 <= ref5 ? ++o : --o) {
           results1.push(this.getParticle(j).hide());
         }
         return results1;
@@ -1810,24 +1818,29 @@ Sprite = (function(superClass) {
   }
 
   Sprite.prototype.load = function(data1) {
-    var i, k, particle, ref, results, value, x, y;
+    var i, j, k, l, n, particle, ref, ref1, ref2, results, value, x, y;
     this.data = data1;
     if (this._parseData()) {
-      results = [];
+      n = 0;
       for (i = k = 0, ref = this.data.particles.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
         value = this.data.particles.charAt(i);
         x = i % this.data.width;
         y = Math.floor(i / this.data.width);
         if (value !== '0') {
-          particle = new Particle();
-          this.addParticle(particle);
+          particle = this.getParticle(n);
           particle.setColor(this.data.colors[value]);
-          results.push(particle.setPosition(x, y));
-        } else {
-          results.push(void 0);
+          particle.setPosition(x, y);
+          particle.show();
+          n++;
         }
       }
-      return results;
+      if ((this._particles.length - 1) > n) {
+        results = [];
+        for (j = l = ref1 = n, ref2 = this._particles.length - 1; ref1 <= ref2 ? l <= ref2 : l >= ref2; j = ref1 <= ref2 ? ++l : --l) {
+          results.push(this.getParticle(j).hide());
+        }
+        return results;
+      }
     } else {
       return console.error("Sprite.load(): Can't load Sprite, data is not valid", this.data);
     }
@@ -1878,7 +1891,8 @@ Text = (function(superClass) {
   };
 
   Text.prototype.setText = function(text) {
-    this.text = text + "";
+    this._oldText = this._text;
+    this._text = text + "";
     return this._drawGlyphs();
   };
 
@@ -1886,36 +1900,36 @@ Text = (function(superClass) {
     this.color = color1;
   };
 
-  Text.prototype._clear = function() {
-    var child, k, len, ref, results;
-    ref = this._children;
-    results = [];
-    for (k = 0, len = ref.length; k < len; k++) {
-      child = ref[k];
-      results.push(child.remove());
-    }
-    return results;
-  };
-
   Text.prototype._drawGlyphs = function() {
-    var data, glyph, i, k, ref, value, x, y;
+    var data, glyph, i, k, l, redundantGlyphs, ref, ref1, results, value, x, y;
     x = 0;
     y = 0;
-    for (i = k = 0, ref = this.text.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
-      value = this.text.charAt(i);
+    for (i = k = 0, ref = this._text.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
+      value = this._text.charAt(i);
       data = this.font.getGlyph(value);
       if (data) {
         data.colors = {
           1: this.color
         };
-        glyph = new Sprite();
-        this.addChild(glyph);
+        glyph = this.getChild(i);
+        if (!glyph) {
+          glyph = new Sprite();
+          this.addChild(glyph);
+        }
         glyph.load(data);
         glyph.setPosition(x, y);
         x += glyph.getWidth() + 1;
       }
     }
-    return this.setSize(x - 1, this.font.getHeight());
+    this.setSize(x - 1, this.font.getHeight());
+    if (this._oldText && (this._oldText.length > this._text.length)) {
+      redundantGlyphs = this._oldText.length - this._text.length;
+      results = [];
+      for (i = l = 0, ref1 = redundantGlyphs - 1; 0 <= ref1 ? l <= ref1 : l >= ref1; i = 0 <= ref1 ? ++l : --l) {
+        results.push(this.getChild(this._text.length + i).hide());
+      }
+      return results;
+    }
   };
 
   return Text;

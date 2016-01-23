@@ -223,7 +223,8 @@ Tracker = (function(superClass) {
       this._marker.show();
       this._marker.setOpacity(1 - (this._target._distance / threshold));
       this._label.show();
-      return this._label.setOpacity(1 - (this._target._distance / threshold));
+      this._label.setOpacity(1 - (this._target._distance / threshold));
+      return this._label.setText(Math.floor(this._target._distance));
     } else {
       this._marker.hide();
       return this._label.hide();

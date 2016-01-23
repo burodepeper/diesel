@@ -132,6 +132,12 @@ class Pane extends VisualEntity
     child._setReference(this)
     return
 
+  getChild: (num) ->
+    if @_children[num]?
+      return @_children[num]
+    else
+      return false
+
   # updateChildren: (method, value) ->
   #   for child in @children
   #     child[method](value)
